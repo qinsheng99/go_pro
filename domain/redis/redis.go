@@ -2,12 +2,11 @@ package redis
 
 import (
 	"context"
-	"time"
-
 	"github.com/go-redis/redis/v8"
+	"time"
 )
 
-type Interface interface {
+type Redis interface {
 	//Set 命令用于设置给定 key 的值。如果 key 已经存储其他值， SET 就覆写旧值，且无视类型。	//SET KEY_NAME VALUE
 	Set(ctx context.Context, key string, value interface{}, expiration time.Duration) (bool, error)
 	//SetNx 命令在指定的 key 不存在时，为 key 设置指定的值。 //SETNX KEY_NAME VALUE
@@ -126,4 +125,7 @@ type Interface interface {
 	ZRank(ctx context.Context, key, member string) (int64, error)
 	//ZRevRank 命令返回有序集中成员的排名。其中有序集成员按分数值递减(从大到小)排序。 排名以 0 为底，也就是说， 分数值最大的成员排名为 0 。
 	ZRevRank(ctx context.Context, key, member string) (int64, error)
+
+	Lock(ctx context.Context, key string, value interface{}, expiration time.Duration) (bool, error)
+	UnLock(ctx context.Context, keys []string, args ...interface{}) (interface{}, error)
 }

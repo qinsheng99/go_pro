@@ -2,16 +2,16 @@ package redis
 
 import (
 	"context"
-	"time"
-
 	"github.com/go-redis/redis/v8"
+	redis2 "github.com/qinsheng99/go-domain-web/domain/redis"
+	"time"
 )
 
 type redisImpl struct {
 	r *redis.Client
 }
 
-func NewredisImpl(r *redis.Client) Interface {
+func NewredisImpl(r *redis.Client) redis2.Redis {
 	return &redisImpl{
 		r: r,
 	}
@@ -557,4 +557,21 @@ func (r *redisImpl) Append(ctx context.Context, key string, value string) (int64
 		return int64(0), err
 	}
 	return res, nil
+}
+
+func (r *redisImpl) Lock(ctx context.Context, key string, value interface{}, expiration time.Duration) (bool, error) {
+	result, err := r.r.SetNX(ctx, key, value, expiration).Result()
+	if err != nil && err != redis.Nil {
+		return false, err
+	}
+	return result, nil
+}
+
+func (r *redisImpl) UnLock(ctx context.Context, keys []string, args ...interface{}) (interface{}, error) {
+	cl := redis.NewScript("if redis.call(\"GET\", KEYS[1]) == ARGV[1] then return redis.call(\"DEL\", KEYS[1]) else return 0 end")
+	result, err := cl.Eval(ctx, r.r, keys, args...).Result()
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
 }
