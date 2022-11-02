@@ -1,0 +1,39 @@
+{
+  "port": 8000,
+  "log" : {
+    "level": "INFO",
+    "filename": "logs/go-web"
+  },
+  "mysql": {
+    "db_host": "localhost",
+    "db_port": 3306,
+    "db_user": "root",
+    "db_pwd": "12345678",
+    "db_name": "ceshi",
+    "db_max_conn": 20,
+    "db_maxidle": 100
+  },
+  "es": {
+    "host": "http://192.168.1.218",
+    "port": 9200
+  },
+  "redis": {
+    "host": "localhost",
+    "port": 6379
+  },
+  "mongo": {
+    "host": "localhost",
+    "port": 27017,
+    "database": "mydb",
+    "collection": "dd"
+  },
+  "postgresql": {
+    "db_host": "localhost",
+    "db_port": 5432,
+    "db_user": "postgres",
+    "db_pwd": "root",
+    "db_name": "postgres",
+    "db_max_conn": 20,
+    "db_maxidle": 100
+  }
+}
