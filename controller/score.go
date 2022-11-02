@@ -3,9 +3,9 @@ package controller
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"github.com/qinsheng99/go-py/api/score_api"
-	"github.com/qinsheng99/go-py/app"
-	"github.com/qinsheng99/go-py/domain/score"
+	"github.com/qinsheng99/go-domain-web/api/score_api"
+	"github.com/qinsheng99/go-domain-web/app"
+	"github.com/qinsheng99/go-domain-web/domain/score"
 	"net/http"
 )
 

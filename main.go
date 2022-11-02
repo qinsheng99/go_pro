@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/qinsheng99/go-py/route"
+	"github.com/qinsheng99/go-domain-web/route"
 	"log"
 )
 

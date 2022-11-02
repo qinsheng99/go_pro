@@ -2,8 +2,8 @@ package score
 
 import (
 	"bytes"
-	"github.com/qinsheng99/go-py/api/score_api"
-	"github.com/qinsheng99/go-py/domain/score"
+	"github.com/qinsheng99/go-domain-web/api/score_api"
+	"github.com/qinsheng99/go-domain-web/domain/score"
 	"os"
 	"os/exec"
 	"strconv"

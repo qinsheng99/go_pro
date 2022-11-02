@@ -1,7 +1,7 @@
 package score
 
 import (
-	"github.com/qinsheng99/go-py/api/score_api"
+	"github.com/qinsheng99/go-domain-web/api/score_api"
 )
 
 type Score interface {

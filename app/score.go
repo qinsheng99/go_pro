@@ -3,8 +3,8 @@ package app
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/qinsheng99/go-py/api/score_api"
-	"github.com/qinsheng99/go-py/domain/score"
+	"github.com/qinsheng99/go-domain-web/api/score_api"
+	"github.com/qinsheng99/go-domain-web/domain/score"
 )
 
 type scoreService struct {

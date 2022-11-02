@@ -1,4 +1,4 @@
-module github.com/qinsheng99/go-py
+module github.com/qinsheng99/go-domain-web
 
 go 1.18
 

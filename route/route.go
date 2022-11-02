@@ -2,8 +2,8 @@ package route
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/qinsheng99/go-py/controller"
-	"github.com/qinsheng99/go-py/infrastructure/score"
+	"github.com/qinsheng99/go-domain-web/controller"
+	"github.com/qinsheng99/go-domain-web/infrastructure/score"
 	"net/http"
 	"os"
 )
