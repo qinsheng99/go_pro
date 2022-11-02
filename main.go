@@ -3,9 +3,11 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/qinsheng99/go-domain-web/config"
+	"github.com/qinsheng99/go-domain-web/infrastructure/elasticsearch"
 	"github.com/qinsheng99/go-domain-web/infrastructure/kubernetes"
 	"github.com/qinsheng99/go-domain-web/infrastructure/mysql"
 	"github.com/qinsheng99/go-domain-web/infrastructure/postgresql"
+	"github.com/qinsheng99/go-domain-web/infrastructure/redis"
 	"github.com/qinsheng99/go-domain-web/logger"
 	"github.com/qinsheng99/go-domain-web/route"
 	"log"
@@ -35,6 +37,16 @@ func main() {
 	}
 
 	err = postgresql.Init(config.Conf.PostgresqlConfig)
+	if err != nil {
+		panic(err)
+	}
+
+	err = elasticsearch.Init(config.Conf.EsConfig)
+	if err != nil {
+		panic(err)
+	}
+
+	err = redis.Init(config.Conf.RedisConfig)
 	if err != nil {
 		panic(err)
 	}
