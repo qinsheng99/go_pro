@@ -15,6 +15,7 @@ type Config struct {
 	*RedisConfig      `json:"redis"`
 	*MongoConfig      `json:"mongo"`
 	*PostgresqlConfig `json:"postgresql"`
+	*EtcdConfig       `json:"etcd"`
 }
 
 // LogConfig 日志配置
@@ -61,6 +62,11 @@ type MongoConfig struct {
 	Port       int64  `json:"port"`
 	Database   string `json:"database"`
 	Collection string `json:"collection"`
+}
+
+type EtcdConfig struct {
+	Host string `json:"host"`
+	Port int64  `json:"port"`
 }
 
 var Conf = new(Config)
