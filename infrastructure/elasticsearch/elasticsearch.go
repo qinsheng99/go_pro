@@ -40,3 +40,7 @@ func Init(cfg *config.EsConfig) (err error) {
 
 	return nil
 }
+
+func GetElasticsearch() *elastic.Client {
+	return es
+}

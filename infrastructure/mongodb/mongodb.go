@@ -34,3 +34,7 @@ func Init(cfg *config.MongoConfig) error {
 
 	return nil
 }
+
+func GetMongo() *mongo.Client {
+	return mgo
+}

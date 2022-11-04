@@ -3,13 +3,9 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/qinsheng99/go-domain-web/config"
-	"github.com/qinsheng99/go-domain-web/infrastructure/elasticsearch"
-	"github.com/qinsheng99/go-domain-web/infrastructure/etcd"
 	"github.com/qinsheng99/go-domain-web/infrastructure/kubernetes"
-	"github.com/qinsheng99/go-domain-web/infrastructure/mongodb"
 	"github.com/qinsheng99/go-domain-web/infrastructure/mysql"
 	"github.com/qinsheng99/go-domain-web/infrastructure/postgresql"
-	"github.com/qinsheng99/go-domain-web/infrastructure/redis"
 	"github.com/qinsheng99/go-domain-web/logger"
 	"github.com/qinsheng99/go-domain-web/route"
 	"log"
@@ -43,25 +39,25 @@ func main() {
 		panic(err)
 	}
 
-	err = elasticsearch.Init(config.Conf.EsConfig)
-	if err != nil {
-		panic(err)
-	}
-
-	err = redis.Init(config.Conf.RedisConfig)
-	if err != nil {
-		panic(err)
-	}
-
-	err = mongodb.Init(config.Conf.MongoConfig)
-	if err != nil {
-		panic(err)
-	}
-
-	err = etcd.Init(config.Conf.EtcdConfig)
-	if err != nil {
-		panic(err)
-	}
+	//err = elasticsearch.Init(config.Conf.EsConfig)
+	//if err != nil {
+	//	panic(err)
+	//}
+	//
+	//err = redis.Init(config.Conf.RedisConfig)
+	//if err != nil {
+	//	panic(err)
+	//}
+	//
+	//err = mongodb.Init(config.Conf.MongoConfig)
+	//if err != nil {
+	//	panic(err)
+	//}
+	//
+	//err = etcd.Init(config.Conf.EtcdConfig)
+	//if err != nil {
+	//	panic(err)
+	//}
 
 	route.SetRoute(r)
 

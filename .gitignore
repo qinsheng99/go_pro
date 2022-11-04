@@ -1,3 +1,5 @@
 .idea
 push.sh
 .DS_Store
+go-domain-web
+./logs

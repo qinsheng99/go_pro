@@ -3,6 +3,7 @@ package utils
 import (
 	"bytes"
 	"crypto/tls"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -24,7 +25,7 @@ var transport = &http.Transport{
 }
 
 type ReqImpl interface {
-	CustomRequest(url, method string, bytesData interface{}, headers map[string]string, u url.Values, try bool) ([]byte, error)
+	CustomRequest(url, method string, bytesData interface{}, headers map[string]string, u url.Values, try bool, data interface{}) ([]byte, error)
 }
 
 type request struct {
@@ -72,11 +73,25 @@ func (r *request) mainRequest(url, method string, bytesData interface{}, headers
 	return
 }
 
-func (r *request) CustomRequest(url, method string, bytesData interface{}, headers map[string]string, u url.Values, try bool) ([]byte, error) {
+func (r *request) CustomRequest(url, method string, bytesData interface{}, headers map[string]string, u url.Values, try bool, data interface{}) ([]byte, error) {
+	var (
+		bys []byte
+		err error
+	)
 	if try {
-		return r.mainRequest(r.geturl(url, u), strings.ToUpper(method), bytesData, headers)
+		bys, err = r.mainRequest(r.geturl(url, u), strings.ToUpper(method), bytesData, headers)
+	} else {
+		bys, err = r.noTryRequest(r.geturl(url, u), strings.ToUpper(method), bytesData, headers)
 	}
-	return r.noTryRequest(r.geturl(url, u), strings.ToUpper(method), bytesData, headers)
+	if err != nil {
+		return nil, err
+	}
+
+	if data == nil {
+		return bys, nil
+	}
+	err = json.NewDecoder(bytes.NewReader(bys)).Decode(data)
+	return bys, err
 }
 
 // noTryRequest 所有公用的http请求无重试

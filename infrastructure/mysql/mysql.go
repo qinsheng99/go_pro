@@ -3,6 +3,7 @@ package mysql
 import (
 	"database/sql"
 	"fmt"
+	"gorm.io/gorm/logger"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/qinsheng99/go-domain-web/config"
@@ -22,7 +23,7 @@ func Init(cfg *config.MysqlConfig) (err error) {
 		DontSupportRenameIndex:    true,
 		DontSupportRenameColumn:   true,
 		SkipInitializeWithVersion: false,
-	}), &gorm.Config{})
+	}), &gorm.Config{Logger: logger.Default.LogMode(logger.Silent)})
 	if err != nil {
 		return err
 	}
@@ -34,4 +35,8 @@ func Init(cfg *config.MysqlConfig) (err error) {
 	sqlDB.SetMaxOpenConns(cfg.DbMaxConn)
 	sqlDB.SetMaxIdleConns(cfg.DbMaxidle)
 	return nil
+}
+
+func Getmysqldb() *gorm.DB {
+	return mysqlDb
 }

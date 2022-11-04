@@ -10,11 +10,11 @@ type redisService struct {
 	r redis.Redis
 }
 
-type RedisService interface {
+type RedisServiceImpl interface {
 	Set(ctx context.Context, key string, value interface{}, expiration time.Duration) (bool, error)
 }
 
-func NewRedisService(r redis.Redis) RedisService {
+func NewRedisService(r redis.Redis) RedisServiceImpl {
 	return &redisService{
 		r: r,
 	}

@@ -11,12 +11,12 @@ type scoreService struct {
 	s score.Score
 }
 
-type ScoreService interface {
+type ScoreServiceImpl interface {
 	Evaluate(score_api.Score, *score_api.ScoreRes) error
 	Calculate(score_api.Score, *score_api.ScoreRes) error
 }
 
-func NewScoreService(s score.Score) ScoreService {
+func NewScoreService(s score.Score) ScoreServiceImpl {
 	return &scoreService{
 		s: s,
 	}

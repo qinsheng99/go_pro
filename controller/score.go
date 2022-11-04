@@ -9,20 +9,22 @@ import (
 	"net/http"
 )
 
-func AddRouteScore(r *gin.Engine, s score.Score) {
+func AddRouteScore(r *gin.RouterGroup, s score.Score) {
 	baseScore := BaseScore{
 		s: app.NewScoreService(s),
 	}
 
+	group := r.Group("/score")
+
 	func() {
-		r.POST("/evaluate", baseScore.Evaluate)
-		r.POST("/calculate", baseScore.Calculate)
+		group.POST("/evaluate", baseScore.Evaluate)
+		group.POST("/calculate", baseScore.Calculate)
 	}()
 
 }
 
 type BaseScore struct {
-	s app.ScoreService
+	s app.ScoreServiceImpl
 }
 
 func (b *BaseScore) Evaluate(c *gin.Context) {

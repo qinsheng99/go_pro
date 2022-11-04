@@ -32,3 +32,7 @@ func Init(cfg *config.PostgresqlConfig) (err error) {
 	sqlDB.SetMaxIdleConns(cfg.DbMaxidle)
 	return nil
 }
+
+func GetPostgresql() *gorm.DB {
+	return postgresqlDb
+}

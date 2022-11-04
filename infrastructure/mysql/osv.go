@@ -1,6 +1,13 @@
 package mysql
 
-import "time"
+import (
+	"encoding/json"
+	"github.com/qinsheng99/go-domain-web/api/osv_api"
+	"github.com/qinsheng99/go-domain-web/logger"
+	"github.com/qinsheng99/go-domain-web/utils"
+	"gorm.io/gorm"
+	"time"
+)
 
 type OeCompatibilityOsv struct {
 	Id                   int64     `gorm:"column:id" json:"id"`
@@ -24,14 +31,163 @@ func (o *OeCompatibilityOsv) TableName() string {
 	return "oe_compatibility_osv"
 }
 
-type ROeCompatibilityOsv struct {
-	OeCompatibilityOsv
-	Updateime      string   `json:"updateTime"`
-	ToolsResult    []Record `gorm:"column:tools_result" json:"toolsResult"`
-	PlatformResult []Record `gorm:"column:platform_result" json:"platformResult"`
+type OsvMapper interface {
+	SyncOsv([]osv_api.Osv) error
+	OSVFindAll(req osv_api.RequestOsv) (datas []OeCompatibilityOsv, total int64, err error)
 }
-type Record struct {
-	Name    string `json:"name"`
-	Percent string `json:"percent"`
-	Result  string `json:"result"`
+
+func NewOsvMapper() OsvMapper {
+	return &OeCompatibilityOsv{}
+}
+
+func (o *OeCompatibilityOsv) ExistsOsv(version string, tx *gorm.DB) (bool, error) {
+	var exists OeCompatibilityOsv
+	err := tx.Where("os_version = ?", version).First(&exists).Error
+	if err != nil {
+		if utils.ErrorNotFound(err) {
+			return false, nil
+		}
+		return false, err
+	}
+	return true, nil
+}
+
+func (o *OeCompatibilityOsv) Delete(version string, tx *gorm.DB) error {
+	return tx.Exec("delete from oe_compatibility_osv where os_version = ?", version).Error
+}
+
+func (o *OeCompatibilityOsv) UpdateOsv(data *OeCompatibilityOsv, tx *gorm.DB) error {
+	return tx.Where("os_version = ?", data.OsVersion).Updates(data).Error
+}
+
+func (o *OeCompatibilityOsv) OSVFindAll(req osv_api.RequestOsv) (datas []OeCompatibilityOsv, total int64, err error) {
+	q := mysqlDb
+	page, size := utils.GetPage(req.Pages)
+	query := q.Model(o)
+	if req.KeyWord != "" {
+		query = query.Where(
+			q.Where("osv_name like ?", "%"+req.KeyWord+"%").
+				Or("os_version like ?", "%"+req.KeyWord+"%").
+				Or("type like ?", "%"+req.KeyWord+"%"),
+		)
+	}
+	if req.OsvName != "" {
+		query.Where("osv_name like ?", req.OsvName)
+	}
+
+	if req.Type != "" {
+		query = query.Where("type = ?", req.Type)
+	}
+
+	if err = query.Count(&total).Error; err != nil {
+		logger.Log.Error(err)
+		return
+	}
+
+	if total == 0 {
+		return
+	}
+
+	query = query.Order("id desc").Limit(size).Offset((page - 1) * size)
+	if err = query.Find(&datas).Error; err != nil {
+		logger.Log.Error(err)
+		return
+	}
+	return
+}
+
+func (o *OeCompatibilityOsv) GetOsvName() (data []string, err error) {
+	if err = mysqlDb.
+		Model(o).
+		Select("distinct(osv_name) as osvName").
+		Order("osv_name asc").
+		Pluck("osvName", &data).Error; err != nil {
+		return nil, err
+	}
+	return
+}
+
+func (o *OeCompatibilityOsv) GetType() (data []string, err error) {
+	if err = mysqlDb.
+		Model(o).
+		Select("distinct(type) as type").
+		Order("type asc").
+		Pluck("type", &data).Error; err != nil {
+		return nil, err
+	}
+	return
+}
+
+func (o *OeCompatibilityOsv) CreateOsv(data *OeCompatibilityOsv, tx *gorm.DB) error {
+	return tx.Create(data).Error
+}
+
+func (o *OeCompatibilityOsv) GetOneOSV(osv *OeCompatibilityOsv) (*OeCompatibilityOsv, error) {
+	result := mysqlDb.Where(osv).First(osv)
+	return osv, result.Error
+}
+
+func (o *OeCompatibilityOsv) SyncOsv(osvList []osv_api.Osv) (err error) {
+	var tools, platform []byte
+	var ok bool
+	tx := mysqlDb.Begin()
+
+	for k := range osvList {
+		osv := osvList[k]
+		if len(osv.PlatformResult) == 0 && len(osv.ToolsResult) == 0 {
+			err = o.Delete(osv.OsVersion, tx)
+			if err != nil {
+				tx.Rollback()
+				return err
+			}
+			continue
+		}
+
+		tools, err = json.Marshal(osv.ToolsResult)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+		platform, err = json.Marshal(osv.PlatformResult)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+
+		data := OeCompatibilityOsv{
+			Architecture:         osv.Arch,
+			OsVersion:            osv.OsVersion,
+			OsvName:              osv.OsvName,
+			Date:                 osv.Date,
+			OsDownloadLink:       osv.OsDownloadLink,
+			Type:                 osv.Type,
+			Details:              osv.Details,
+			FriendlyLink:         osv.FriendlyLink,
+			TotalResult:          osv.TotalResult,
+			CheckSum:             osv.CheckSum,
+			BaseOpeneulerVersion: osv.BaseOpeneulerVersion,
+			ToolsResult:          string(tools),
+			PlatformResult:       string(platform),
+			Updateime:            time.Now(),
+		}
+
+		if ok, err = o.ExistsOsv(osv.OsVersion, tx); err == nil && ok {
+			err = o.UpdateOsv(&data, tx)
+			if err != nil {
+				tx.Rollback()
+				return err
+			}
+		} else if err == nil {
+			err = o.CreateOsv(&data, tx)
+			if err != nil {
+				tx.Rollback()
+				return err
+			}
+		} else {
+			tx.Rollback()
+			return err
+		}
+	}
+	tx.Commit()
+	return nil
 }

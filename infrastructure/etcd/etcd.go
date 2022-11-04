@@ -8,7 +8,7 @@ import (
 	"go.etcd.io/etcd/client/v3"
 )
 
-var client = new(clientv3.Client)
+var client *clientv3.Client
 
 func Init(cfg *config.EtcdConfig) (err error) {
 	client, err = clientv3.New(clientv3.Config{
@@ -20,4 +20,8 @@ func Init(cfg *config.EtcdConfig) (err error) {
 		return err
 	}
 	return nil
+}
+
+func GetEtcd() *clientv3.Client {
+	return client
 }

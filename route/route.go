@@ -3,7 +3,10 @@ package route
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/qinsheng99/go-domain-web/controller"
+	"github.com/qinsheng99/go-domain-web/infrastructure/mysql"
+	"github.com/qinsheng99/go-domain-web/infrastructure/repository"
 	"github.com/qinsheng99/go-domain-web/infrastructure/score"
+	"github.com/qinsheng99/go-domain-web/utils"
 	"net/http"
 	"os"
 )
@@ -13,10 +16,19 @@ func SetRoute(r *gin.Engine) {
 		c.JSON(http.StatusOK, "success")
 	})
 
+	group := r.Group("/v1")
+
 	controller.AddRouteScore(
-		r,
+		group,
 		score.NewScore(
 			os.Getenv("EVALUATE"),
 			os.Getenv("CALCULATE")),
+	)
+
+	controller.AddRouteOsv(
+		group,
+		repository.NewRepoOsv(utils.ParserOsvJsonFile, utils.NewRequest(nil),
+			mysql.NewOsvMapper(),
+		),
 	)
 }
