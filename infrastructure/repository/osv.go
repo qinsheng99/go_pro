@@ -36,18 +36,8 @@ func (r *repoOsv) SyncOsv() (string, error) {
 	return "success", nil
 }
 
-func (r *repoOsv) Find() (data []repository.ROeCompatibilityOsv, _ int64, _ error) {
-	list, total, err := r.osv.OSVFindAll(osv_api.RequestOsv{})
-	if err != nil {
-		return nil, 0, err
-	}
-
-	data = make([]repository.ROeCompatibilityOsv, len(list))
-
-	for _, v := range list {
-		data = append(data, repository.ROeCompatibilityOsv{OeCompatibilityOsv: v})
-	}
-	return data, total, nil
+func (r *repoOsv) Find() (data []mysql.OeCompatibilityOsv, _ int64, _ error) {
+	return r.osv.OSVFindAll(osv_api.RequestOsv{})
 }
 
 func (r *repoOsv) parserOsv() (osv []osv_api.Osv, err error) {

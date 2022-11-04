@@ -35,7 +35,7 @@ func (b *BaseOsv) SyncOsv(c *gin.Context) {
 }
 
 func (b *BaseOsv) Find(c *gin.Context) {
-	result, _, err := b.osv.Find()
+	result, err := b.osv.Find()
 	if err != nil {
 		logger.Log.Error("syncOsv failed :", err)
 		utils.Failure(c, err)

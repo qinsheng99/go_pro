@@ -12,7 +12,12 @@ type ROeCompatibilityOsv struct {
 	PlatformResult []osv_api.Record `gorm:"column:platform_result" json:"platformResult,omitempty"`
 }
 
+type ResultOsv struct {
+	OsvList []ROeCompatibilityOsv `json:"osv_list"`
+	Total   int64                 `json:"total"`
+}
+
 type RepoOsvImpl interface {
 	SyncOsv() (string, error)
-	Find() ([]ROeCompatibilityOsv, int64, error)
+	Find() ([]mysql.OeCompatibilityOsv, int64, error)
 }
