@@ -3,6 +3,7 @@ package config
 import (
 	"encoding/json"
 	"io/ioutil"
+	"os"
 )
 
 // Config 整个项目的配置
@@ -76,7 +77,7 @@ func Init() error {
 	if err != nil {
 		return err
 	}
-	err = json.Unmarshal(bys, Conf)
+	err = json.Unmarshal([]byte(os.ExpandEnv(string(bys))), Conf)
 	if err != nil {
 		return err
 	}

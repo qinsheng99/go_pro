@@ -28,11 +28,7 @@ func (s *scoreService) Evaluate(col score_api.Score, res *score_api.ScoreRes) er
 		return err
 	}
 
-	err = json.NewDecoder(bytes.NewBuffer(bys)).Decode(res)
-	if err != nil {
-		return err
-	}
-	return nil
+	return json.NewDecoder(bytes.NewBuffer(bys)).Decode(res)
 }
 
 func (s *scoreService) Calculate(col score_api.Score, res *score_api.ScoreRes) error {
@@ -41,9 +37,5 @@ func (s *scoreService) Calculate(col score_api.Score, res *score_api.ScoreRes) e
 		return err
 	}
 
-	err = json.NewDecoder(bytes.NewBuffer(bys)).Decode(res)
-	if err != nil {
-		return err
-	}
-	return nil
+	return json.NewDecoder(bytes.NewBuffer(bys)).Decode(res)
 }
