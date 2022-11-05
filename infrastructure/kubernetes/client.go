@@ -1,6 +1,7 @@
 package kubernetes
 
 import (
+	"fmt"
 	"k8s.io/client-go/discovery"
 	"k8s.io/client-go/discovery/cached/memory"
 	"k8s.io/client-go/dynamic"
@@ -38,7 +39,8 @@ func Init() (err error) {
 		return
 	}
 	dyna, err = dynamic.NewForConfig(k8sConfig)
-	if err != nil {
+	if err != nil || dyna == nil {
+		err = fmt.Errorf("err is %v, %v", err, "dyna is nil")
 		return
 	}
 

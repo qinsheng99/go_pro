@@ -14,7 +14,7 @@ type BaseOsv struct {
 }
 
 func AddRouteOsv(r *gin.RouterGroup, osv repository.RepoOsvImpl) {
-	baseosv := BaseOsv{osv: app.NewOsvService(osv)}
+	baseosv := &BaseOsv{osv: app.NewOsvService(osv)}
 
 	group := r.Group("/osv")
 

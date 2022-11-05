@@ -39,5 +39,10 @@
   "etcd": {
     "host": "localhost",
     "port": 2379
+  },
+  "pod": {
+    "image": "ccr.ccs.tencentyun.com/kugo/demo:v5",
+    "namespace": "default",
+    "secret": "test-secret"
   }
 }

@@ -8,7 +8,7 @@ require (
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/olivere/elastic/v7 v7.0.32
-	github.com/qinsheng99/go-py v0.0.0-20221104134411-e99855ad22fa
+	github.com/qinsheng99/go-py v0.0.1
 	go.etcd.io/etcd/client/v3 v3.5.5
 	go.mongodb.org/mongo-driver v1.10.1
 	go.uber.org/zap v1.23.0

@@ -6,12 +6,14 @@ import (
 	"github.com/qinsheng99/go-domain-web/api/score_api"
 	"github.com/qinsheng99/go-domain-web/app"
 	"github.com/qinsheng99/go-domain-web/domain/score"
+	"github.com/qinsheng99/go-py/sdk"
 	"net/http"
 )
 
 func AddRouteScore(r *gin.RouterGroup, s score.Score) {
-	baseScore := BaseScore{
-		s: app.NewScoreService(s),
+	baseScore := &BaseScore{
+		s:   app.NewScoreService(s),
+		cli: sdk.NewCalculateEvaluate("https://xihescript.test.osinfra.cn"),
 	}
 
 	group := r.Group("/score")
@@ -19,12 +21,15 @@ func AddRouteScore(r *gin.RouterGroup, s score.Score) {
 	func() {
 		group.POST("/evaluate", baseScore.Evaluate)
 		group.POST("/calculate", baseScore.Calculate)
+		group.POST("/sdk-calculate", baseScore.SdkCalculate)
+		group.POST("/sdk-evaluate", baseScore.SdkEvaluate)
 	}()
 
 }
 
 type BaseScore struct {
-	s app.ScoreServiceImpl
+	s   app.ScoreServiceImpl
+	cli sdk.CalculateEvaluate
 }
 
 func (b *BaseScore) Evaluate(c *gin.Context) {
@@ -59,4 +64,24 @@ func (b *BaseScore) Calculate(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, res)
+}
+
+func (b *BaseScore) SdkEvaluate(c *gin.Context) {
+	col := sdk.Calculate{}
+	if err := c.ShouldBindBodyWith(&col, binding.JSON); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"err": err.Error()})
+		return
+	}
+
+	b.cli.Evaluate(&col)
+}
+
+func (b *BaseScore) SdkCalculate(c *gin.Context) {
+	col := sdk.Calculate{}
+	if err := c.ShouldBindBodyWith(&col, binding.JSON); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"err": err.Error()})
+		return
+	}
+
+	b.cli.Calculate(&col)
 }

@@ -17,6 +17,7 @@ type Config struct {
 	*MongoConfig      `json:"mongo"`
 	*PostgresqlConfig `json:"postgresql"`
 	*EtcdConfig       `json:"etcd"`
+	*PodConfig        `json:"pod"`
 }
 
 // LogConfig 日志配置
@@ -68,6 +69,12 @@ type MongoConfig struct {
 type EtcdConfig struct {
 	Host string `json:"host"`
 	Port int64  `json:"port"`
+}
+
+type PodConfig struct {
+	Image     string `json:"image"`
+	NameSpace string `json:"namespace"`
+	Secret    string `json:"secret"`
 }
 
 var Conf = new(Config)
