@@ -1,4 +1,0 @@
-{"level":"ERROR","time":"2022-11-04 10:57:43","caller":"utils/http.go:67","msg":"statusCode is 404 ,data : [session-f34a2ba0] Route error: 404 not found!"}
-{"level":"ERROR","time":"2022-11-04 10:57:45","caller":"utils/http.go:67","msg":"statusCode is 404 ,data : [session-f34a2ba0] Route error: 404 not found!"}
-{"level":"ERROR","time":"2022-11-04 10:57:47","caller":"utils/http.go:67","msg":"statusCode is 404 ,data : [session-f34a2ba0] Route error: 404 not found!"}
-{"level":"ERROR","time":"2022-11-04 10:57:47","caller":"controller/osv.go:29","msg":"syncOsv failed :statusCode is 404 ,data : [session-f34a2ba0] Route error: 404 not found!"}
