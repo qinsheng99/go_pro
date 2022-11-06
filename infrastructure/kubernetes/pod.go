@@ -44,61 +44,62 @@ func (p *podImpl) getPodConf(name string) *corev1.Pod {
 		Namespace: p.cfg.NameSpace,
 	}
 
-	newPod.Spec = corev1.PodSpec{
-		Containers: []corev1.Container{
-			{
-				Name:  name,
-				Image: p.cfg.Image,
-				Env: []corev1.EnvVar{
-					{
-						Name: "DB_USER",
-						ValueFrom: &corev1.EnvVarSource{
-							SecretKeyRef: &corev1.SecretKeySelector{
-								LocalObjectReference: corev1.LocalObjectReference{Name: p.cfg.Secret},
-								Key:                  "db-user",
-							},
-						},
-					},
-					{
-						Name: "DB_PWD",
-						ValueFrom: &corev1.EnvVarSource{
-							SecretKeyRef: &corev1.SecretKeySelector{
-								LocalObjectReference: corev1.LocalObjectReference{Name: p.cfg.Secret},
-								Key:                  "db-password",
-							},
+	spec := corev1.PodSpec{}
+	newPod.Spec = spec
+
+	spec.Containers = []corev1.Container{
+		{
+			Name:  name,
+			Image: p.cfg.Image,
+			Env: []corev1.EnvVar{
+				{
+					Name: "DB_USER",
+					ValueFrom: &corev1.EnvVarSource{
+						SecretKeyRef: &corev1.SecretKeySelector{
+							LocalObjectReference: corev1.LocalObjectReference{Name: p.cfg.Secret},
+							Key:                  "db-user",
 						},
 					},
 				},
-				ImagePullPolicy: corev1.PullAlways,
-				Resources:       corev1.ResourceRequirements{},
-				//LivenessProbe: &corev1.Probe{
-				//	ProbeHandler: corev1.ProbeHandler{
-				//		HTTPGet: &corev1.HTTPGetAction{
-				//			Path: "callback/" + namespace + "/" + name,
-				//			Port: intstr.IntOrString{
-				//				Type:   intstr.Int,
-				//				IntVal: 8080,
-				//			},
-				//		},
-				//	},
-				//	InitialDelaySeconds: 5,  //Pod容器启动多少时间后开始检测
-				//	PeriodSeconds:       10, //探测间隔时间
-				//	TimeoutSeconds:      3,  //超时时间
-				//},
-				//Lifecycle: &corev1.Lifecycle{
-				//	PostStart: &corev1.LifecycleHandler{
-				//		HTTPGet: &corev1.HTTPGetAction{
-				//			Path: "callback/" + namespace + "/" + name,
-				//			Port: intstr.IntOrString{
-				//				Type:   intstr.Int,
-				//				IntVal: 8080,
-				//			},
-				//		},
-				//	},
-				//},
+				{
+					Name: "DB_PWD",
+					ValueFrom: &corev1.EnvVarSource{
+						SecretKeyRef: &corev1.SecretKeySelector{
+							LocalObjectReference: corev1.LocalObjectReference{Name: p.cfg.Secret},
+							Key:                  "db-password",
+						},
+					},
+				},
 			},
+			ImagePullPolicy: corev1.PullAlways,
+			Resources:       corev1.ResourceRequirements{},
+			//LivenessProbe: &corev1.Probe{
+			//	ProbeHandler: corev1.ProbeHandler{
+			//		HTTPGet: &corev1.HTTPGetAction{
+			//			Path: "callback/" + namespace + "/" + name,
+			//			Port: intstr.IntOrString{
+			//				Type:   intstr.Int,
+			//				IntVal: 8080,
+			//			},
+			//		},
+			//	},
+			//	InitialDelaySeconds: 5,  //Pod容器启动多少时间后开始检测
+			//	PeriodSeconds:       10, //探测间隔时间
+			//	TimeoutSeconds:      3,  //超时时间
+			//},
+			//Lifecycle: &corev1.Lifecycle{
+			//	PostStart: &corev1.LifecycleHandler{
+			//		HTTPGet: &corev1.HTTPGetAction{
+			//			Path: "callback/" + namespace + "/" + name,
+			//			Port: intstr.IntOrString{
+			//				Type:   intstr.Int,
+			//				IntVal: 8080,
+			//			},
+			//		},
+			//	},
+			//},
 		},
-		RestartPolicy: corev1.RestartPolicyNever,
 	}
+	spec.RestartPolicy = corev1.RestartPolicyNever
 	return newPod
 }
