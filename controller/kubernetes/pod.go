@@ -6,6 +6,7 @@ import (
 	app "github.com/qinsheng99/go-domain-web/app/kubernetes"
 	"github.com/qinsheng99/go-domain-web/domain/kubernetes"
 	"github.com/qinsheng99/go-domain-web/utils"
+	"net/http"
 )
 
 type BasePod struct {
@@ -34,7 +35,7 @@ func (b *BasePod) Get(c *gin.Context) {
 		return
 	}
 
-	utils.Success(c, pod)
+	utils.Success(c, http.StatusOK, pod)
 }
 
 func (b *BasePod) List(c *gin.Context) {
@@ -44,7 +45,7 @@ func (b *BasePod) List(c *gin.Context) {
 		return
 	}
 
-	utils.Success(c, pod)
+	utils.Success(c, http.StatusOK, pod)
 }
 
 func (b *BasePod) Create(c *gin.Context) {
@@ -53,5 +54,5 @@ func (b *BasePod) Create(c *gin.Context) {
 		utils.Failure(c, err)
 		return
 	}
-	utils.Success(c, "success")
+	utils.Success(c, http.StatusCreated, "success")
 }

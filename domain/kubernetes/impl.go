@@ -10,3 +10,7 @@ type Pod interface {
 	List(ctx context.Context) (*corev1.PodList, error)
 	Create(ctx context.Context) error
 }
+
+type ConfigMap interface {
+	Create(ctx context.Context) (*corev1.ConfigMap, error)
+}

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"github.com/gin-gonic/gin"
 	"github.com/qinsheng99/go-domain-web/config"
 	"github.com/qinsheng99/go-domain-web/infrastructure/kubernetes"
@@ -9,9 +10,11 @@ import (
 	"github.com/qinsheng99/go-domain-web/logger"
 	"github.com/qinsheng99/go-domain-web/route"
 	"log"
+	"strconv"
 )
 
 func main() {
+	flag.Parse()
 	r := gin.Default()
 
 	err := config.Init()
@@ -61,7 +64,7 @@ func main() {
 
 	route.SetRoute(r)
 
-	err = r.Run(":8000")
+	err = r.Run(":" + strconv.Itoa(config.Conf.Port))
 	if err != nil {
 		log.Fatal(err)
 	}

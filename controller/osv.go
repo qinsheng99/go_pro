@@ -7,6 +7,7 @@ import (
 	"github.com/qinsheng99/go-domain-web/domain/repository"
 	"github.com/qinsheng99/go-domain-web/logger"
 	"github.com/qinsheng99/go-domain-web/utils"
+	"net/http"
 )
 
 type BaseOsv struct {
@@ -31,7 +32,7 @@ func (b *BaseOsv) SyncOsv(c *gin.Context) {
 		utils.Failure(c, fmt.Errorf("syncOsv failed. An exception occurred."+result+err.Error()))
 		return
 	}
-	utils.Success(c, result)
+	utils.Success(c, http.StatusOK, result)
 }
 
 func (b *BaseOsv) Find(c *gin.Context) {
@@ -41,5 +42,5 @@ func (b *BaseOsv) Find(c *gin.Context) {
 		utils.Failure(c, err)
 		return
 	}
-	utils.Success(c, result)
+	utils.Success(c, http.StatusOK, result)
 }

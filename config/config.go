@@ -1,9 +1,10 @@
 package config
 
 import (
-	"encoding/json"
+	"flag"
 	"io/ioutil"
 	"os"
+	"sigs.k8s.io/yaml"
 )
 
 // Config 整个项目的配置
@@ -17,7 +18,7 @@ type Config struct {
 	*MongoConfig      `json:"mongo"`
 	*PostgresqlConfig `json:"postgresql"`
 	*EtcdConfig       `json:"etcd"`
-	*PodConfig        `json:"pod"`
+	*KubernetesConfig `json:"kubernetes"`
 }
 
 // LogConfig 日志配置
@@ -71,20 +72,32 @@ type EtcdConfig struct {
 	Port int64  `json:"port"`
 }
 
-type PodConfig struct {
-	Image     string `json:"image"`
+type KubernetesConfig struct {
 	NameSpace string `json:"namespace"`
-	Secret    string `json:"secret"`
+	Pod       struct {
+		Image  string `json:"image"`
+		Secret string `json:"secret"`
+	} `json:"pod"`
+	ConfigMap struct {
+		ConfigMapName string `json:"config_map_name"`
+		ConfigName    string `json:"config_name"`
+		MounthPath    string `json:"mounth_path"`
+	} `json:"config_map"`
 }
 
+var path = flag.String("config-file", "", "")
 var Conf = new(Config)
 
 func Init() error {
-	bys, err := ioutil.ReadFile("config/config.json")
+	var file = "config/config.yaml"
+	if *path != "" {
+		file = *path
+	}
+	bys, err := ioutil.ReadFile(file)
 	if err != nil {
 		return err
 	}
-	err = json.Unmarshal([]byte(os.ExpandEnv(string(bys))), Conf)
+	err = yaml.Unmarshal([]byte(os.ExpandEnv(string(bys))), Conf)
 	if err != nil {
 		return err
 	}

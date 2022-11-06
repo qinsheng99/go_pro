@@ -8,8 +8,8 @@ import (
 
 type RespOption func(m map[string]interface{})
 
-func Success(c *gin.Context, data interface{}, options ...RespOption) {
-	c.JSON(http.StatusOK, successReturn(data, options...))
+func Success(c *gin.Context, code int, data interface{}, options ...RespOption) {
+	c.JSON(code, successReturn(data, options...))
 }
 
 func Failure(c *gin.Context, err error) {

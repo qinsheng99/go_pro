@@ -6,13 +6,14 @@ import (
 	"golang.org/x/net/context"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"path/filepath"
 )
 
 type podImpl struct {
-	cfg *config.PodConfig
+	cfg *config.KubernetesConfig
 }
 
-func NewPodImpl(cfg *config.PodConfig) kubernetes.Pod {
+func NewPodImpl(cfg *config.KubernetesConfig) kubernetes.Pod {
 	return &podImpl{cfg: cfg}
 }
 
@@ -45,18 +46,17 @@ func (p *podImpl) getPodConf(name string) *corev1.Pod {
 	}
 
 	spec := corev1.PodSpec{}
-	newPod.Spec = spec
 
 	spec.Containers = []corev1.Container{
 		{
-			Name:  name,
-			Image: p.cfg.Image,
+			Name:  name + "abc",
+			Image: p.cfg.Pod.Image,
 			Env: []corev1.EnvVar{
 				{
 					Name: "DB_USER",
 					ValueFrom: &corev1.EnvVarSource{
 						SecretKeyRef: &corev1.SecretKeySelector{
-							LocalObjectReference: corev1.LocalObjectReference{Name: p.cfg.Secret},
+							LocalObjectReference: corev1.LocalObjectReference{Name: p.cfg.Pod.Secret},
 							Key:                  "db-user",
 						},
 					},
@@ -65,14 +65,39 @@ func (p *podImpl) getPodConf(name string) *corev1.Pod {
 					Name: "DB_PWD",
 					ValueFrom: &corev1.EnvVarSource{
 						SecretKeyRef: &corev1.SecretKeySelector{
-							LocalObjectReference: corev1.LocalObjectReference{Name: p.cfg.Secret},
+							LocalObjectReference: corev1.LocalObjectReference{Name: p.cfg.Pod.Secret},
 							Key:                  "db-password",
 						},
 					},
 				},
+				{
+					Name:  "GAUSS",
+					Value: "aa",
+				},
+				{
+					Name:  "OPEN",
+					Value: "ba",
+				},
+				{
+					Name:  "LOOK",
+					Value: "ca",
+				},
+				{
+					Name:  "MIND",
+					Value: "da",
+				},
 			},
-			ImagePullPolicy: corev1.PullAlways,
+			ImagePullPolicy: corev1.PullIfNotPresent,
 			Resources:       corev1.ResourceRequirements{},
+			VolumeMounts: []corev1.VolumeMount{
+				{
+					MountPath: p.cfg.ConfigMap.MounthPath,
+					Name:      p.cfg.ConfigMap.ConfigName,
+				},
+			},
+			Args: []string{
+				"--config-file=" + filepath.Join(p.cfg.ConfigMap.MounthPath, "config.yaml"),
+			},
 			//LivenessProbe: &corev1.Probe{
 			//	ProbeHandler: corev1.ProbeHandler{
 			//		HTTPGet: &corev1.HTTPGetAction{
@@ -100,6 +125,21 @@ func (p *podImpl) getPodConf(name string) *corev1.Pod {
 			//},
 		},
 	}
+
+	spec.Volumes = []corev1.Volume{
+		{
+			Name: p.cfg.ConfigMap.ConfigName,
+			VolumeSource: corev1.VolumeSource{
+				ConfigMap: &corev1.ConfigMapVolumeSource{
+					LocalObjectReference: corev1.LocalObjectReference{
+						Name: p.cfg.ConfigMap.ConfigMapName,
+					},
+				},
+			},
+		},
+	}
 	spec.RestartPolicy = corev1.RestartPolicyNever
+
+	newPod.Spec = spec
 	return newPod
 }

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test-config
+  namespace: default
+data:
+  config.yaml: |
+    token:
+      gauss: ${GAUSS}
+      open: ${OPEN}
+      mind: ${MIND}
+      look: ${LOOK}

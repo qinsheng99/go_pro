@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: {{.Name}}
-  namespace: {{.NameSpace}}
+  name: test1
+  namespace: default
 spec:
   containers:
     - env:
@@ -16,6 +16,23 @@ spec:
             secretKeyRef:
               key: db-password
               name: test-secret
-      image: ccr.ccs.tencentyun.com/kugo/demo:v5
-      imagePullPolicy: Always
+        - name: GAUSS
+          value: a
+        - name: OPEN
+          value: b
+        - name: LOOK
+          value: c
+        - name: MIND
+          value: d
+      image: ccr.ccs.tencentyun.com/kugo/demo:v6
+      imagePullPolicy: IfNotPresent
       name: test-k8s
+      volumeMounts:
+        - mountPath: /opt/demo/config
+          name: app-config
+      args:
+        - --config-file=/opt/demo/config/config.yaml
+  volumes:
+    - name: app-config
+      configMap:
+        name: test-config

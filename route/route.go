@@ -35,5 +35,7 @@ func SetRoute(r *gin.Engine) {
 		),
 	)
 
-	kubercontrol.AddRoutePod(group, kubernetes.NewPodImpl(config.Conf.PodConfig))
+	kubercontrol.AddRoutePod(group, kubernetes.NewPodImpl(config.Conf.KubernetesConfig))
+
+	kubercontrol.AddRouteConfigMap(group, kubernetes.NewConfigImpl(config.Conf.KubernetesConfig))
 }
