@@ -5,7 +5,7 @@ log:
   filename: logs/go-web
 
 mysql:
-  db_host: localhost
+  db_host: ${DB_HOST}
   db_port: 3306
   db_user: "root"
   db_pwd: "12345678"
@@ -18,17 +18,17 @@ es:
   port: 9200
 
 redis:
-  host: "localhost"
+  host: ${DB_HOST}
   port: 6379
 
 mongo:
-  host: "localhost"
+  host: ${DB_HOST}
   port: 27017
   database: "mydb"
   collection: "dd"
 
 postgresql:
-  db_host: "localhost"
+  db_host: ${DB_HOST}
   db_port: 5432
   db_user: "postgres"
   db_pwd: "root"
@@ -37,7 +37,7 @@ postgresql:
   db_maxidle: 100
 
 etcd:
-  host: "localhost"
+  host: ${DB_HOST}
   port: 2379
 
 kubernetes:
@@ -49,3 +49,7 @@ kubernetes:
     config_map_name: "test-config"
     config_name: "app-config"
     mounth_path: "/opt/demo/config"
+  crd:
+    group: code.zjm.com
+    version: v1
+    kind: CodeServer

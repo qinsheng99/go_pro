@@ -2,6 +2,9 @@ package kubernetes
 
 import (
 	"fmt"
+	"github.com/qinsheng99/go-domain-web/config"
+	"k8s.io/apimachinery/pkg/api/meta"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/discovery"
 	"k8s.io/client-go/discovery/cached/memory"
 	"k8s.io/client-go/dynamic"
@@ -17,6 +20,8 @@ var (
 	k8sClient *kubernetes.Clientset
 	dyna      dynamic.Interface
 	restm     *restmapper.DeferredDiscoveryRESTMapper
+	resource  schema.GroupVersionResource
+	m         *meta.RESTMapping
 )
 
 func getHome() string {
@@ -28,7 +33,7 @@ func getHome() string {
 	return u.HomeDir
 }
 
-func Init() (err error) {
+func Init(cfg *config.KubernetesConfig) (err error) {
 	k8sConfig, err = clientcmd.BuildConfigFromFlags("", getHome()+"/.kube/config")
 	if err != nil {
 		return
@@ -50,6 +55,13 @@ func Init() (err error) {
 	}
 
 	restm = restmapper.NewDeferredDiscoveryRESTMapper(memory.NewMemCacheClient(dis))
+
+	m, err = restm.RESTMapping(schema.GroupKind{Group: cfg.Crd.Group, Kind: cfg.Crd.Kind}, cfg.Crd.Version)
+	if err != nil {
+		return
+	}
+
+	resource = m.Resource
 	return nil
 }
 
@@ -67,4 +79,8 @@ func GetrestMapper() *restmapper.DeferredDiscoveryRESTMapper {
 
 func GetK8sConfig() *rest.Config {
 	return k8sConfig
+}
+
+func GetResource() schema.GroupVersionResource {
+	return resource
 }

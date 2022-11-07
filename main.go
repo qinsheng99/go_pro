@@ -13,6 +13,8 @@ import (
 	"strconv"
 )
 
+var listen = flag.Bool("listen", false, "")
+
 func main() {
 	flag.Parse()
 	r := gin.Default()
@@ -27,7 +29,7 @@ func main() {
 		panic(err)
 	}
 
-	err = kubernetes.Init()
+	err = kubernetes.Init(config.Conf.KubernetesConfig)
 	if err != nil {
 		panic(err)
 	}
@@ -63,6 +65,9 @@ func main() {
 	//}
 
 	route.SetRoute(r)
+
+	lis := kubernetes.NewListen(kubernetes.GetClient(), kubernetes.GetDyna(), kubernetes.GetResource(), *listen)
+	go lis.ListenResource()
 
 	err = r.Run(":" + strconv.Itoa(config.Conf.Port))
 	if err != nil {

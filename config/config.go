@@ -83,6 +83,11 @@ type KubernetesConfig struct {
 		ConfigName    string `json:"config_name"`
 		MounthPath    string `json:"mounth_path"`
 	} `json:"config_map"`
+	Crd struct {
+		Group   string `json:"group"`
+		Kind    string `json:"kind"`
+		Version string `json:"version"`
+	} `json:"crd"`
 }
 
 var path = flag.String("config-file", "", "")
