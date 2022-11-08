@@ -27,3 +27,7 @@ func GetPage(req api.Pages) (int, int) {
 	}
 	return page, size
 }
+
+func Label(name string) map[string]string {
+	return map[string]string{"app": name}
+}

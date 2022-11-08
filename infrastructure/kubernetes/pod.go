@@ -6,7 +6,6 @@ import (
 	"golang.org/x/net/context"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"path/filepath"
 )
 
 type podImpl struct {
@@ -30,7 +29,7 @@ func (p *podImpl) List(ctx context.Context) (*corev1.PodList, error) {
 }
 
 func (p *podImpl) Create(ctx context.Context) error {
-	_, err := GetClient().CoreV1().Pods(p.cfg.NameSpace).Create(ctx, p.getPodConf("text"), metav1.CreateOptions{})
+	_, err := GetClient().CoreV1().Pods(p.cfg.NameSpace).Create(ctx, p.getPodConf(p.cfg.Pod.Name), metav1.CreateOptions{})
 	return err
 }
 
@@ -95,9 +94,7 @@ func (p *podImpl) getPodConf(name string) *corev1.Pod {
 					Name:      p.cfg.ConfigMap.ConfigName,
 				},
 			},
-			Args: []string{
-				"--config-file=" + filepath.Join(p.cfg.ConfigMap.MounthPath, "config.yaml"),
-			},
+			Args: p.cfg.Pod.Args,
 			//LivenessProbe: &corev1.Probe{
 			//	ProbeHandler: corev1.ProbeHandler{
 			//		HTTPGet: &corev1.HTTPGetAction{
@@ -123,6 +120,13 @@ func (p *podImpl) getPodConf(name string) *corev1.Pod {
 			//		},
 			//	},
 			//},
+			Ports: []corev1.ContainerPort{
+				{
+					Name:          "http",
+					ContainerPort: p.cfg.Pod.Port,
+					Protocol:      corev1.ProtocolTCP,
+				},
+			},
 		},
 	}
 

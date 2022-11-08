@@ -2,6 +2,7 @@ package config
 
 import (
 	"flag"
+	"github.com/qinsheng99/go-domain-web/utils/validate"
 	"io/ioutil"
 	"os"
 	"sigs.k8s.io/yaml"
@@ -75,8 +76,11 @@ type EtcdConfig struct {
 type KubernetesConfig struct {
 	NameSpace string `json:"namespace"`
 	Pod       struct {
-		Image  string `json:"image"`
-		Secret string `json:"secret"`
+		Image  string   `json:"image"`
+		Secret string   `json:"secret"`
+		Name   string   `json:"name" required:"true"`
+		Args   []string `json:"args" required:"true"`
+		Port   int32    `json:"port" required:"true"`
 	} `json:"pod"`
 	ConfigMap struct {
 		ConfigMapName string `json:"config_map_name"`
@@ -106,5 +110,6 @@ func Init() error {
 	if err != nil {
 		return err
 	}
-	return nil
+
+	return validate.Vali(Conf)
 }

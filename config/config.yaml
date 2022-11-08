@@ -44,6 +44,10 @@ kubernetes:
   pod:
     image: "ccr.ccs.tencentyun.com/kugo/demo:v6"
     secret: "test-secret"
+    name: test
+    args:
+      - --config-file=/opt/demo/config/config.yaml
+    port: 8080
   namespace: "default"
   config_map:
     config_map_name: "test-config"
