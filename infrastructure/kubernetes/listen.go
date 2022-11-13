@@ -35,6 +35,9 @@ type Listen struct {
 }
 
 func (l *Listen) ListenResource() {
+	if !l.listen {
+		return
+	}
 	log.Println("listen k8s resource for crd")
 	infor := l.crdConfig()
 	infor.AddEventHandler(cache.ResourceEventHandlerFuncs{

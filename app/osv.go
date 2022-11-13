@@ -2,9 +2,10 @@ package app
 
 import (
 	"encoding/json"
-	"github.com/qinsheng99/go-domain-web/api/osv_api"
+	"github.com/qinsheng99/go-domain-web/api/osv"
+	"github.com/qinsheng99/go-domain-web/domain"
 	"github.com/qinsheng99/go-domain-web/domain/repository"
-	"github.com/qinsheng99/go-domain-web/utils"
+	"github.com/qinsheng99/go-domain-web/utils/const"
 )
 
 type osvService struct {
@@ -19,30 +20,30 @@ func NewOsvService(osv repository.RepoOsvImpl) OsvServiceImpl {
 
 type OsvServiceImpl interface {
 	SyncOsv() (string, error)
-	Find() (*repository.ResultOsv, error)
+	Find() (*domain.ResultOsv, error)
 }
 
 func (o *osvService) SyncOsv() (string, error) {
 	return o.osv.SyncOsv()
 }
 
-func (o *osvService) Find() (_ *repository.ResultOsv, _ error) {
+func (o *osvService) Find() (_ *domain.ResultOsv, _ error) {
 	list, total, err := o.osv.Find()
 	if err != nil {
 		return nil, err
 	}
-	data := make([]repository.ROeCompatibilityOsv, 0, len(list))
+	data := make([]domain.ROeCompatibilityOsv, 0, len(list))
 	for _, v := range list {
-		var t []osv_api.Record
+		var t []osv.Record
 		_ = json.Unmarshal([]byte(v.ToolsResult), &t)
-		var p []osv_api.Record
+		var p []osv.Record
 		_ = json.Unmarshal([]byte(v.PlatformResult), &p)
-		data = append(data, repository.ROeCompatibilityOsv{
+		data = append(data, domain.ROeCompatibilityOsv{
 			OeCompatibilityOsv: v,
 			ToolsResult:        t,
 			PlatformResult:     p,
-			Updateime:          v.Updateime.Format(utils.Format),
+			Updateime:          v.Updateime.Format(_const.Format),
 		})
 	}
-	return &repository.ResultOsv{OsvList: data, Total: int64(total)}, nil
+	return &domain.ResultOsv{OsvList: data, Total: int64(total)}, nil
 }

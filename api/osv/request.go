@@ -1,4 +1,4 @@
-package osv_api
+package osv
 
 import "github.com/qinsheng99/go-domain-web/api"
 

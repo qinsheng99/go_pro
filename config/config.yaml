@@ -40,6 +40,10 @@ etcd:
   host: ${DB_HOST}
   port: 2379
 
+kafka:
+  host: ${DB_HOST}
+  port: 9092
+
 kubernetes:
   pod:
     image: "ccr.ccs.tencentyun.com/kugo/demo:v6"

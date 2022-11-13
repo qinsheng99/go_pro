@@ -2,7 +2,7 @@ package repository
 
 import (
 	"errors"
-	"github.com/qinsheng99/go-domain-web/api/osv_api"
+	"github.com/qinsheng99/go-domain-web/api/osv"
 	"github.com/qinsheng99/go-domain-web/domain/repository"
 	"github.com/qinsheng99/go-domain-web/infrastructure/mysql"
 	"github.com/qinsheng99/go-domain-web/utils"
@@ -37,10 +37,10 @@ func (r *repoOsv) SyncOsv() (string, error) {
 }
 
 func (r *repoOsv) Find() (data []mysql.OeCompatibilityOsv, _ int64, _ error) {
-	return r.osv.OSVFindAll(osv_api.RequestOsv{})
+	return r.osv.OSVFindAll(osv.RequestOsv{})
 }
 
-func (r *repoOsv) parserOsv() (osv []osv_api.Osv, err error) {
+func (r *repoOsv) parserOsv() (osv []osv.Osv, err error) {
 	_, err = r.req.CustomRequest(
 		r.url,
 		"GET",

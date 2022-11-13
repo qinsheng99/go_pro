@@ -1,6 +1,6 @@
-package score_api
+package domain
 
-type ScoreRes struct {
+type ResScore struct {
 	Status  int     `json:"status"`
 	Msg     string  `json:"msg"`
 	Data    float64 `json:"data,omitempty"`

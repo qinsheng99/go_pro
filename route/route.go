@@ -2,16 +2,17 @@ package route
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/qinsheng99/go-domain-web/app"
 	"github.com/qinsheng99/go-domain-web/config"
 	"github.com/qinsheng99/go-domain-web/controller"
 	kubercontrol "github.com/qinsheng99/go-domain-web/controller/kubernetes"
 	"github.com/qinsheng99/go-domain-web/infrastructure/kubernetes"
 	"github.com/qinsheng99/go-domain-web/infrastructure/mysql"
 	"github.com/qinsheng99/go-domain-web/infrastructure/repository"
-	"github.com/qinsheng99/go-domain-web/infrastructure/score"
+	"github.com/qinsheng99/go-domain-web/infrastructure/sort"
 	"github.com/qinsheng99/go-domain-web/utils"
+	"github.com/qinsheng99/go-domain-web/utils/const"
 	"net/http"
-	"os"
 )
 
 func SetRoute(r *gin.Engine) {
@@ -21,16 +22,9 @@ func SetRoute(r *gin.Engine) {
 
 	group := r.Group("/v1")
 
-	controller.AddRouteScore(
-		group,
-		score.NewScore(
-			os.Getenv("EVALUATE"),
-			os.Getenv("CALCULATE")),
-	)
-
 	controller.AddRouteOsv(
 		group,
-		repository.NewRepoOsv(utils.ParserOsvJsonFile, utils.NewRequest(nil),
+		repository.NewRepoOsv(_const.ParserOsvJsonFile, utils.NewRequest(nil),
 			mysql.NewOsvMapper(),
 		),
 	)
@@ -38,4 +32,6 @@ func SetRoute(r *gin.Engine) {
 	kubercontrol.AddRoutePod(group, kubernetes.NewPodImpl(config.Conf.KubernetesConfig))
 
 	kubercontrol.AddRouteConfigMap(group, kubernetes.NewConfigImpl(config.Conf.KubernetesConfig))
+
+	controller.AddRouteSort(group, app.NewSortService(sort.NewSort()))
 }

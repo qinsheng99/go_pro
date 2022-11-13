@@ -3,6 +3,7 @@ package utils
 import (
 	"errors"
 	"github.com/qinsheng99/go-domain-web/api"
+	"github.com/qinsheng99/go-domain-web/utils/const"
 	"gorm.io/gorm"
 )
 
@@ -16,12 +17,12 @@ func ErrorNotFound(err error) bool {
 func GetPage(req api.Pages) (int, int) {
 	var page, size int
 	if req.Page == 0 {
-		page = Page
+		page = _const.Page
 	} else {
 		page = req.Page
 	}
 	if req.Size == 0 {
-		size = Size
+		size = _const.Size
 	} else {
 		size = req.Size
 	}

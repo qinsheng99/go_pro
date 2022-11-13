@@ -19,6 +19,7 @@ type Config struct {
 	*MongoConfig      `json:"mongo"`
 	*PostgresqlConfig `json:"postgresql"`
 	*EtcdConfig       `json:"etcd"`
+	*KafkaConfig      `json:"kafka"`
 	*KubernetesConfig `json:"kubernetes"`
 }
 
@@ -69,6 +70,11 @@ type MongoConfig struct {
 }
 
 type EtcdConfig struct {
+	Host string `json:"host"`
+	Port int64  `json:"port"`
+}
+
+type KafkaConfig struct {
 	Host string `json:"host"`
 	Port int64  `json:"port"`
 }
