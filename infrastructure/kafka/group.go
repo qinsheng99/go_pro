@@ -33,9 +33,9 @@ func (g *group) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.C
 		case message := <-claim.Messages():
 			handle(message)
 
-			//if g.subOpts.AutoAck {
-			//	session.MarkMessage(message, "")
-			//}
+			if g.subOpts.AutoAck {
+				session.MarkMessage(message, "")
+			}
 
 		case <-session.Context().Done():
 			return nil
