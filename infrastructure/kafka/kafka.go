@@ -149,9 +149,8 @@ func (k *kafka) Subscribe(topics string, h Handler, opts ...SubscribeOption) (Su
 	}
 
 	g, err = sarama.NewConsumerGroupFromClient(opt.Queue, c)
-	defer c.Close()
 	if err != nil {
-
+		c.Close()
 		return nil, err
 	}
 

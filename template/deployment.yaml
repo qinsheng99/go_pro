@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-deployment
+  namespace: default
+  labels:
+    app: test-deployment
+#  namespace: api-cve
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: test-deployment
+  template:
+    metadata:
+      labels:
+        app: test-deployment
+    spec:
+      containers:
+        - name: test-server # 容器名字
+          image: ccr.ccs.tencentyun.com/kugo/demo:v5 # 镜像
+          imagePullPolicy: Always
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: test-secret
+                  key: db-user
+            - name: DB_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: test-secret
+                  key: db-password
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - mountPath: /opt/demo/config
+              name: app-config
+          args:
+            - --config-file=/opt/demo/config/config.yaml
+      volumes:
+        - name: app-config
+          configMap:
+            name: test-config
