@@ -69,7 +69,7 @@ func Codec(code Codeimpl) Options {
 
 type Message struct {
 	Key  string
-	Data []byte
+	Body []byte
 }
 
 func (m *Message) Getkey() string {

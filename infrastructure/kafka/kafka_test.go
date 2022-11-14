@@ -1,6 +1,8 @@
 package kafka
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestInit(t *testing.T) {
 	err := Init()
@@ -24,17 +26,17 @@ func TestBroker(t *testing.T) {
 	}
 
 	msg := Message{
-		Data: []byte(`{"message":"broker_test"}`),
+		Body: []byte(`{"message":"broker_test"}`),
 	}
 	done := make(chan bool)
 
 	sub, err := Subscribe("mq-test", func(event MqEvent) error {
 		m := event.Message()
-		if string(m.Data) != string(msg.Data) {
-			t.Fatalf("Unexpected msg %s, expected %s", string(m.Data), string(msg.Data))
+		if string(m.Body) != string(msg.Body) {
+			t.Fatalf("Unexpected msg %s, expected %s", string(m.Body), string(msg.Body))
 		}
 
-		t.Logf("body: %s , extra: %v", string(m.Data), event.Extra())
+		t.Logf("body: %s , extra: %v", string(m.Body), event.Extra())
 
 		close(done)
 

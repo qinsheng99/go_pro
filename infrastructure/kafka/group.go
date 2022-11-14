@@ -73,7 +73,7 @@ func (g *group) genHanler(session sarama.ConsumerGroupSession) func(*sarama.Cons
 
 		if err := unmarshal(msg.Value, ke.m); err != nil {
 			ke.err = fmt.Errorf("unmarshal msg failed, err: %v", err)
-			ke.m.Data = msg.Value
+			ke.m.Body = msg.Value
 
 			if err := eh(ke); err != nil {
 				log.Error(err)
