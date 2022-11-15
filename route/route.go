@@ -8,6 +8,7 @@ import (
 	kubercontrol "github.com/qinsheng99/go-domain-web/controller/kubernetes"
 	"github.com/qinsheng99/go-domain-web/infrastructure/kubernetes"
 	"github.com/qinsheng99/go-domain-web/infrastructure/mysql"
+	"github.com/qinsheng99/go-domain-web/infrastructure/redis"
 	"github.com/qinsheng99/go-domain-web/infrastructure/repository"
 	"github.com/qinsheng99/go-domain-web/infrastructure/sort"
 	"github.com/qinsheng99/go-domain-web/utils"
@@ -34,4 +35,6 @@ func SetRoute(r *gin.Engine) {
 	kubercontrol.AddRouteConfigMap(group, kubernetes.NewConfigImpl(config.Conf.KubernetesConfig))
 
 	controller.AddRouteSort(group, app.NewSortService(sort.NewSort()))
+
+	controller.AddRouteRedis(group, app.NewRedisService(redis.NewredisImpl(redis.GetRedis())))
 }

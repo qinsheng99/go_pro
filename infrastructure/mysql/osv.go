@@ -133,9 +133,9 @@ func (o *OeCompatibilityOsv) SyncOsv(osvList []osv.Osv) (err error) {
 	tx := mysqlDb.Begin()
 
 	for k := range osvList {
-		osv := osvList[k]
-		if len(osv.PlatformResult) == 0 && len(osv.ToolsResult) == 0 {
-			err = o.Delete(osv.OsVersion, tx)
+		v := osvList[k]
+		if len(v.PlatformResult) == 0 && len(v.ToolsResult) == 0 {
+			err = o.Delete(v.OsVersion, tx)
 			if err != nil {
 				tx.Rollback()
 				return err
@@ -143,35 +143,35 @@ func (o *OeCompatibilityOsv) SyncOsv(osvList []osv.Osv) (err error) {
 			continue
 		}
 
-		tools, err = json.Marshal(osv.ToolsResult)
+		tools, err = json.Marshal(v.ToolsResult)
 		if err != nil {
 			tx.Rollback()
 			return err
 		}
-		platform, err = json.Marshal(osv.PlatformResult)
+		platform, err = json.Marshal(v.PlatformResult)
 		if err != nil {
 			tx.Rollback()
 			return err
 		}
 
 		data := OeCompatibilityOsv{
-			Architecture:         osv.Arch,
-			OsVersion:            osv.OsVersion,
-			OsvName:              osv.OsvName,
-			Date:                 osv.Date,
-			OsDownloadLink:       osv.OsDownloadLink,
-			Type:                 osv.Type,
-			Details:              osv.Details,
-			FriendlyLink:         osv.FriendlyLink,
-			TotalResult:          osv.TotalResult,
-			CheckSum:             osv.CheckSum,
-			BaseOpeneulerVersion: osv.BaseOpeneulerVersion,
+			Architecture:         v.Arch,
+			OsVersion:            v.OsVersion,
+			OsvName:              v.OsvName,
+			Date:                 v.Date,
+			OsDownloadLink:       v.OsDownloadLink,
+			Type:                 v.Type,
+			Details:              v.Details,
+			FriendlyLink:         v.FriendlyLink,
+			TotalResult:          v.TotalResult,
+			CheckSum:             v.CheckSum,
+			BaseOpeneulerVersion: v.BaseOpeneulerVersion,
 			ToolsResult:          string(tools),
 			PlatformResult:       string(platform),
 			Updateime:            time.Now(),
 		}
 
-		if ok, err = o.ExistsOsv(osv.OsVersion, tx); err == nil && ok {
+		if ok, err = o.ExistsOsv(v.OsVersion, tx); err == nil && ok {
 			err = o.UpdateOsv(&data, tx)
 			if err != nil {
 				tx.Rollback()
