@@ -1,0 +1,26 @@
+info:
+  contact: {}
+paths:
+  /del/:key:
+    delete:
+      consumes:
+      - application/json
+      description: redis del
+      parameters:
+      - description: redis key
+        in: query
+        name: key
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "500":
+          description: Internal Server Error
+          schema:
+            type: system_error
+      tags:
+      - redis
+swagger: "2.0"

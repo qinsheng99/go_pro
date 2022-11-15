@@ -53,6 +53,15 @@ func (b *BaseRedis) Zrange(c *gin.Context) {
 	utils.Success(c, http.StatusOK, revrange)
 }
 
+// Delete
+// @Title Delete
+// @Description redis del
+// @Tags redis
+// @Accept application/json
+// @Param key query string true "redis key"
+// @Success 200 {integer} integer
+// @Failure 500 system_error system error
+// @Router /del/:key [delete]
 func (b *BaseRedis) Delete(c *gin.Context) {
 	del, err := b.r.Del(context.Background(), c.Param("key"))
 	if err != nil {

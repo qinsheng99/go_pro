@@ -1,0 +1,42 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/del/:key": {
+            "delete": {
+                "description": "redis del",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "redis"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "redis key",
+                        "name": "key",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "system_error"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
