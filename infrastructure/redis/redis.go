@@ -2,9 +2,10 @@ package redis
 
 import (
 	"context"
+	"time"
+
 	"github.com/go-redis/redis/v8"
 	redis2 "github.com/qinsheng99/go-domain-web/domain/redis"
-	"time"
 )
 
 type redisImpl struct {
@@ -77,7 +78,7 @@ func (r *redisImpl) Incr(ctx context.Context, key string) (int64, error) {
 	return res, nil
 }
 
-//Decr decr:命令将 key 中储存的数字值减一。//DECR KEY_NAME
+// Decr decr:命令将 key 中储存的数字值减一。//DECR KEY_NAME
 func (r *redisImpl) Decr(ctx context.Context, key string) (int64, error) {
 	res, err := r.r.Decr(ctx, key).Result()
 	if err != nil && err != redis.Nil {
@@ -95,7 +96,7 @@ func (r *redisImpl) IncrBy(ctx context.Context, key string, value int64) (int64,
 	return res, nil
 }
 
-//DecrBy decrBy:命令将 key 所储存的值减去指定的减量值。	//DECRBY KEY_NAME DECREMENT_AMOUNT
+// DecrBy decrBy:命令将 key 所储存的值减去指定的减量值。	//DECRBY KEY_NAME DECREMENT_AMOUNT
 func (r *redisImpl) DecrBy(ctx context.Context, key string, value int64) (int64, error) {
 	res, err := r.r.DecrBy(ctx, key, value).Result()
 	if err != nil && err != redis.Nil {
@@ -113,7 +114,7 @@ func (r *redisImpl) Expire(ctx context.Context, key string, expiration time.Dura
 	return res, nil
 }
 
-//HSet 用于为哈希表中的字段赋值,如果哈希表不存在,一个新的哈希表被创建并进行HSET操作。字段已经存在,旧值被覆盖。HSET KEY_NAME FIELD VALUE
+// HSet 用于为哈希表中的字段赋值,如果哈希表不存在,一个新的哈希表被创建并进行HSET操作。字段已经存在,旧值被覆盖。HSET KEY_NAME FIELD VALUE
 func (r *redisImpl) HSet(ctx context.Context, key string, field string, data interface{}) (bool, error) {
 	_, err := r.r.HSet(ctx, key, field, data).Result()
 	if err != nil && err != redis.Nil {
@@ -175,7 +176,7 @@ func (r *redisImpl) HGetAll(ctx context.Context, key string) (map[string]string,
 	return res, err
 }
 
-//Hkeys 命令用于获取哈希表中的所有域（field）
+// Hkeys 命令用于获取哈希表中的所有域（field）
 func (r *redisImpl) Hkeys(ctx context.Context, key string) ([]string, error) {
 	res, err := r.r.HKeys(ctx, key).Result()
 	if err != nil && err != redis.Nil {
@@ -274,7 +275,7 @@ func (r *redisImpl) Lpush(ctx context.Context, key string, value ...interface{})
 	return res, nil
 }
 
-//LPushX 将一个值插入到已存在的列表头部，列表不存在时操作无效。
+// LPushX 将一个值插入到已存在的列表头部，列表不存在时操作无效。
 func (r *redisImpl) LPushX(ctx context.Context, key string, value ...interface{}) (int64, error) {
 	res, err := r.r.LPushX(ctx, key, value).Result()
 	if err != nil && err != redis.Nil {
@@ -301,7 +302,7 @@ func (r *redisImpl) LRange(ctx context.Context, key string, start, stop int64) (
 	return res, nil
 }
 
-//RPop 命令用于移除列表的最后一个元素，返回值为移除的元素。	//RPOP KEY_NAME
+// RPop 命令用于移除列表的最后一个元素，返回值为移除的元素。	//RPOP KEY_NAME
 func (r *redisImpl) RPop(ctx context.Context, key string) (string, error) {
 	res, err := r.r.RPop(ctx, key).Result()
 	if err != nil && err != redis.Nil {
@@ -319,7 +320,7 @@ func (r *redisImpl) BRpop(ctx context.Context, timeout time.Duration, keys ...st
 	return res, nil
 }
 
-//LPop 命令用于移除并返回列表的第一个元素。//Lpop KEY_NAME
+// LPop 命令用于移除并返回列表的第一个元素。//Lpop KEY_NAME
 func (r *redisImpl) LPop(ctx context.Context, key string) (string, error) {
 	res, err := r.r.LPop(ctx, key).Result()
 	if err != nil && err != redis.Nil {
@@ -328,7 +329,7 @@ func (r *redisImpl) LPop(ctx context.Context, key string) (string, error) {
 	return res, nil
 }
 
-//LIndex 命令用于通过索引获取列表中的元素。你也可以使用负数下标，以 -1 表示列表的最后一个元素， -2 表示列表的倒数第二个元素，以此类推。
+// LIndex 命令用于通过索引获取列表中的元素。你也可以使用负数下标，以 -1 表示列表的最后一个元素， -2 表示列表的倒数第二个元素，以此类推。
 func (r *redisImpl) LIndex(ctx context.Context, key string, index int64) (string, error) {
 	res, err := r.r.LIndex(ctx, key, index).Result()
 	if err != nil && err != redis.Nil {
@@ -371,7 +372,7 @@ func (r *redisImpl) LSet(ctx context.Context, key string, index int64, value int
 	return res, nil
 }
 
-//LTrim 对一个列表进行修剪(trim)，就是说，让列表只保留指定区间内的元素，不在指定区间之内的元素都将被删除。
+// LTrim 对一个列表进行修剪(trim)，就是说，让列表只保留指定区间内的元素，不在指定区间之内的元素都将被删除。
 func (r *redisImpl) LTrim(ctx context.Context, key string, start, stop int64) (string, error) {
 	res, err := r.r.LTrim(ctx, key, start, stop).Result()
 	if err != nil && err != redis.Nil {
@@ -425,7 +426,7 @@ func (r *redisImpl) MGet(ctx context.Context, keys ...string) ([]interface{}, er
 	return res, nil
 }
 
-//MSet 命令用于同时设置一个或多个 key-value 对。//MSET key1 value1 key2 value2 .. keyN valueN
+// MSet 命令用于同时设置一个或多个 key-value 对。//MSET key1 value1 key2 value2 .. keyN valueN
 func (r *redisImpl) MSet(ctx context.Context, values ...interface{}) (string, error) {
 	res, err := r.r.MSet(ctx, values...).Result()
 	if err != nil && err != redis.Nil {
@@ -434,7 +435,7 @@ func (r *redisImpl) MSet(ctx context.Context, values ...interface{}) (string, er
 	return res, nil
 }
 
-//MSetNX 命令用于所有给定 key 都不存在时，同时设置一个或多个 key-value 对。//MSETNX key1 value1 key2 value2 ..
+// MSetNX 命令用于所有给定 key 都不存在时，同时设置一个或多个 key-value 对。//MSETNX key1 value1 key2 value2 ..
 func (r *redisImpl) MSetNX(ctx context.Context, values ...interface{}) (bool, error) {
 	res, err := r.r.MSetNX(ctx, values).Result()
 	if err != nil && err != redis.Nil {
@@ -470,7 +471,7 @@ func (r *redisImpl) Type(ctx context.Context, key string) (string, error) {
 	return res, nil
 }
 
-//GetRange 命令用于获取存储在指定 key 中字符串的子字符串。字符串的截取范围由 start 和 end 两个偏移量决定(包括 start 和 end 在内)。
+// GetRange 命令用于获取存储在指定 key 中字符串的子字符串。字符串的截取范围由 start 和 end 两个偏移量决定(包括 start 和 end 在内)。
 func (r *redisImpl) GetRange(ctx context.Context, key string, start, end int64) (string, error) {
 	res, err := r.r.GetRange(ctx, key, start, end).Result()
 	if err != nil && err != redis.Nil {
@@ -530,7 +531,7 @@ func (r *redisImpl) ZRank(ctx context.Context, key, member string) (int64, error
 	return count - res, nil
 }
 
-//Zcard 命令用于计算集合中元素的数量。
+// Zcard 命令用于计算集合中元素的数量。
 func (r *redisImpl) zcard(ctx context.Context, key string) (int64, error) {
 	res, err := r.r.ZCard(ctx, key).Result()
 	if err != nil && err != redis.Nil {
@@ -549,8 +550,8 @@ func (r *redisImpl) GetSet(ctx context.Context, key string, value interface{}) (
 }
 
 // Append 命令用于为指定的 key 追加值。
-//如果 key 已经存在并且是一个字符串， APPEND 命令将 value 追加到 key 原来的值的末尾。
-//如果 key 不存在， APPEND 就简单地将给定 key 设为 value ，就像执行 SET key value 一样。
+// 如果 key 已经存在并且是一个字符串， APPEND 命令将 value 追加到 key 原来的值的末尾。
+// 如果 key 不存在， APPEND 就简单地将给定 key 设为 value ，就像执行 SET key value 一样。
 func (r *redisImpl) Append(ctx context.Context, key string, value string) (int64, error) {
 	res, err := r.r.Append(ctx, key, value).Result()
 	if err != nil && err != redis.Nil {

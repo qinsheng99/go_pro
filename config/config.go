@@ -2,9 +2,9 @@ package config
 
 import (
 	"flag"
-	"github.com/qinsheng99/go-domain-web/utils/validate"
-	"io/ioutil"
 	"os"
+
+	"github.com/qinsheng99/go-domain-web/utils/validate"
 	"sigs.k8s.io/yaml"
 )
 
@@ -108,7 +108,7 @@ func Init() error {
 	if *path != "" {
 		file = *path
 	}
-	bys, err := ioutil.ReadFile(file)
+	bys, err := os.ReadFile(file)
 	if err != nil {
 		return err
 	}

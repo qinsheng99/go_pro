@@ -2,12 +2,13 @@ package controller
 
 import (
 	"context"
+	"net/http"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
 	"github.com/qinsheng99/go-domain-web/app"
 	"github.com/qinsheng99/go-domain-web/utils"
-	"net/http"
-	"strconv"
 )
 
 type BaseRedis struct {

@@ -1,6 +1,8 @@
 package route
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/qinsheng99/go-domain-web/app"
 	"github.com/qinsheng99/go-domain-web/config"
@@ -13,10 +15,9 @@ import (
 	"github.com/qinsheng99/go-domain-web/infrastructure/repository"
 	"github.com/qinsheng99/go-domain-web/infrastructure/sort"
 	"github.com/qinsheng99/go-domain-web/utils"
-	"github.com/qinsheng99/go-domain-web/utils/const"
+	_const "github.com/qinsheng99/go-domain-web/utils/const"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"net/http"
 )
 
 func SetRoute(r *gin.Engine) {

@@ -2,9 +2,10 @@ package app
 
 import (
 	"context"
+	"time"
+
 	v8 "github.com/go-redis/redis/v8"
 	"github.com/qinsheng99/go-domain-web/domain/redis"
-	"time"
 )
 
 type redisService struct {

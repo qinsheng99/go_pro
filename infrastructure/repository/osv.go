@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+
 	"github.com/qinsheng99/go-domain-web/api/osv"
 	"github.com/qinsheng99/go-domain-web/domain/repository"
 	"github.com/qinsheng99/go-domain-web/infrastructure/mysql"

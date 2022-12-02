@@ -2,10 +2,11 @@ package app
 
 import (
 	"encoding/json"
+
 	"github.com/qinsheng99/go-domain-web/api/osv"
 	"github.com/qinsheng99/go-domain-web/domain"
 	"github.com/qinsheng99/go-domain-web/domain/repository"
-	"github.com/qinsheng99/go-domain-web/utils/const"
+	_const "github.com/qinsheng99/go-domain-web/utils/const"
 )
 
 type osvService struct {

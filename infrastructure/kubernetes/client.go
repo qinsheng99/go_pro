@@ -2,6 +2,8 @@ package kubernetes
 
 import (
 	"fmt"
+	"os/user"
+
 	"github.com/qinsheng99/go-domain-web/config"
 	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -12,7 +14,6 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/restmapper"
 	"k8s.io/client-go/tools/clientcmd"
-	"os/user"
 )
 
 var (

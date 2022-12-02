@@ -2,6 +2,7 @@ package elasticsearch
 
 import (
 	"fmt"
+
 	"github.com/olivere/elastic/v7"
 	"github.com/qinsheng99/go-domain-web/config"
 )

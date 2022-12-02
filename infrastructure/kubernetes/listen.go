@@ -2,6 +2,10 @@ package kubernetes
 
 import (
 	"context"
+	"log"
+	"sync"
+	"time"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -11,9 +15,6 @@ import (
 	"k8s.io/client-go/informers"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/cache"
-	"log"
-	"sync"
-	"time"
 )
 
 func NewListen(res *kubernetes.Clientset, dym dynamic.Interface, resource schema.GroupVersionResource, listen bool) ListenInter {

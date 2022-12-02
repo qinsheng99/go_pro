@@ -2,10 +2,11 @@ package etcd
 
 import (
 	"fmt"
-	"github.com/qinsheng99/go-domain-web/config"
 	"time"
 
-	"go.etcd.io/etcd/client/v3"
+	"github.com/qinsheng99/go-domain-web/config"
+
+	clientv3 "go.etcd.io/etcd/client/v3"
 )
 
 var client *clientv3.Client

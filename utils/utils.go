@@ -2,8 +2,9 @@ package utils
 
 import (
 	"errors"
+
 	"github.com/qinsheng99/go-domain-web/api"
-	"github.com/qinsheng99/go-domain-web/utils/const"
+	_const "github.com/qinsheng99/go-domain-web/utils/const"
 	"gorm.io/gorm"
 )
 
