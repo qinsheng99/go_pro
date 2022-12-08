@@ -2,11 +2,12 @@ package mysql
 
 import (
 	"encoding/json"
-	"github.com/qinsheng99/go-domain-web/api/osv"
+	"time"
+
+	"github.com/qinsheng99/go-domain-web/api"
 	"github.com/qinsheng99/go-domain-web/logger"
 	"github.com/qinsheng99/go-domain-web/utils"
 	"gorm.io/gorm"
-	"time"
 )
 
 type OeCompatibilityOsv struct {
@@ -32,8 +33,8 @@ func (o *OeCompatibilityOsv) TableName() string {
 }
 
 type OsvMapper interface {
-	SyncOsv([]osv.Osv) error
-	OSVFindAll(req osv.RequestOsv) (datas []OeCompatibilityOsv, total int64, err error)
+	SyncOsv([]api.Osv) error
+	OSVFindAll(req api.RequestOsv) (datas []OeCompatibilityOsv, total int64, err error)
 }
 
 func NewOsvMapper() OsvMapper {
@@ -60,7 +61,7 @@ func (o *OeCompatibilityOsv) UpdateOsv(data *OeCompatibilityOsv, tx *gorm.DB) er
 	return tx.Where("os_version = ?", data.OsVersion).Updates(data).Error
 }
 
-func (o *OeCompatibilityOsv) OSVFindAll(req osv.RequestOsv) (datas []OeCompatibilityOsv, total int64, err error) {
+func (o *OeCompatibilityOsv) OSVFindAll(req api.RequestOsv) (datas []OeCompatibilityOsv, total int64, err error) {
 	q := mysqlDb
 	page, size := utils.GetPage(req.Pages)
 	query := q.Model(o)
@@ -127,7 +128,7 @@ func (o *OeCompatibilityOsv) GetOneOSV(osv *OeCompatibilityOsv) (*OeCompatibilit
 	return osv, result.Error
 }
 
-func (o *OeCompatibilityOsv) SyncOsv(osvList []osv.Osv) (err error) {
+func (o *OeCompatibilityOsv) SyncOsv(osvList []api.Osv) (err error) {
 	var tools, platform []byte
 	var ok bool
 	tx := mysqlDb.Begin()

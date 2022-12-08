@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	app "github.com/qinsheng99/go-domain-web/app/kubernetes"
+	"github.com/qinsheng99/go-domain-web/app"
 	"github.com/qinsheng99/go-domain-web/domain/kubernetes"
 	"github.com/qinsheng99/go-domain-web/utils"
 )

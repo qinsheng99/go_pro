@@ -3,7 +3,7 @@ package app
 import (
 	"encoding/json"
 
-	"github.com/qinsheng99/go-domain-web/api/osv"
+	"github.com/qinsheng99/go-domain-web/api"
 	"github.com/qinsheng99/go-domain-web/domain"
 	"github.com/qinsheng99/go-domain-web/domain/repository"
 	_const "github.com/qinsheng99/go-domain-web/utils/const"
@@ -35,9 +35,9 @@ func (o *osvService) Find() (_ *domain.ResultOsv, _ error) {
 	}
 	data := make([]domain.ROeCompatibilityOsv, 0, len(list))
 	for _, v := range list {
-		var t []osv.Record
+		var t []api.Record
 		_ = json.Unmarshal([]byte(v.ToolsResult), &t)
-		var p []osv.Record
+		var p []api.Record
 		_ = json.Unmarshal([]byte(v.PlatformResult), &p)
 		data = append(data, domain.ROeCompatibilityOsv{
 			OeCompatibilityOsv: v,

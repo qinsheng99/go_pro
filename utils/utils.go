@@ -33,3 +33,14 @@ func GetPage(req api.Pages) (int, int) {
 func Label(name string) map[string]string {
 	return map[string]string{"app": name}
 }
+
+func StrSliceToInterface(data []string) []interface{} {
+	var res = make([]interface{}, 0, len(data))
+	for k := range data {
+		if len(data[k]) <= 0 {
+			continue
+		}
+		res = append(res, data[k])
+	}
+	return res
+}

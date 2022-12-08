@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -61,7 +60,7 @@ func (r *request) mainRequest(url, method string, bytesData interface{}, headers
 			return attempt < 3, err
 		}
 		defer resp.Body.Close()
-		resByte, err = ioutil.ReadAll(resp.Body)
+		resByte, err = io.ReadAll(resp.Body)
 
 		if resp.StatusCode > http.StatusMultipleChoices || resp.Body == nil {
 			logger.Log.Error(fmt.Sprintf("statusCode is %d ,data : %s", resp.StatusCode, string(resByte)))
@@ -116,7 +115,7 @@ func (r *request) noTryRequest(url, method string, bytesData interface{}, header
 		logger.Log.Errorf("url:%s ;http new request err: %v", url, resp.Status)
 		return nil, errors.New(fmt.Sprintf("request err %s", resp.Status))
 	}
-	resByte, err = ioutil.ReadAll(resp.Body)
+	resByte, err = io.ReadAll(resp.Body)
 	return
 }
 

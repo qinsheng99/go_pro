@@ -7,8 +7,8 @@ import (
 	"github.com/qinsheng99/go-domain-web/app"
 	"github.com/qinsheng99/go-domain-web/config"
 	"github.com/qinsheng99/go-domain-web/controller"
-	kubercontrol "github.com/qinsheng99/go-domain-web/controller/kubernetes"
 	"github.com/qinsheng99/go-domain-web/docs"
+	"github.com/qinsheng99/go-domain-web/infrastructure/elasticsearch"
 	"github.com/qinsheng99/go-domain-web/infrastructure/kubernetes"
 	"github.com/qinsheng99/go-domain-web/infrastructure/mysql"
 	"github.com/qinsheng99/go-domain-web/infrastructure/redis"
@@ -38,11 +38,15 @@ func SetRoute(r *gin.Engine) {
 		),
 	)
 
-	kubercontrol.AddRoutePod(group, kubernetes.NewPodImpl(config.Conf.KubernetesConfig))
+	pull := elasticsearch.NewPullMapper(config.Conf.EsConfig.Indexs.PullIndex)
 
-	kubercontrol.AddRouteConfigMap(group, kubernetes.NewConfigImpl(config.Conf.KubernetesConfig))
+	controller.AddRoutePod(group, kubernetes.NewPodImpl(config.Conf.KubernetesConfig))
+
+	controller.AddRouteConfigMap(group, kubernetes.NewConfigImpl(config.Conf.KubernetesConfig))
 
 	controller.AddRouteSort(group, app.NewSortService(sort.NewSort()))
 
 	controller.AddRouteRedis(group, app.NewRedisService(redis.NewredisImpl(redis.GetRedis())))
+
+	controller.AddRoutePull(group, repository.NewRepoPull(pull, utils.NewRequest(nil)))
 }

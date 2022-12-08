@@ -1,12 +1,10 @@
-package osv
-
-import "github.com/qinsheng99/go-domain-web/api"
+package api
 
 type RequestOsv struct {
-	KeyWord string    `json:"keyword"`
-	OsvName string    `json:"osvName"`
-	Type    string    `json:"type"`
-	Pages   api.Pages `json:"pages"`
+	KeyWord string `json:"keyword"`
+	OsvName string `json:"osvName"`
+	Type    string `json:"type"`
+	Pages   Pages  `json:"pages"`
 }
 
 type Osv struct {

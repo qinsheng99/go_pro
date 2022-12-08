@@ -16,6 +16,8 @@ mysql:
 es:
   host: "http://localhost"
   port: 9200
+  indexs:
+    pull_index: "pr_index"
 
 redis:
   host: ${DB_HOST}

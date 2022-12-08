@@ -53,8 +53,11 @@ type PostgresqlConfig struct {
 }
 
 type EsConfig struct {
-	Host string `json:"host"`
-	Port int64  `json:"port"`
+	Host   string `json:"host"`
+	Port   int64  `json:"port"`
+	Indexs struct {
+		PullIndex string `json:"pull_index"`
+	} `json:"indexs"`
 }
 
 type RedisConfig struct {
