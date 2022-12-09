@@ -61,6 +61,8 @@ func (r repoPull) Refresh(ctx context.Context) error {
 			Title:       datum.GetTitle(),
 			Description: base64.StdEncoding.EncodeToString([]byte(datum.GetBody())),
 			Labels:      datum.GetLabelName(),
+			Draft:       datum.GetDraft(),
+			Mergeable:   datum.GetMergeable(),
 		}
 
 		if r.pg.Exist(pull.Link) {

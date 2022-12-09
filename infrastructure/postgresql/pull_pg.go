@@ -1,14 +1,12 @@
 package postgresql
 
 import (
-	"errors"
 	"fmt"
 	"sort"
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
 	"github.com/qinsheng99/go-domain-web/utils"
-	"gorm.io/gorm"
 )
 
 type Pull struct {
@@ -27,6 +25,8 @@ type Pull struct {
 	Title       string         `json:"title" description:"标题" gorm:"column:title;type:text"`
 	Description string         `json:"description" description:"描述" gorm:"column:description;type:text"`
 	Labels      pq.StringArray `json:"labels" description:"标签" gorm:"column:labels;type:text[];default:'{}'"`
+	Draft       bool           `json:"draft" description:"是否是草稿" gorm:"column:draft;type:bool"`
+	Mergeable   bool           `json:"mergeable" description:"是否可合入" gorm:"column:mergeable;type:bool"`
 }
 
 const (
@@ -55,12 +55,13 @@ func NewPullMapper() PullMapper {
 }
 
 func (p *Pull) Exist(link string) bool {
-	err := GetPostgresql().Where("link = ?", link).First(p).Error
-	if err != nil || errors.Is(err, gorm.ErrRecordNotFound) {
-		return false
+	var list []Pull
+	_ = GetPostgresql().Model(p).Where("link = ?", link).Find(&list).Error
+	if len(list) > 0 {
+		return true
 	}
 
-	return true
+	return false
 }
 
 func (p *Pull) Insert(pull *Pull) error {

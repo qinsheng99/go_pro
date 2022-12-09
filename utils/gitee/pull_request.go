@@ -27,6 +27,8 @@ type PullRequest struct {
 	CreatedAt       time.Time     `json:"created_at"`
 	UpdatedAt       time.Time     `json:"updated_at"`
 	ClosedAt        time.Time     `json:"closed_at"`
+	Draft           bool          `json:"draft"`
+	Mergeable       bool          `json:"mergeable"`
 	User            struct {
 		Id           int    `json:"id"`
 		Login        string `json:"login"`
@@ -132,4 +134,12 @@ func (p *PullRequest) GetAssignessName() (a []string) {
 		a = append(a, ass.Login)
 	}
 	return
+}
+
+func (p *PullRequest) GetDraft() bool {
+	return p.Draft
+}
+
+func (p *PullRequest) GetMergeable() bool {
+	return p.Mergeable
 }
