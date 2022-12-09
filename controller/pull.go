@@ -26,7 +26,8 @@ func AddRoutePull(r *gin.RouterGroup, pull repository.RepoPullImpl) {
 	{
 		group.GET("/refresh/:type", basepull.Refresh)
 		group.GET("/pulls", basepull.PRList)
-		group.GET("/pulls/:field", basepull.PullField)
+		//group.GET("/pulls/:field", basepull.PullField)
+		group.GET("/pulls/authors", basepull.PullAuthors)
 	}
 }
 
@@ -66,7 +67,7 @@ func (b BasePull) PRList(c *gin.Context) {
 		return
 	}
 
-	utils.Success(c, http.StatusOK, b.base.Response(list, req.Page, req.PerPage, int(total)))
+	c.JSON(http.StatusOK, b.base.Response(list, req.Page, req.PerPage, int(total)))
 }
 
 func (b BasePull) PullField(c *gin.Context) {
@@ -83,7 +84,7 @@ func (b BasePull) PullField(c *gin.Context) {
 	field := c.Param("field")
 	switch fields.Has(field) {
 	case true:
-		total, res, err = b.p.PullFields(req, nil, field)
+		total, res, err = b.p.PullFields(req, field)
 	default:
 		utils.Failure(c, fmt.Errorf("unkonwn pulls field: %s", field))
 		return
@@ -94,5 +95,26 @@ func (b BasePull) PullField(c *gin.Context) {
 		return
 	}
 
-	utils.Success(c, http.StatusOK, b.base.Response(res, req.Page, req.PerPage, int(total)))
+	c.JSON(http.StatusOK, b.base.Response(res, req.Page, req.PerPage, int(total)))
+}
+
+func (b BasePull) PullAuthors(c *gin.Context) {
+	var req api.RequestPull
+	var err error
+	if err = c.ShouldBindWith(&req, binding.Form); err != nil {
+		utils.Failure(c, err)
+		return
+	}
+
+	req.SetDefault()
+	var res []string
+	var total int64
+	total, res, err = b.p.PullAuthors(req)
+
+	if err != nil {
+		utils.Failure(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, b.base.Response(res, req.Page, req.PerPage, int(total)))
 }

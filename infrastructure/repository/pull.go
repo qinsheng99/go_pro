@@ -118,11 +118,11 @@ func (r repoPull) PullList(req api.RequestPull, ctx context.Context) ([]elastics
 	}
 
 	if len(req.Author) > 0 {
-		q = q.Must(elastic.NewTermQuery("author", req.Author))
+		q.Must(elastic.NewTermQuery("author", req.Author))
 	}
 
 	if len(req.Assignee) > 0 {
-		q = q.Must(elastic.NewMatchPhraseQuery("assignees", req.Assignee))
+		q.Must(elastic.NewMatchPhraseQuery("assignees", req.Assignee))
 	}
 
 	if len(req.Exclusion) > 0 {
@@ -148,7 +148,7 @@ func (r repoPull) PullList(req api.RequestPull, ctx context.Context) ([]elastics
 	)
 }
 
-func (r repoPull) PullFields(req api.RequestPull, ctx context.Context, field string) (int64, []string, error) {
+func (r repoPull) PullFields(req api.RequestPull, field string) (int64, []string, error) {
 	switch field {
 	case _const.PullsAuthors:
 		return r.pg.FieldList(req.Keyword, req.Sig, postgresql.Author, req.Page, req.PerPage)
@@ -165,4 +165,12 @@ func (r repoPull) PullFields(req api.RequestPull, ctx context.Context, field str
 	}
 
 	return 0, nil, nil
+}
+
+func (r repoPull) PullAuthors(req api.RequestPull) (int64, []string, error) {
+	return r.pg.FieldList(req.Keyword, req.Sig, postgresql.Author, req.Page, req.PerPage)
+}
+
+func (r repoPull) PullRef(req api.RequestPull) (int64, []string, error) {
+	return r.pg.FieldList(req.Keyword, req.Sig, postgresql.Ref, req.Page, req.PerPage)
 }
