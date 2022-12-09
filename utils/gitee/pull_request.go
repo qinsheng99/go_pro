@@ -120,22 +120,16 @@ func (p *PullRequest) GetLabels() []Labels {
 	return p.Labels
 }
 
-func (p *PullRequest) GetLabelName() (l string) {
+func (p *PullRequest) GetLabelName() (l []string) {
 	for _, label := range p.Labels {
-		l += label.Name + ","
-	}
-	if len(l) > 0 {
-		l = l[:len(l)-1]
+		l = append(l, label.Name)
 	}
 	return
 }
 
-func (p *PullRequest) GetAssignessName() (l string) {
-	for _, label := range p.Assignees {
-		l += label.Login + ","
-	}
-	if len(l) > 0 {
-		l = l[:len(l)-1]
+func (p *PullRequest) GetAssignessName() (a []string) {
+	for _, ass := range p.Assignees {
+		a = append(a, ass.Login)
 	}
 	return
 }

@@ -30,7 +30,7 @@ mongo:
   collection: "dd"
 
 postgresql:
-  db_host: ${DB_HOST}
+  db_host: "localhost"
   db_port: 5432
   db_user: "postgres"
   db_pwd: "root"

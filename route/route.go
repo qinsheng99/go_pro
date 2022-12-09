@@ -11,6 +11,7 @@ import (
 	"github.com/qinsheng99/go-domain-web/infrastructure/elasticsearch"
 	"github.com/qinsheng99/go-domain-web/infrastructure/kubernetes"
 	"github.com/qinsheng99/go-domain-web/infrastructure/mysql"
+	"github.com/qinsheng99/go-domain-web/infrastructure/postgresql"
 	"github.com/qinsheng99/go-domain-web/infrastructure/redis"
 	"github.com/qinsheng99/go-domain-web/infrastructure/repository"
 	"github.com/qinsheng99/go-domain-web/infrastructure/sort"
@@ -48,5 +49,5 @@ func SetRoute(r *gin.Engine) {
 
 	controller.AddRouteRedis(group, app.NewRedisService(redis.NewredisImpl(redis.GetRedis())))
 
-	controller.AddRoutePull(group, repository.NewRepoPull(pull, utils.NewRequest(nil)))
+	controller.AddRoutePull(group, repository.NewRepoPull(pull, utils.NewRequest(nil), postgresql.NewPullMapper()))
 }

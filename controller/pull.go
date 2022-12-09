@@ -10,10 +10,13 @@ import (
 	"github.com/qinsheng99/go-domain-web/app"
 	"github.com/qinsheng99/go-domain-web/domain/repository"
 	"github.com/qinsheng99/go-domain-web/utils"
+	_const "github.com/qinsheng99/go-domain-web/utils/const"
+	"k8s.io/apimachinery/pkg/util/sets"
 )
 
 type BasePull struct {
 	p app.PullServiceImpl
+	base
 }
 
 func AddRoutePull(r *gin.RouterGroup, pull repository.RepoPullImpl) {
@@ -23,16 +26,18 @@ func AddRoutePull(r *gin.RouterGroup, pull repository.RepoPullImpl) {
 	{
 		group.GET("/refresh/:type", basepull.Refresh)
 		group.GET("/pulls", basepull.PRList)
-		group.GET("/pulls/:type", basepull.PullField)
+		group.GET("/pulls/:field", basepull.PullField)
 	}
 }
+
+var fields = sets.NewString(_const.PullsAuthors, _const.PullsAssignees, _const.PullsLabels, _const.PullsRef, _const.PullsSig, _const.PullsRepos)
 
 func (b BasePull) Refresh(c *gin.Context) {
 	var err error
 	switch c.Param("type") {
-	case "pr":
+	case _const.RefreshPr:
 		err = b.p.Refresh(nil)
-	case "issue":
+	case _const.RefreshIssue:
 
 	default:
 		utils.Failure(c, fmt.Errorf("unkonwn refresh type: %s", c.Param("type")))
@@ -61,7 +66,7 @@ func (b BasePull) PRList(c *gin.Context) {
 		return
 	}
 
-	utils.Success(c, http.StatusOK, api.ResponsePull{Total: total, Data: list})
+	utils.Success(c, http.StatusOK, b.base.Response(list, req.Page, req.PerPage, int(total)))
 }
 
 func (b BasePull) PullField(c *gin.Context) {
@@ -74,11 +79,13 @@ func (b BasePull) PullField(c *gin.Context) {
 
 	req.SetDefault()
 	var res []string
-	switch c.Param("type") {
-	case "author":
-		res, err = b.p.PullAuthor(req, nil)
+	var total int64
+	field := c.Param("field")
+	switch fields.Has(field) {
+	case true:
+		total, res, err = b.p.PullFields(req, nil, field)
 	default:
-		utils.Failure(c, fmt.Errorf("unkonwn pulls type: %s", c.Param("type")))
+		utils.Failure(c, fmt.Errorf("unkonwn pulls field: %s", field))
 		return
 	}
 
@@ -87,5 +94,5 @@ func (b BasePull) PullField(c *gin.Context) {
 		return
 	}
 
-	utils.Success(c, http.StatusOK, res)
+	utils.Success(c, http.StatusOK, b.base.Response(res, req.Page, req.PerPage, int(total)))
 }

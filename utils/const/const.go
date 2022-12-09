@@ -11,3 +11,15 @@ const (
 	Asc  = "asc"
 	Desc = "desc"
 )
+
+const (
+	RefreshPr    = "pr"
+	RefreshIssue = "issue"
+
+	PullsAuthors   = "authors"
+	PullsAssignees = "assignees"
+	PullsLabels    = "labels"
+	PullsRef       = "refs"
+	PullsSig       = "sigs"
+	PullsRepos     = "repos"
+)

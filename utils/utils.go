@@ -2,6 +2,7 @@ package utils
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/qinsheng99/go-domain-web/api"
 	_const "github.com/qinsheng99/go-domain-web/utils/const"
@@ -43,4 +44,19 @@ func StrSliceToInterface(data []string) []interface{} {
 		res = append(res, data[k])
 	}
 	return res
+}
+
+func FilterRepeat(strs []string, str string) (repeat []string) {
+	flag := len(str) > 0
+	var item = make(map[string]struct{})
+	for _, s := range strs {
+		if flag && !strings.Contains(s, str) {
+			continue
+		}
+		if _, ok := item[s]; !ok {
+			item[s] = struct{}{}
+			repeat = append(repeat, s)
+		}
+	}
+	return
 }

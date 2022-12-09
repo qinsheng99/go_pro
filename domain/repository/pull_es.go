@@ -10,5 +10,5 @@ import (
 type RepoPullImpl interface {
 	Refresh(context.Context) (err error)
 	PullList(api.RequestPull, context.Context) ([]elasticsearch.Pull, int64, error)
-	PullAuthor(api.RequestPull, context.Context) ([]string, error)
+	PullFields(api.RequestPull, context.Context, string) (int64, []string, error)
 }

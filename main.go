@@ -8,6 +8,7 @@ import (
 	"github.com/qinsheng99/go-domain-web/infrastructure/elasticsearch"
 	"github.com/qinsheng99/go-domain-web/infrastructure/kubernetes"
 	"github.com/qinsheng99/go-domain-web/infrastructure/mysql"
+	"github.com/qinsheng99/go-domain-web/infrastructure/postgresql"
 	"github.com/qinsheng99/go-domain-web/logger"
 	"github.com/qinsheng99/go-domain-web/route"
 	"github.com/qinsheng99/go-domain-web/utils/server"
@@ -44,10 +45,10 @@ func main() {
 		logrus.WithError(err).Fatal("mysql init failed")
 	}
 
-	//err = postgresql.Init(config.Conf.PostgresqlConfig)
-	//if err != nil {
-	//	logrus.WithError(err).Fatal("postgresql init failed")
-	//}
+	err = postgresql.Init(config.Conf.PostgresqlConfig)
+	if err != nil {
+		logrus.WithError(err).Fatal("postgresql init failed")
+	}
 
 	err = elasticsearch.Init(config.Conf.EsConfig)
 	if err != nil {

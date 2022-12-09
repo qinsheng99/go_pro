@@ -1,9 +1,5 @@
 package api
 
-import (
-	"github.com/qinsheng99/go-domain-web/infrastructure/elasticsearch"
-)
-
 type RequestPull struct {
 	Page      int    `json:"page"  form:"page"`
 	PerPage   int    `json:"per_page" form:"per_page"`
@@ -21,11 +17,6 @@ type RequestPull struct {
 	Repo      string `json:"repo" form:"repo"`
 	Org       string `json:"org" form:"org"`
 	Keyword   string `json:"keyword" form:"keyword"`
-}
-
-type ResponsePull struct {
-	Total int64                `json:"total"`
-	Data  []elasticsearch.Pull `json:"data"`
 }
 
 func (r *RequestPull) SetDefault() {

@@ -15,7 +15,7 @@ type pullService struct {
 type PullServiceImpl interface {
 	Refresh(ctx context.Context) error
 	PullList(req api.RequestPull, ctx context.Context) (list []elasticsearch.Pull, total int64, err error)
-	PullAuthor(req api.RequestPull, ctx context.Context) ([]string, error)
+	PullFields(api.RequestPull, context.Context, string) (int64, []string, error)
 }
 
 func NewPullService(pull repository.RepoPullImpl) PullServiceImpl {
@@ -37,10 +37,10 @@ func (p pullService) PullList(req api.RequestPull, ctx context.Context) ([]elast
 	return p.pull.PullList(req, ctx)
 }
 
-func (p pullService) PullAuthor(req api.RequestPull, ctx context.Context) ([]string, error) {
+func (p pullService) PullFields(req api.RequestPull, ctx context.Context, field string) (int64, []string, error) {
 	if ctx == nil {
 		ctx = context.Background()
 	}
 
-	return p.pull.PullAuthor(req, ctx)
+	return p.pull.PullFields(req, ctx, field)
 }
