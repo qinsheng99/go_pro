@@ -3,9 +3,11 @@ package postgresql
 import (
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
+	"github.com/qinsheng99/go-domain-web/api"
 	"github.com/qinsheng99/go-domain-web/utils"
 )
 
@@ -48,6 +50,7 @@ type PullMapper interface {
 	Update(*Pull) error
 	FieldList(string, string, string, int, int) (int64, []string, error)
 	FieldSliceList(string, string, int, int) (int64, []string, error)
+	PullListForPG(api.RequestPull) ([]Pull, int64, error)
 }
 
 func NewPullMapper() PullMapper {
@@ -131,5 +134,68 @@ func (p *Pull) FieldSliceList(keyword, field string, page, size int) (total int6
 		return
 	}
 	data = res[offset : offset+int64(size)]
+	return
+}
+
+func (p *Pull) PullListForPG(req api.RequestPull) (data []Pull, total int64, err error) {
+	query := GetPostgresql().Model(p)
+	if len(req.Label) > 0 {
+		for _, s := range strings.Split(strings.ReplaceAll(req.Label, "，", ","), ",") {
+			query.Where("? = ANY(labels)", s)
+		}
+	}
+	if s := strings.Split(strings.ReplaceAll(req.State, "，", ","), ","); len(s) > 0 && len(req.State) > 0 {
+		query.Where("state in ?", s)
+	}
+
+	if len(req.Org) > 0 {
+		query.Where("org = ?", req.Org)
+	}
+
+	if len(req.Repo) > 0 {
+		query.Where("repo = ?", req.Repo)
+	}
+
+	if len(req.Sig) > 0 {
+		query.Where("sig = ?", req.Sig)
+	}
+
+	if len(req.Ref) > 0 {
+		query.Where("ref = ?", req.Ref)
+	}
+
+	if len(req.Author) > 0 {
+		query.Where("author = ?", req.Ref)
+	}
+
+	if len(req.Assignee) > 0 {
+		query.Where("? = ANY(assignees)", req.Ref)
+	}
+
+	if len(req.Exclusion) > 0 {
+		for _, s := range strings.Split(strings.ReplaceAll(req.Exclusion, "，", ","), ",") {
+			query.Where("NOT ? = ANY(labels)", s)
+		}
+	}
+
+	if len(req.Search) > 0 {
+		query.Where(
+			GetPostgresql().
+				Where("repo like ?", "%"+req.Search+"%").
+				Or("title like ?", "%"+req.Search+"%").
+				Or("sig like ?", "%"+req.Search+"%"),
+		)
+	}
+
+	err = query.Count(&total).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	query.Limit(req.PerPage).Offset((req.Page - 1) * req.PerPage).Order(fmt.Sprintf("%s %s", req.Sort, req.Direction))
+	err = query.Debug().Find(&data).Error
+	if err != nil {
+		return nil, 0, err
+	}
 	return
 }

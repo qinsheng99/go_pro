@@ -6,6 +6,7 @@ import (
 	"github.com/qinsheng99/go-domain-web/api"
 	"github.com/qinsheng99/go-domain-web/domain/repository"
 	"github.com/qinsheng99/go-domain-web/infrastructure/elasticsearch"
+	"github.com/qinsheng99/go-domain-web/infrastructure/postgresql"
 )
 
 type pullService struct {
@@ -18,6 +19,7 @@ type PullServiceImpl interface {
 	PullFields(api.RequestPull, string) (int64, []string, error)
 	PullAuthors(api.RequestPull) (int64, []string, error)
 	PullRef(api.RequestPull) (int64, []string, error)
+	PullListPg(req api.RequestPull) ([]postgresql.Pull, int64, error)
 }
 
 func NewPullService(pull repository.RepoPullImpl) PullServiceImpl {
@@ -49,4 +51,8 @@ func (p pullService) PullAuthors(req api.RequestPull) (int64, []string, error) {
 
 func (p pullService) PullRef(req api.RequestPull) (int64, []string, error) {
 	return p.pull.PullRef(req)
+}
+
+func (p pullService) PullListPg(req api.RequestPull) ([]postgresql.Pull, int64, error) {
+	return p.pull.PullListPg(req)
 }

@@ -17,6 +17,7 @@ type RequestPull struct {
 	Repo      string `json:"repo" form:"repo"`
 	Org       string `json:"org" form:"org"`
 	Keyword   string `json:"keyword" form:"keyword"`
+	Pg        string `json:"pg" form:"pg"`
 }
 
 func (r *RequestPull) SetDefault() {

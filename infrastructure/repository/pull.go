@@ -176,3 +176,7 @@ func (r repoPull) PullAuthors(req api.RequestPull) (int64, []string, error) {
 func (r repoPull) PullRef(req api.RequestPull) (int64, []string, error) {
 	return r.pg.FieldList(req.Keyword, req.Sig, postgresql.Ref, req.Page, req.PerPage)
 }
+
+func (r repoPull) PullListPg(req api.RequestPull) ([]postgresql.Pull, int64, error) {
+	return r.pg.PullListForPG(req)
+}

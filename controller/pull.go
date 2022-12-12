@@ -60,8 +60,23 @@ func (b BasePull) PRList(c *gin.Context) {
 	}
 
 	req.SetDefault()
+	switch req.Pg {
+	case "1":
+		b.pullListPg(c, req)
+		return
+	}
 
 	list, total, err := b.p.PullList(req, nil)
+	if err != nil {
+		utils.Failure(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, b.base.Response(list, req.Page, req.PerPage, int(total)))
+}
+
+func (b BasePull) pullListPg(c *gin.Context, req api.RequestPull) {
+	list, total, err := b.p.PullListPg(req)
 	if err != nil {
 		utils.Failure(c, err)
 		return
