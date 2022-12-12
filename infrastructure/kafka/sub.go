@@ -19,6 +19,7 @@ type subscriber struct {
 	ready chan struct{}
 	stop  chan struct{}
 	done  chan struct{}
+	c     context.CancelFunc
 }
 
 type SubscribeOptions struct {
@@ -65,7 +66,7 @@ func (s *subscriber) Unsubscribe() error {
 	var mErr []error
 
 	s.once.Do(func() {
-		close(s.stop)
+		s.c()
 
 		// wait
 		<-s.done
@@ -82,35 +83,24 @@ func (s *subscriber) start() {
 	ctx := s.gc.subOpts.Context
 	topic := []string{s.t}
 
+	c, cancel := context.WithCancel(ctx)
 	go func() {
 		defer close(s.done)
-
-		for {
-			select {
-			case err := <-s.cg.Errors():
-				if err != nil {
-					log.Errorf("consumer error: %v", err)
-				}
-
-			case <-s.stop:
-				log.Errorf("consumer stopped")
-				return
-
-			default:
-				err := s.cg.Consume(ctx, topic, &s.gc)
-				switch err {
-				case nil:
-					continue
-				case sarama.ErrClosedConsumerGroup:
-					return
-				default:
-					log.Error(err)
-				}
-			}
+		if err := s.cg.Consume(c, topic, &s.gc); err != nil {
+			close(s.stop)
 		}
 	}()
 
-	<-s.ready
+	select {
+	case <-s.ready:
+		s.c = cancel
+		return
+
+	case <-s.stop:
+		cancel()
+		log.Errorf("consumer stopped")
+		return
+	}
 }
 
 func (s *subscriber) notifyReady() {
