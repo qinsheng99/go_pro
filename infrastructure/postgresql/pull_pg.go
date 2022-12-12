@@ -138,7 +138,7 @@ func (p *Pull) FieldSliceList(keyword, field string, page, size int) (total int6
 }
 
 func (p *Pull) PullListForPG(req api.RequestPull) (data []Pull, total int64, err error) {
-	query := GetPostgresql().Model(p)
+	query := GetPostgresql().Model(p).Where("sig != 'Private'")
 	if len(req.Label) > 0 {
 		for _, s := range strings.Split(strings.ReplaceAll(req.Label, "，", ","), ",") {
 			query.Where("? = ANY(labels)", s)
@@ -179,12 +179,7 @@ func (p *Pull) PullListForPG(req api.RequestPull) (data []Pull, total int64, err
 	}
 
 	if len(req.Search) > 0 {
-		query.Where(
-			GetPostgresql().
-				Where("repo like ?", "%"+req.Search+"%").
-				Or("title like ?", "%"+req.Search+"%").
-				Or("sig like ?", "%"+req.Search+"%"),
-		)
+		query.Where("concat (repo, title, sig) like ?", "%"+req.Search+"%")
 	}
 
 	err = query.Count(&total).Error

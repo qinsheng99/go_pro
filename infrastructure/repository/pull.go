@@ -91,7 +91,7 @@ func (r repoPull) PullList(req api.RequestPull, ctx context.Context) ([]elastics
 	if len(req.Label) > 0 {
 		l := elastic.NewBoolQuery()
 		for _, s := range strings.Split(strings.ReplaceAll(req.Label, "，", ","), ",") {
-			l.Should(elastic.NewMatchPhraseQuery("labels", s))
+			l.Must(elastic.NewMatchPhraseQuery("labels", s))
 		}
 		q.Must(l)
 	}
@@ -130,7 +130,7 @@ func (r repoPull) PullList(req api.RequestPull, ctx context.Context) ([]elastics
 	if len(req.Exclusion) > 0 {
 		e := elastic.NewBoolQuery()
 		for _, s := range strings.Split(strings.ReplaceAll(req.Exclusion, "，", ","), ",") {
-			e.Should(elastic.NewMatchPhraseQuery("labels", s))
+			e.Must(elastic.NewMatchPhraseQuery("labels", s))
 		}
 		q.MustNot(e)
 	}
