@@ -15,6 +15,7 @@ const (
 const (
 	RefreshPr    = "pr"
 	RefreshIssue = "issue"
+	RefreshRepo  = "repo"
 
 	PullsAuthors   = "authors"
 	PullsAssignees = "assignees"

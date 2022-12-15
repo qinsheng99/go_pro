@@ -50,4 +50,6 @@ func SetRoute(r *gin.Engine) {
 	controller.AddRouteRedis(group, app.NewRedisService(redis.NewredisImpl(redis.GetRedis())))
 
 	controller.AddRoutePull(group, repository.NewRepoPull(pull, utils.NewRequest(nil), postgresql.NewPullMapper()))
+
+	controller.AddRouteRepo(group, repository.NewRepoR(mysql.NewRepoMapper()))
 }

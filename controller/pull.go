@@ -39,6 +39,7 @@ func (b BasePull) Refresh(c *gin.Context) {
 	case _const.RefreshPr:
 		err = b.p.Refresh(nil)
 	case _const.RefreshIssue:
+	case _const.RefreshRepo:
 
 	default:
 		utils.Failure(c, fmt.Errorf("unkonwn refresh type: %s", c.Param("type")))
