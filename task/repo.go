@@ -1,22 +1,24 @@
-package main
+package task
 
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/qinsheng99/go-domain-web/infrastructure/mysql"
-	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/qinsheng99/go-domain-web/infrastructure/mysql"
+	"github.com/sirupsen/logrus"
 )
 
 type Repo struct {
 	Id       int64  `json:"id"`
 	FullName string `json:"full_name"`
+	Path     string `json:"path"`
 }
 
-func repo() {
+func RepoTask() {
 	page := 1
 	for {
 		url := fmt.Sprintf("https://gitee.com/api/v5/user/repos?"+
@@ -44,12 +46,13 @@ func repo() {
 
 		for _, re := range res {
 			var r = mysql.Repo{
-				RepoId:     re.Id,
-				Repo:       re.FullName,
-				CreateTime: time.Now(),
-				UpdateTime: time.Now(),
+				RepoId:       re.Id,
+				RepoName:     re.Path,
+				FullRepoName: re.FullName,
+				CreateTime:   time.Now(),
+				UpdateTime:   time.Now(),
 			}
-			if !strings.Contains(r.Repo, "qinsheng") {
+			if !strings.Contains(r.FullRepoName, "qinsheng") {
 				continue
 			}
 

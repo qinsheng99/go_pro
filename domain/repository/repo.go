@@ -6,6 +6,6 @@ import (
 )
 
 type RepoImpl interface {
-	RepoNames(p api.Pages) ([]string, error)
+	RepoNames(p api.Pages, name string) ([]string, error)
 	FindRepo(string) (*mysql.Repo, error)
 }

@@ -1,13 +1,14 @@
 package controller
 
 import (
+	"net/http"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/qinsheng99/go-domain-web/api"
 	"github.com/qinsheng99/go-domain-web/app"
 	"github.com/qinsheng99/go-domain-web/domain/repository"
 	"github.com/qinsheng99/go-domain-web/utils"
-	"net/http"
-	"strconv"
 )
 
 type BaseRepo struct {
@@ -33,7 +34,7 @@ func (b BaseRepo) RepoNames(c *gin.Context) {
 		Size: size,
 	}
 
-	repo, err := b.r.RepoNames(p)
+	repo, err := b.r.RepoNames(p, c.DefaultQuery("name", ""))
 	if err != nil {
 		utils.Failure(c, err)
 		return

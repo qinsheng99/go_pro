@@ -12,3 +12,13 @@ type IssueType struct {
 func (i *IssueType) TableName() string {
 	return "issue_type"
 }
+
+func (i *IssueType) List() (data []IssueType, err error) {
+	err = Getmysqldb().Find(&data).Error
+	return
+}
+
+func (i *IssueType) Find() (err error) {
+	err = Getmysqldb().Where("unique_id = ?", i.UniqueId).First(i).Error
+	return
+}

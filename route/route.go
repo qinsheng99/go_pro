@@ -39,6 +39,9 @@ func SetRoute(r *gin.Engine) {
 		),
 	)
 
+	group.GET("/send/:email", controller.Base.SendEmail)
+	group.GET("/verify/:email/:code", controller.Base.VerifyCode)
+
 	pull := elasticsearch.NewPullMapper(config.Conf.EsConfig.Indexs.PullIndex)
 
 	controller.AddRoutePod(group, kubernetes.NewPodImpl(config.Conf.KubernetesConfig))
@@ -52,4 +55,6 @@ func SetRoute(r *gin.Engine) {
 	controller.AddRoutePull(group, repository.NewRepoPull(pull, utils.NewRequest(nil), postgresql.NewPullMapper()))
 
 	controller.AddRouteRepo(group, repository.NewRepoR(mysql.NewRepoMapper()))
+
+	controller.AddRouteIssueType(group)
 }

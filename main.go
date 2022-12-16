@@ -69,7 +69,7 @@ func main() {
 	//	logrus.WithError(err).Fatal("etcd init failed")
 	//}
 
-	repo()
+	//task.RepoTask()
 	route.SetRoute(r)
 
 	lis := kubernetes.NewListen(kubernetes.GetClient(), kubernetes.GetDyna(), kubernetes.GetResource(), *listen)

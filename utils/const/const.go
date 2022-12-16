@@ -10,6 +10,8 @@ const (
 
 	Asc  = "asc"
 	Desc = "desc"
+
+	Code = "0123456789"
 )
 
 const (

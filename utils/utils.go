@@ -1,12 +1,15 @@
 package utils
 
 import (
+	"bytes"
 	"errors"
 	"strings"
+	"time"
 
 	"github.com/qinsheng99/go-domain-web/api"
 	_const "github.com/qinsheng99/go-domain-web/utils/const"
 	"gorm.io/gorm"
+	"k8s.io/apimachinery/pkg/util/rand"
 )
 
 func ErrorNotFound(err error) bool {
@@ -59,4 +62,15 @@ func FilterRepeat(strs []string, str string) (repeat []string) {
 		}
 	}
 	return
+}
+
+func GenerateCode(length int) string {
+	rand.Seed(time.Now().Unix())
+	l := len(_const.Code)
+	var bys = new(bytes.Buffer)
+	for i := 0; i < length; i++ {
+		bys.Write([]byte{_const.Code[rand.Intn(l)]})
+	}
+
+	return bys.String()
 }

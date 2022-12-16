@@ -1,16 +1,18 @@
 package mysql
 
 import (
-	"github.com/qinsheng99/go-domain-web/api"
 	"time"
+
+	"github.com/qinsheng99/go-domain-web/api"
 )
 
 type Repo struct {
-	Id         int64     `gorm:"column:id" json:"id"`
-	RepoId     int64     `gorm:"column:repo_id" json:"repoId"`
-	Repo       string    `gorm:"column:repo" json:"repo"`
-	CreateTime time.Time `gorm:"column:create_time" json:"createTime"`
-	UpdateTime time.Time `gorm:"column:update_time" json:"updateTime"`
+	Id           int64     `gorm:"column:id" json:"id"`
+	RepoId       int64     `gorm:"column:repo_id" json:"repoId"`
+	FullRepoName string    `gorm:"column:full_repo_name" json:"fullRepoName"`
+	RepoName     string    `gorm:"column:repo_name" json:"repoName"`
+	CreateTime   time.Time `gorm:"column:create_time" json:"createTime"`
+	UpdateTime   time.Time `gorm:"column:update_time" json:"updateTime"`
 }
 
 func (r *Repo) TableName() string {
@@ -18,7 +20,7 @@ func (r *Repo) TableName() string {
 }
 
 type RepoMapper interface {
-	RepoNames(api.Pages) (data []string, err error)
+	RepoNames(api.Pages, string) (data []string, err error)
 	FindRepo(string) (data *Repo, err error)
 }
 
@@ -45,18 +47,22 @@ func (r *Repo) Update() (err error) {
 	return
 }
 
-func (r *Repo) RepoNames(p api.Pages) (data []string, err error) {
+func (r *Repo) RepoNames(p api.Pages, name string) (data []string, err error) {
 	p.SetDefault()
-	err = Getmysqldb().Model(r).
-		Order("repo asc").Limit(p.Size).
+	q := Getmysqldb().Model(r)
+	if len(name) > 0 {
+		q.Where("full_repo_name like ?", "%"+name+"%")
+	}
+	err = q.
+		Order("full_repo_name asc").Limit(p.Size).
 		Offset((p.Page-1)*p.Size).
-		Pluck("repo", &data).Error
+		Pluck("full_repo_name", &data).Error
 	return
 }
 
 func (r *Repo) FindRepo(name string) (repo *Repo, err error) {
 	repo = new(Repo)
 	err = Getmysqldb().Model(r).
-		Where("repo = ?", name).First(repo).Error
+		Where("full_repo_name = ?", name).First(repo).Error
 	return
 }

@@ -34,9 +34,9 @@ func successReturn(data interface{}, options ...RespOption) map[string]interface
 func handleBadReturn(err error) map[string]interface{} {
 	var info = make(map[string]interface{})
 	info["code"] = 1
-	info["msg"] = ""
+	info["msg"] = err.Error()
 	info["success"] = false
-	info["result"] = err.Error()
+	info["result"] = ""
 	return info
 }
 
