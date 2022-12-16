@@ -41,6 +41,7 @@ func SetRoute(r *gin.Engine) {
 
 	group.GET("/send/:email", controller.Base.SendEmail)
 	group.GET("/verify/:email/:code", controller.Base.VerifyCode)
+	group.POST("/create-issue", controller.Base.CreateIssue)
 
 	pull := elasticsearch.NewPullMapper(config.Conf.EsConfig.Indexs.PullIndex)
 

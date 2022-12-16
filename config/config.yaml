@@ -1,4 +1,4 @@
-port: 30000
+port: 8000
 
 log:
   level: INFO
