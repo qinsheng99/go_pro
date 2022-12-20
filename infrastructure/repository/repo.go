@@ -14,7 +14,7 @@ func NewRepoR(r mysql.RepoMapper) repository.RepoImpl {
 	return repoRepo{r: r}
 }
 
-func (r repoRepo) RepoNames(p api.Pages, name string) ([]string, error) {
+func (r repoRepo) RepoNames(p api.Pages, name string) ([]mysql.Repo, error) {
 	return r.r.RepoNames(p, name)
 }
 

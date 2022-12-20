@@ -20,7 +20,7 @@ func (r *Repo) TableName() string {
 }
 
 type RepoMapper interface {
-	RepoNames(api.Pages, string) (data []string, err error)
+	RepoNames(api.Pages, string) (data []Repo, err error)
 	FindRepo(string) (data *Repo, err error)
 }
 
@@ -47,7 +47,7 @@ func (r *Repo) Update() (err error) {
 	return
 }
 
-func (r *Repo) RepoNames(p api.Pages, name string) (data []string, err error) {
+func (r *Repo) RepoNames(p api.Pages, name string) (data []Repo, err error) {
 	p.SetDefault()
 	q := Getmysqldb().Model(r)
 	if len(name) > 0 {
@@ -55,8 +55,8 @@ func (r *Repo) RepoNames(p api.Pages, name string) (data []string, err error) {
 	}
 	err = q.
 		Order("full_repo_name asc").Limit(p.Size).
-		Offset((p.Page-1)*p.Size).
-		Pluck("full_repo_name", &data).Error
+		Offset((p.Page - 1) * p.Size).
+		Find(&data).Error
 	return
 }
 
