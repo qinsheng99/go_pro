@@ -36,7 +36,7 @@ var emailReg = regexp.MustCompile("\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\
 
 func (base) SendEmail(c *gin.Context) {
 	if !emailReg.MatchString(c.Param("email")) {
-		utils.Failure(c, fmt.Errorf("email:[%s] is err", c.Param("email")))
+		utils.Failure(c, fmt.Errorf("incorrect email format,email:%s", c.Param("email")))
 		return
 	}
 
