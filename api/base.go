@@ -34,7 +34,7 @@ type IssueOptions struct {
 }
 
 type CreateIssueReq struct {
-	Repo  string `json:"repo"`
+	Id    int64  `json:"id"`
 	Title string `json:"title"`
 	Body  string `json:"body"`
 	Email string `json:"email"`

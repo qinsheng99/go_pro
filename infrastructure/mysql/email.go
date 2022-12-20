@@ -17,7 +17,7 @@ func (e *Email) TableName() string {
 }
 
 func (e *Email) Check() bool {
-	err := Getmysqldb().Where("email = ? and code = ? and is_delete = ?", e.Email, e.Code, e.IsDelete).First(e).Error
+	err := Getmysqldb().Where("email = ? and code = ? and is_delete = 0", e.Email, e.Code).First(e).Error
 	if err != nil {
 		return false
 	}
@@ -26,9 +26,23 @@ func (e *Email) Check() bool {
 }
 
 func (e *Email) DeleteCode() {
-	Getmysqldb().Where("id = ?", e.Id).Update("is_delete", 1)
+	Getmysqldb().Model(e).Where("id = ?", e.Id).Update("is_delete", 1)
 }
 
 func (e *Email) Insert() error {
 	return Getmysqldb().Create(e).Error
+}
+
+func (e *Email) Update() error {
+	return Getmysqldb().Model(e).Where("id = ?", e.Id).UpdateColumns(map[string]interface {
+	}{"code": e.Code, "create_time": e.CreateTime, "is_delete": 0}).Error
+}
+
+func (e *Email) Exist() bool {
+	err := Getmysqldb().Where("email = ?", e.Email).First(e).Error
+	if err != nil {
+		return false
+	}
+
+	return true
 }

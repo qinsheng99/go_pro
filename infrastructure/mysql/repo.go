@@ -42,6 +42,11 @@ func (r *Repo) Exist() bool {
 	return true
 }
 
+func (r *Repo) FindRepoName() string {
+	Getmysqldb().Model(r).Where(r).First(r)
+	return r.RepoName
+}
+
 func (r *Repo) Update() (err error) {
 	err = Getmysqldb().Omit("create_time").Model(r).Updates(r).Error
 	return
