@@ -2,7 +2,6 @@ package controller
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/qinsheng99/go-domain-web/infrastructure/mysql"
@@ -35,14 +34,12 @@ func (BaseIssueType) List(c *gin.Context) {
 }
 
 func (BaseIssueType) One(c *gin.Context) {
-	var i mysql.IssueType
-	id, _ := strconv.Atoi(c.Query("unique"))
-	i.UniqueId = int64(id)
-	err := i.Find()
+	var i = mysql.IssueType{Name: c.Query("name")}
+	res, err := i.Find()
 	if err != nil {
 		utils.Failure(c, err)
 		return
 	}
 
-	utils.Success(c, http.StatusOK, i)
+	utils.Success(c, http.StatusOK, res)
 }

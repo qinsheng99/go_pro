@@ -18,7 +18,7 @@ func (i *IssueType) List() (data []IssueType, err error) {
 	return
 }
 
-func (i *IssueType) Find() (res []IssueType, err error) {
+func (i *IssueType) Find() (res []IssueType,err error) {
 	err = Getmysqldb().Where("name = ?", i.Name).Find(&res).Error
 	return
 }

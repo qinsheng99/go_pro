@@ -22,7 +22,7 @@ func QueryFailure(c *gin.Context) {
 
 func successReturn(data interface{}, options ...RespOption) map[string]interface{} {
 	var info = make(map[string]interface{})
-	info["code"] = 0
+	info["code"] = 200
 	info["msg"] = ""
 	info["success"] = true
 	info["result"] = data
