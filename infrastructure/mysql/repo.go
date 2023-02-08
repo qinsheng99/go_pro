@@ -15,6 +15,21 @@ type Repo struct {
 	UpdateTime   time.Time `gorm:"column:update_time" json:"updateTime"`
 }
 
+type RepoName struct {
+	Id     int64  `gorm:"column:id" json:"id"`
+	RepoId int64  `gorm:"column:repo_id" json:"repoId"`
+	Name   string `gorm:"column:name" json:"name"`
+}
+
+func (r *RepoName) TableName() string {
+	return "repo_name"
+}
+
+type RepoWith struct {
+	Repo
+	RepoNames []RepoName `json:"repo_names" gorm:"ForeignKey:repo_id;references:id"` //ForeignKey 连接表外键  references 对应主表的键
+}
+
 func (r *Repo) TableName() string {
 	return "repo"
 }
@@ -22,6 +37,7 @@ func (r *Repo) TableName() string {
 type RepoMapper interface {
 	RepoNames(api.Pages, string) (data []Repo, err error)
 	FindRepo(string) (data *Repo, err error)
+	FindRepoWith(id int) (repo RepoWith, err error)
 }
 
 func NewRepoMapper() RepoMapper {
@@ -30,6 +46,7 @@ func NewRepoMapper() RepoMapper {
 
 func (r *Repo) Insert() (err error) {
 	err = Getmysqldb().Model(r).Create(r).Error
+
 	return
 }
 
@@ -44,11 +61,13 @@ func (r *Repo) Exist() bool {
 
 func (r *Repo) FindRepoName() string {
 	Getmysqldb().Model(r).Where(r).First(r)
+
 	return r.RepoName
 }
 
 func (r *Repo) Update() (err error) {
 	err = Getmysqldb().Omit("create_time").Model(r).Updates(r).Error
+
 	return
 }
 
@@ -62,6 +81,7 @@ func (r *Repo) RepoNames(p api.Pages, name string) (data []Repo, err error) {
 		Order("full_repo_name asc").Limit(p.Size).
 		Offset((p.Page - 1) * p.Size).
 		Find(&data).Error
+
 	return
 }
 
@@ -69,5 +89,12 @@ func (r *Repo) FindRepo(name string) (repo *Repo, err error) {
 	repo = new(Repo)
 	err = Getmysqldb().Model(r).
 		Where("full_repo_name = ?", name).First(repo).Error
+
+	return
+}
+
+func (r *Repo) FindRepoWith(id int) (repo RepoWith, err error) {
+	err = Getmysqldb().Model(r).Where("id = ?", id).Preload("RepoNames").First(&repo).Error
+
 	return
 }

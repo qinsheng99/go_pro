@@ -21,3 +21,7 @@ func (r repoRepo) RepoNames(p api.Pages, name string) ([]mysql.Repo, error) {
 func (r repoRepo) FindRepo(name string) (*mysql.Repo, error) {
 	return r.r.FindRepo(name)
 }
+
+func (r repoRepo) FindRepoWith(id int) (mysql.RepoWith, error) {
+	return r.r.FindRepoWith(id)
+}

@@ -13,6 +13,7 @@ type repoService struct {
 type RepoServiceImpl interface {
 	RepoNames(p api.Pages, name string) ([]mysql.Repo, error)
 	FindRepo(string) (*mysql.Repo, error)
+	FindRepoWith(id int) (mysql.RepoWith, error)
 }
 
 func NewRepoService(p repository.RepoImpl) RepoServiceImpl {
@@ -27,4 +28,8 @@ func (r repoService) RepoNames(p api.Pages, name string) ([]mysql.Repo, error) {
 
 func (r repoService) FindRepo(name string) (*mysql.Repo, error) {
 	return r.p.FindRepo(name)
+}
+
+func (r repoService) FindRepoWith(id int) (mysql.RepoWith, error) {
+	return r.p.FindRepoWith(id)
 }
