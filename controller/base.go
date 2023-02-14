@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+
 	"github.com/qinsheng99/go-domain-web/api"
 	"github.com/qinsheng99/go-domain-web/infrastructure/mysql"
 	"github.com/qinsheng99/go-domain-web/utils"
@@ -30,6 +31,11 @@ func (base) Response(data interface{}, page, size, total int) base {
 		Page:    page,
 		PerPage: size,
 	}
+}
+
+type Pages struct {
+	Page int `json:"page"`
+	Size int `json:"size"`
 }
 
 var emailReg = regexp.MustCompile("\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*")

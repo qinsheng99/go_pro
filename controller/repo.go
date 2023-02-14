@@ -6,8 +6,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/qinsheng99/go-domain-web/api"
 	"github.com/qinsheng99/go-domain-web/app"
+	"github.com/qinsheng99/go-domain-web/domain/dp"
 	"github.com/qinsheng99/go-domain-web/domain/repository"
 	"github.com/qinsheng99/go-domain-web/utils"
 )
@@ -31,12 +31,8 @@ func AddRouteRepo(r *gin.RouterGroup, repo repository.RepoImpl) {
 func (b BaseRepo) RepoNames(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	size, _ := strconv.Atoi(c.DefaultQuery("size", "10"))
-	var p = api.Pages{
-		Page: page,
-		Size: size,
-	}
 
-	repo, err := b.r.RepoNames(p, c.DefaultQuery("name", ""))
+	repo, err := b.r.RepoNames(dp.NewPage(page), dp.NewSize(size), c.DefaultQuery("name", ""))
 	if err != nil {
 		utils.Failure(c, err)
 		return

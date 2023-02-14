@@ -3,7 +3,7 @@ package mysql
 import (
 	"time"
 
-	"github.com/qinsheng99/go-domain-web/api"
+	"github.com/qinsheng99/go-domain-web/domain/dp"
 )
 
 type Repo struct {
@@ -35,7 +35,7 @@ func (r *Repo) TableName() string {
 }
 
 type RepoMapper interface {
-	RepoNames(api.Pages, string) (data []Repo, err error)
+	RepoNames(dp.Page, dp.Size, string) (data []Repo, err error)
 	FindRepo(string) (data *Repo, err error)
 	FindRepoWith(id int) (repo RepoWith, err error)
 }
@@ -71,15 +71,14 @@ func (r *Repo) Update() (err error) {
 	return
 }
 
-func (r *Repo) RepoNames(p api.Pages, name string) (data []Repo, err error) {
-	p.SetDefault()
+func (r *Repo) RepoNames(p dp.Page, s dp.Size, name string) (data []Repo, err error) {
 	q := Getmysqldb().Model(r)
 	if len(name) > 0 {
 		q.Where("full_repo_name like ?", "%"+name+"%")
 	}
 	err = q.
-		Order("full_repo_name asc").Limit(p.Size).
-		Offset((p.Page - 1) * p.Size).
+		Order("full_repo_name asc").Limit(s.Size()).
+		Offset((p.Page() - 1) * s.Size()).
 		Find(&data).Error
 
 	return

@@ -7,10 +7,11 @@ import (
 	"os"
 	"time"
 
-	"github.com/qinsheng99/go-domain-web/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+
+	"github.com/qinsheng99/go-domain-web/config"
 )
 
 const CONNMAXLIFTIME = 900

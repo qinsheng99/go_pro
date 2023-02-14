@@ -1,12 +1,5 @@
 package api
 
-type RequestOsv struct {
-	KeyWord string `json:"keyword"`
-	OsvName string `json:"osvName"`
-	Type    string `json:"type"`
-	Pages   Pages  `json:"pages"`
-}
-
 type Osv struct {
 	Arch                 string   `json:"arch"`
 	OsvName              string   `json:"osv_name"`

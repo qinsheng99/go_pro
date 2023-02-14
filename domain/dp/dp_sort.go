@@ -1,0 +1,21 @@
+package dp
+
+import "errors"
+
+type sortFields []int
+
+type SortField interface {
+	SortField() []int
+}
+
+func (s sortFields) SortField() []int {
+	return s
+}
+
+func NewSortField(arr []int) (SortField, error) {
+	if len(arr) == 0 {
+		return nil, errors.New("sort field is empty")
+	}
+
+	return sortFields(arr), nil
+}

@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"time"
 
+	"gorm.io/gorm"
+
 	"github.com/qinsheng99/go-domain-web/api"
+	"github.com/qinsheng99/go-domain-web/domain"
 	"github.com/qinsheng99/go-domain-web/logger"
 	"github.com/qinsheng99/go-domain-web/utils"
-	"gorm.io/gorm"
 )
 
 type OeCompatibilityOsv struct {
@@ -34,7 +36,7 @@ func (o *OeCompatibilityOsv) TableName() string {
 
 type OsvMapper interface {
 	SyncOsv([]api.Osv) error
-	OSVFindAll(req api.RequestOsv) (datas []OeCompatibilityOsv, total int64, err error)
+	OSVFindAll(req domain.OsvDP) (datas []OeCompatibilityOsv, total int64, err error)
 }
 
 func NewOsvMapper() OsvMapper {
@@ -61,24 +63,23 @@ func (o *OeCompatibilityOsv) UpdateOsv(data *OeCompatibilityOsv, tx *gorm.DB) er
 	return tx.Where("os_version = ?", data.OsVersion).Updates(data).Error
 }
 
-func (o *OeCompatibilityOsv) OSVFindAll(req api.RequestOsv) (datas []OeCompatibilityOsv, total int64, err error) {
+func (o *OeCompatibilityOsv) OSVFindAll(req domain.OsvDP) (datas []OeCompatibilityOsv, total int64, err error) {
 	q := mysqlDb
-	page, size := utils.GetPage(req.Pages)
 	query := q.Model(o)
-	if req.KeyWord != "" {
-		query = query.Where(
-			q.Where("osv_name like ?", "%"+req.KeyWord+"%").
-				Or("os_version like ?", "%"+req.KeyWord+"%").
-				Or("type like ?", "%"+req.KeyWord+"%"),
-		)
-	}
-	if req.OsvName != "" {
-		query.Where("osv_name like ?", req.OsvName)
-	}
-
-	if req.Type != "" {
-		query = query.Where("type = ?", req.Type)
-	}
+	//if req.KeyWord != "" {
+	//	query = query.Where(
+	//		q.Where("osv_name like ?", "%"+req.KeyWord+"%").
+	//			Or("os_version like ?", "%"+req.KeyWord+"%").
+	//			Or("type like ?", "%"+req.KeyWord+"%"),
+	//	)
+	//}
+	//if req.OsvName != "" {
+	//	query.Where("osv_name like ?", req.OsvName)
+	//}
+	//
+	//if req.Type != "" {
+	//	query = query.Where("type = ?", req.Type)
+	//}
 
 	if err = query.Count(&total).Error; err != nil {
 		logger.Log.Error(err)
@@ -89,7 +90,7 @@ func (o *OeCompatibilityOsv) OSVFindAll(req api.RequestOsv) (datas []OeCompatibi
 		return
 	}
 
-	query = query.Order("id desc").Limit(size).Offset((page - 1) * size)
+	query = query.Order("id desc").Limit(req.Size.Size()).Offset((req.Page.Page() - 1) * req.Size.Size())
 	if err = query.Find(&datas).Error; err != nil {
 		logger.Log.Error(err)
 		return

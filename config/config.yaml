@@ -9,7 +9,7 @@ mysql:
   db_port: 3306
   db_user: "root"
   db_pwd: "12345678"
-  db_name: "cve"
+  db_name: "cves_go"
   db_max_conn: 20
   db_maxidle: 100
 

@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"github.com/qinsheng99/go-domain-web/api"
+
 	"github.com/qinsheng99/go-domain-web/app"
 	"github.com/qinsheng99/go-domain-web/utils"
 )
@@ -26,23 +26,31 @@ func AddRouteSort(r *gin.RouterGroup, s app.SortServiceImpl) {
 }
 
 func (b *BaseSort) SelectSort(c *gin.Context) {
-	var req api.Sort
+	var req Sort
 	if err := c.ShouldBindBodyWith(&req, binding.JSON); err != nil {
 		utils.QueryFailure(c)
 		return
 	}
+
+	s, err := req.tocmd()
+	if err != nil {
+		utils.Failure(c, err)
+		return
+	}
+
 	switch c.Param("type") {
 	case "select":
-		b.s.Select(req.Data)
+		b.s.Select(s)
 	case "bubbling":
-		b.s.Bubbling(req.Data)
+		b.s.Bubbling(s)
 	case "insert":
-		b.s.Insert(req.Data)
+		b.s.Insert(s)
 	case "quick":
-		b.s.Quick(req.Data)
+		b.s.Quick(s)
 	default:
 		utils.Failure(c, fmt.Errorf("unknown typ %s", c.Param("type")))
 		return
 	}
-	utils.Success(c, http.StatusOK, req.Data)
+
+	utils.Success(c, http.StatusOK, s.Fields.SortField())
 }

@@ -21,30 +21,30 @@ func NewOsvService(osv repository.RepoOsvImpl) OsvServiceImpl {
 
 type OsvServiceImpl interface {
 	SyncOsv() (string, error)
-	Find() (*domain.ResultOsv, error)
+	Find(domain.OsvDP) (*ResultOsv, error)
 }
 
 func (o *osvService) SyncOsv() (string, error) {
 	return o.osv.SyncOsv()
 }
 
-func (o *osvService) Find() (_ *domain.ResultOsv, _ error) {
-	list, total, err := o.osv.Find()
+func (o *osvService) Find(osv domain.OsvDP) (_ *ResultOsv, _ error) {
+	list, total, err := o.osv.Find(osv)
 	if err != nil {
 		return nil, err
 	}
-	data := make([]domain.ROeCompatibilityOsv, 0, len(list))
+	data := make([]ROeCompatibilityOsv, 0, len(list))
 	for _, v := range list {
 		var t []api.Record
 		_ = json.Unmarshal([]byte(v.ToolsResult), &t)
 		var p []api.Record
 		_ = json.Unmarshal([]byte(v.PlatformResult), &p)
-		data = append(data, domain.ROeCompatibilityOsv{
+		data = append(data, ROeCompatibilityOsv{
 			OeCompatibilityOsv: v,
 			ToolsResult:        t,
 			PlatformResult:     p,
 			Updateime:          v.Updateime.Format(_const.Format),
 		})
 	}
-	return &domain.ResultOsv{OsvList: data, Total: int64(total)}, nil
+	return &ResultOsv{OsvList: data, Total: int64(total)}, nil
 }
