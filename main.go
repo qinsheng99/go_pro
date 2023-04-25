@@ -6,9 +6,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 
+	"github.com/qinsheng99/go-domain-web/common/infrastructure/mysql"
+	"github.com/qinsheng99/go-domain-web/common/infrastructure/postgresql"
 	"github.com/qinsheng99/go-domain-web/config"
-	"github.com/qinsheng99/go-domain-web/infrastructure/mysql"
-	"github.com/qinsheng99/go-domain-web/infrastructure/postgresql"
 	"github.com/qinsheng99/go-domain-web/logger"
 	"github.com/qinsheng99/go-domain-web/route"
 	"github.com/qinsheng99/go-domain-web/utils/server"
@@ -70,7 +70,7 @@ func main() {
 	//}
 
 	//task.RepoTask()
-	route.SetRoute(r)
+	route.SetRoute(r, config.Conf)
 
 	//lis := kubernetes.NewListen(kubernetes.GetClient(), kubernetes.GetDyna(), kubernetes.GetResource(), *listen)
 	//go lis.ListenResource()

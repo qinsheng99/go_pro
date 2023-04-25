@@ -1,9 +1,10 @@
-package elasticsearch
+package elastic
 
 import (
 	"fmt"
 
 	"github.com/olivere/elastic/v7"
+
 	"github.com/qinsheng99/go-domain-web/config"
 )
 
@@ -40,8 +41,4 @@ func Init(cfg *config.EsConfig) (err error) {
 	}
 
 	return nil
-}
-
-func GetElasticsearch() *elastic.Client {
-	return es
 }

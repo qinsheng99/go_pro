@@ -16,7 +16,7 @@ import (
 
 const CONNMAXLIFTIME = 900
 
-var postgresqlDb *gorm.DB
+var db *gorm.DB
 
 func Init(cfg *config.PostgresqlConfig) (err error) {
 	var sqlDB *sql.DB
@@ -27,14 +27,14 @@ func Init(cfg *config.PostgresqlConfig) (err error) {
 		IgnoreRecordNotFoundError: true,
 		Colorful:                  true,
 	})
-	postgresqlDb, err = gorm.Open(postgres.New(postgres.Config{
+	db, err = gorm.Open(postgres.New(postgres.Config{
 		DSN:                  dsn,
 		PreferSimpleProtocol: true, // disables implicit prepared statement usage
 	}), &gorm.Config{Logger: l})
 	if err != nil {
 		return err
 	}
-	sqlDB, err = postgresqlDb.DB()
+	sqlDB, err = db.DB()
 	if err != nil {
 		return err
 	}
@@ -42,8 +42,4 @@ func Init(cfg *config.PostgresqlConfig) (err error) {
 	sqlDB.SetMaxOpenConns(cfg.DbMaxConn)
 	sqlDB.SetMaxIdleConns(cfg.DbMaxidle)
 	return nil
-}
-
-func GetPostgresql() *gorm.DB {
-	return postgresqlDb
 }

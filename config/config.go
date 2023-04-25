@@ -4,8 +4,9 @@ import (
 	"flag"
 	"os"
 
-	"github.com/qinsheng99/go-domain-web/utils/validate"
 	"sigs.k8s.io/yaml"
+
+	"github.com/qinsheng99/go-domain-web/utils/validate"
 )
 
 // Config 整个项目的配置
@@ -40,6 +41,9 @@ type MysqlConfig struct {
 	DbName    string `json:"db_name"`
 	DbMaxConn int    `json:"db_max_conn"`
 	DbMaxidle int    `json:"db_maxidle"`
+	Table     struct {
+		OeCompatibilityOsv string `json:"oe_compatibility_osv"`
+	} `json:"table"`
 }
 
 type PostgresqlConfig struct {

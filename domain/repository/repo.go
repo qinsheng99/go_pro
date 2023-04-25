@@ -1,12 +1,12 @@
 package repository
 
 import (
+	"github.com/qinsheng99/go-domain-web/domain"
 	"github.com/qinsheng99/go-domain-web/domain/dp"
-	"github.com/qinsheng99/go-domain-web/infrastructure/mysql"
 )
 
 type RepoImpl interface {
-	RepoNames(p dp.Page, s dp.Size, name string) ([]mysql.Repo, error)
-	FindRepo(string) (*mysql.Repo, error)
-	FindRepoWith(id int) (mysql.RepoWith, error)
+	RepoNames(p dp.Page, s dp.Size, name string) ([]domain.Repo, error)
+	FindRepo(string) (*domain.Repo, error)
+	FindRepoWith(id int) (domain.RepoWith, error)
 }

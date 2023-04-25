@@ -12,6 +12,8 @@ mysql:
   db_name: "cves_go"
   db_max_conn: 20
   db_maxidle: 100
+  table:
+    oe_compatibility_osv: oe_compatibility_osv
 
 es:
   host: "http://localhost"

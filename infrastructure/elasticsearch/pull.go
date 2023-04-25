@@ -1,106 +1,130 @@
 package elasticsearch
 
 import (
+	"context"
 	"encoding/json"
-	"strconv"
+	"strings"
 
 	"github.com/olivere/elastic/v7"
-	"github.com/qinsheng99/go-domain-web/infrastructure/postgresql"
-	"golang.org/x/net/context"
+
+	"github.com/qinsheng99/go-domain-web/api"
+	elasticlocal "github.com/qinsheng99/go-domain-web/common/infrastructure/elastic"
+	"github.com/qinsheng99/go-domain-web/domain"
+	elastic2 "github.com/qinsheng99/go-domain-web/domain/elastic"
+	"github.com/qinsheng99/go-domain-web/utils"
+	"github.com/qinsheng99/go-domain-web/utils/gitee"
 )
 
-type Pull struct {
-	postgresql.Pull
+type repoPull struct {
+	cli esDao
+	req utils.ReqImpl
 }
 
-type PullMapperImpl interface {
-	InsertMany(pull []*Pull, ctx context.Context) (err error)
-	InsertOne(pull *Pull, ctx context.Context) (err error)
-	PullList(elastic.Query, *Query, context.Context) ([]Pull, int64, error)
-	UpdateColumn(interface{}, context.Context, string) error
-	Update(*Pull, context.Context, string) error
-	Exist(string, context.Context) bool
+func NewRepoPull(cli esDao, req utils.ReqImpl) elastic2.RepoPullImpl {
+	return repoPull{cli: cli, req: req}
 }
 
-type Query struct {
-	page, size      int
-	includeSource   []string
-	excludeSource   []string
-	sort, sortField string
-}
+func (r repoPull) Refresh(ctx context.Context) error {
+	url := "https://gitee.com/api/v5/enterprise/open_euler/pull_requests?state=all&sort=" +
+		"created&direction=desc&page=1&per_page=100&access_token=xx"
 
-func NewQuery(page, size int, include, exclude []string, sort, sf string) *Query {
-	return &Query{page: page, size: size, includeSource: include, excludeSource: exclude, sort: sort, sortField: sf}
-}
-
-type pullMapper struct {
-	index string
-}
-
-func NewPullMapper(index string) PullMapperImpl {
-	return pullMapper{index: index}
-}
-
-func (p pullMapper) InsertMany(pulls []*Pull, ctx context.Context) (err error) {
-	for _, pl := range pulls {
-		_, err = GetElasticsearch().Index().Index(p.index).Id(strconv.Itoa(int(pl.Id))).BodyJson(pl).Do(ctx)
-		if err != nil {
-			return
-		}
+	var data []gitee.PullRequest
+	_, err := r.req.CustomRequest(url, "GET", nil, nil, nil, false, &data)
+	if err != nil {
+		return err
 	}
-	return
+
+	var res = make(map[int]interface{})
+	for _, datum := range data {
+		htmlUrl := datum.GetHtml()
+		org := strings.Split(htmlUrl, "/")[3]
+		if org != "src-openeuler" && org != "openeuler" {
+			continue
+		}
+		repo := strings.Split(htmlUrl, "/")[4]
+
+		var do pullRequestDO
+		toPullRequestDO(&do, datum, org, repo, htmlUrl)
+
+		res[datum.Id] = &do
+	}
+	return r.cli.Insert(res, context.Background())
 }
 
-func (p pullMapper) InsertOne(pull *Pull, ctx context.Context) (err error) {
-	_, err = GetElasticsearch().Index().Index(p.index).Id(strconv.Itoa(int(pull.Id))).BodyJson(pull).Do(ctx)
-	return
-}
+func (r repoPull) PullList(req api.RequestPull, ctx context.Context) ([]domain.PullInfo, int64, error) {
+	q := elastic.NewBoolQuery()
 
-func (p pullMapper) UpdateColumn(doc interface{}, ctx context.Context, id string) (err error) {
-	_, err = GetElasticsearch().Update().Index(p.index).Id(id).Doc(doc).Do(ctx)
-	return
-}
+	if len(req.Label) > 0 {
+		l := elastic.NewBoolQuery()
+		for _, s := range strings.Split(strings.ReplaceAll(req.Label, "，", ","), ",") {
+			l.Must(elastic.NewMatchPhraseQuery("labels", s))
+		}
+		q.Must(l)
+	}
+	//if l := utils.StrSliceToInterface(strings.Split(strings.ReplaceAll(req.Label, "，", ","), ",")); len(l) > 0 {
+	//	q.Must(elastic.NewTermsQuery("labels", l...))
+	//}
 
-func (p pullMapper) Exist(id string, ctx context.Context) (flag bool) {
-	flag, _ = GetElasticsearch().Exists().Index(p.index).Id(id).Do(ctx)
-	return
-}
+	if s := utils.StrSliceToInterface(strings.Split(strings.ReplaceAll(req.State, "，", ","), ",")); len(s) > 0 {
+		q.Must(elastic.NewTermsQuery("state", s...))
+	}
 
-func (p pullMapper) Update(pull *Pull, ctx context.Context, id string) (err error) {
-	_, err = GetElasticsearch().Index().Index(p.index).Id(id).BodyJson(pull).Do(ctx)
-	return
-}
+	if len(req.Org) > 0 {
+		q.Must(elastic.NewTermQuery("org", req.Org))
+	}
 
-func (p pullMapper) PullList(q elastic.Query, req *Query, ctx context.Context) (list []Pull, total int64, _ error) {
-	search := p.baseSearch(q, req)
-	r, err := search.Do(ctx)
+	if len(req.Repo) > 0 {
+		q.Must(elastic.NewTermQuery("repo", req.Repo))
+	}
+
+	if len(req.Sig) > 0 {
+		q.Must(elastic.NewTermQuery("sig", req.Sig))
+	}
+
+	if len(req.Ref) > 0 {
+		q.Must(elastic.NewTermQuery("ref", req.Ref))
+	}
+
+	if len(req.Author) > 0 {
+		q.Must(elastic.NewTermQuery("author", req.Author))
+	}
+
+	if len(req.Assignee) > 0 {
+		q.Must(elastic.NewMatchPhraseQuery("assignees", req.Assignee))
+	}
+
+	if len(req.Exclusion) > 0 {
+		e := elastic.NewBoolQuery()
+		for _, s := range strings.Split(strings.ReplaceAll(req.Exclusion, "，", ","), ",") {
+			e.Must(elastic.NewMatchPhraseQuery("labels", s))
+		}
+		q.MustNot(e)
+	}
+
+	if len(req.Search) > 0 {
+		s := elastic.NewBoolQuery()
+		for _, field := range []string{"repo", "title", "sig"} {
+			s.Should(elastic.NewWildcardQuery(field, "*"+req.Search+"*"))
+		}
+		q.Must(s)
+	}
+	v, total, err := r.cli.List(
+		q,
+		elasticlocal.NewQuery(req.Page, req.PerPage, nil, nil, req.Direction, req.Sort), ctx,
+	)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	total = r.Hits.TotalHits.Value
-
-	list = make([]Pull, 0)
-	for _, hit := range r.Hits.Hits {
-		var l Pull
-		err = json.Unmarshal(hit.Source, &l)
-		if err != nil {
+	var res = make([]domain.PullInfo, total)
+	for i, hit := range v {
+		var p domain.PullInfo
+		if err = json.Unmarshal(hit.Source, &p); err != nil {
 			return nil, 0, err
 		}
-		list = append(list, l)
+
+		res[i] = p
 	}
 
-	return
-}
-
-func (p pullMapper) baseSearch(q elastic.Query, req *Query) *elastic.SearchService {
-	search := GetElasticsearch().Search().Index(p.index).Query(q).From((req.page - 1) * req.size).Size(req.size)
-	if req.includeSource != nil || req.excludeSource != nil {
-		search.FetchSourceContext(elastic.NewFetchSourceContext(true).Include(req.includeSource...).Exclude(req.excludeSource...))
-	}
-
-	if len(req.sort) > 0 && len(req.sortField) > 0 {
-		search.Sort(req.sortField+".keyword", req.sort == "asc")
-	}
-	return search
+	return res, total, nil
 }

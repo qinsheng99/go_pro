@@ -8,7 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/qinsheng99/go-domain-web/infrastructure/mysql"
+	"github.com/qinsheng99/go-domain-web/infrastructure/repositoryimpl"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -45,7 +46,7 @@ func RepoTask() {
 		}
 
 		for _, re := range res {
-			var r = mysql.Repo{
+			var r = repositoryimpl.Repo{
 				RepoId:       re.Id,
 				RepoName:     re.Path,
 				FullRepoName: re.FullName,
