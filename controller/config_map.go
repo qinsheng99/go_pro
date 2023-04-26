@@ -33,5 +33,5 @@ func (b *BaseConfigMap) Create(c *gin.Context) {
 		return
 	}
 
-	utils.SuccessCreate(c, "success")
+	utils.SuccessCreate(c)
 }

@@ -4,7 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 
+	"gorm.io/gorm"
+
 	"github.com/qinsheng99/go-domain-web/common/api"
+	"github.com/qinsheng99/go-domain-web/common/infrastructure/dao"
 	"github.com/qinsheng99/go-domain-web/domain"
 	"github.com/qinsheng99/go-domain-web/domain/repository"
 	"github.com/qinsheng99/go-domain-web/utils"
@@ -101,7 +104,47 @@ func (r *repoOsv) parserOsv() (osv []api.Osv, err error) {
 	return
 }
 
-func (r *repoOsv) Find(opt domain.OsvOptions) (_ []domain.CompatibilityOsv, _ int64, _ error) {
-	//r.cli.
-	return nil, 0, nil
+func (r *repoOsv) OsvList(opt domain.OsvOptions) ([]domain.CompatibilityOsvInfo, int64, error) {
+	f := func(db *gorm.DB) *gorm.DB {
+		if opt.KeyWord != "" {
+			db.Where(
+				db.
+					Where("osv_name like ?", "%"+opt.KeyWord+"%").
+					Or("os_version like ?", "%"+opt.KeyWord+"%").
+					Or("type like ?", "%"+opt.KeyWord+"%"),
+			)
+		}
+		if opt.OsvName != "" {
+			db.Where("osv_name like ?", opt.OsvName)
+		}
+
+		if opt.Type != "" {
+			db.Where("type = ?", opt.Type)
+		}
+
+		return db
+	}
+
+	total, err := r.cli.Count(f)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var do []compatibilityOsvDO
+	if err = r.cli.GetRecords(
+		f,
+		&do,
+		dao.Pagination{PageNum: opt.Page.Page(), CountPerPage: opt.Size.Size()},
+		[]dao.SortByColumn{{Column: "id"}},
+	); err != nil {
+		return nil, 0, err
+	}
+
+	var res = make([]domain.CompatibilityOsvInfo, len(do))
+
+	for i, v := range do {
+		res[i] = v.toCompatibilityOsvInfo()
+	}
+
+	return res, total, nil
 }

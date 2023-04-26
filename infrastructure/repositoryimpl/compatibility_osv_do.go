@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/qinsheng99/go-domain-web/common/api"
+	"github.com/qinsheng99/go-domain-web/domain"
 )
 
 type compatibilityOsvDO struct {
@@ -43,70 +44,26 @@ func toCompatibilityOsvDO(v *compatibilityOsvDO, data api.Osv, tools, platform [
 	}
 }
 
-//type OsvMapper interface {
-//	OSVFindAll(req domain.OsvDP) (datas []OeCompatibilityOsv, total int64, err error)
-//}
-//
-//func NewOsvMapper() OsvMapper {
-//	return &OeCompatibilityOsv{}
-//}
-//
-//func (o *OeCompatibilityOsv) ExistsOsv(version string, tx *gorm.DB) (bool, error) {
-//	var exists OeCompatibilityOsv
-//	err := tx.Where("os_version = ?", version).First(&exists).Error
-//	if err != nil {
-//		if utils.ErrorNotFound(err) {
-//			return false, nil
-//		}
-//		return false, err
-//	}
-//	return true, nil
-//}
-//
-//func (o *OeCompatibilityOsv) Delete(version string, tx *gorm.DB) error {
-//	return tx.Exec("delete from oe_compatibility_osv where os_version = ?", version).Error
-//}
-//
-//func (o *OeCompatibilityOsv) UpdateOsv(data *OeCompatibilityOsv, tx *gorm.DB) error {
-//	return tx.Where("os_version = ?", data.OsVersion).Updates(data).Error
-//}
-//
-//var mysqlDb = mysql.DB()
-//
-//func (o *OeCompatibilityOsv) OSVFindAll(req domain.OsvDP) (datas []OeCompatibilityOsv, total int64, err error) {
-//	q := mysql.DB()
-//	query := q.Model(o)
-//	//if req.KeyWord != "" {
-//	//	query = query.Where(
-//	//		q.Where("osv_name like ?", "%"+req.KeyWord+"%").
-//	//			Or("os_version like ?", "%"+req.KeyWord+"%").
-//	//			Or("type like ?", "%"+req.KeyWord+"%"),
-//	//	)
-//	//}
-//	//if req.OsvName != "" {
-//	//	query.Where("osv_name like ?", req.OsvName)
-//	//}
-//	//
-//	//if req.Type != "" {
-//	//	query = query.Where("type = ?", req.Type)
-//	//}
-//
-//	if err = query.Count(&total).Error; err != nil {
-//		logger.Log.Error(err)
-//		return
-//	}
-//
-//	if total == 0 {
-//		return
-//	}
-//
-//	query = query.Order("id desc").Limit(req.Size.Size()).Offset((req.Page.Page() - 1) * req.Size.Size())
-//	if err = query.Find(&datas).Error; err != nil {
-//		logger.Log.Error(err)
-//		return
-//	}
-//	return
-//}
+func (c compatibilityOsvDO) toCompatibilityOsvInfo() (v domain.CompatibilityOsvInfo) {
+	v.Id = c.Id
+	v.Architecture = c.Architecture
+	v.OsVersion = c.OsVersion
+	v.OsvName = c.OsvName
+	v.Date = c.Date
+	v.OsDownloadLink = c.OsDownloadLink
+	v.Type = c.Type
+	v.Details = c.Details
+	v.FriendlyLink = c.FriendlyLink
+	v.TotalResult = c.TotalResult
+	v.CheckSum = c.CheckSum
+	v.BaseOpeneulerVersion = c.BaseOpeneulerVersion
+	v.ToolsResult = c.ToolsResult
+	v.PlatformResult = c.PlatformResult
+	v.Updateime = c.Updateime
+
+	return
+}
+
 //
 //func (o *OeCompatibilityOsv) GetOsvName() (data []string, err error) {
 //	if err = mysqlDb.
@@ -128,13 +85,4 @@ func toCompatibilityOsvDO(v *compatibilityOsvDO, data api.Osv, tools, platform [
 //		return nil, err
 //	}
 //	return
-//}
-//
-//func (o *OeCompatibilityOsv) CreateOsv(data *OeCompatibilityOsv, tx *gorm.DB) error {
-//	return tx.Create(data).Error
-//}
-//
-//func (o *OeCompatibilityOsv) GetOneOSV(osv *OeCompatibilityOsv) (*OeCompatibilityOsv, error) {
-//	result := mysqlDb.Where(osv).First(osv)
-//	return osv, result.Error
 //}

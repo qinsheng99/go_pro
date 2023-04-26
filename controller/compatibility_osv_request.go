@@ -10,7 +10,7 @@ type Pages struct {
 	Size int `json:"size"`
 }
 
-type RequestOsv struct {
+type requestOsv struct {
 	KeyWord string `json:"keyword"`
 	OsvName string `json:"osvName"`
 	Type    string `json:"type"`
@@ -27,7 +27,7 @@ func (p *Pages) SetDefault() {
 	}
 }
 
-func (r RequestOsv) tocmd() (o domain.OsvOptions) {
+func (r requestOsv) tocmd() (o domain.OsvOptions) {
 	o.Page = dp.NewPage(r.Pages.Page)
 	o.Size = dp.NewSize(r.Pages.Size)
 

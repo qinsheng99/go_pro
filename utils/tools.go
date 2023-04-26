@@ -6,49 +6,45 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type RespOption func(m map[string]interface{})
-
-func Success(c *gin.Context, data interface{}, options ...RespOption) {
-	c.JSON(http.StatusOK, successReturn(data, options...))
+type ResponseData struct {
+	Code    int         `json:"code"`
+	Msg     string      `json:"msg"`
+	Success bool        `json:"success"`
+	Result  interface{} `json:"result"`
 }
 
-func SuccessCreate(c *gin.Context, data interface{}, options ...RespOption) {
-	c.JSON(http.StatusCreated, successReturn(data, options...))
+func Success(c *gin.Context, data interface{}) {
+	c.JSON(http.StatusOK, ResponseData{
+		Code:    200,
+		Msg:     "",
+		Success: true,
+		Result:  data,
+	})
+}
+
+func SuccessCreate(c *gin.Context) {
+	c.JSON(http.StatusCreated, ResponseData{
+		Code:    200,
+		Msg:     "",
+		Success: true,
+		Result:  "",
+	})
 }
 
 func Failure(c *gin.Context, err error) {
-	c.JSON(http.StatusOK, handleBadReturn(err))
+	c.JSON(http.StatusBadRequest, ResponseData{
+		Code:    1,
+		Msg:     err.Error(),
+		Success: false,
+		Result:  "",
+	})
 }
 
-func QueryFailure(c *gin.Context) {
-	c.JSON(http.StatusOK, queryHandleBadReturn(nil))
-}
-
-func successReturn(data interface{}, options ...RespOption) map[string]interface{} {
-	var info = make(map[string]interface{})
-	info["code"] = 200
-	info["msg"] = ""
-	info["success"] = true
-	info["result"] = data
-	for _, option := range options {
-		option(info)
-	}
-	return info
-}
-func handleBadReturn(err error) map[string]interface{} {
-	var info = make(map[string]interface{})
-	info["code"] = 1
-	info["msg"] = err.Error()
-	info["success"] = false
-	info["result"] = ""
-	return info
-}
-
-func queryHandleBadReturn(data interface{}) map[string]interface{} {
-	var info = make(map[string]interface{})
-	info["code"] = 1
-	info["msg"] = "数据参数不正确"
-	info["success"] = false
-	info["result"] = data
-	return info
+func QueryFailure(c *gin.Context, err error) {
+	c.JSON(http.StatusBadRequest, ResponseData{
+		Code:    1,
+		Msg:     "数据参数不正确",
+		Success: false,
+		Result:  err.Error(),
+	})
 }

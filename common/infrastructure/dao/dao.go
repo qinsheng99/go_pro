@@ -115,13 +115,13 @@ func (d Dao) GetRecords(
 	return
 }
 
-func (d Dao) Count(filter Scope, db *gorm.DB) (int, error) {
+func (d Dao) Count(filter Scope, db *gorm.DB) (int64, error) {
 	var total int64
 	query := db.Table(d.Name).Scopes(filter)
 
 	err := query.Count(&total).Error
 
-	return int(total), err
+	return total, err
 }
 
 func (d Dao) GetRecord(filter Scope, result interface{}, db *gorm.DB) error {

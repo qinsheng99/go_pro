@@ -43,7 +43,7 @@ func (b BasePull) Refresh(c *gin.Context) {
 		return
 	}
 
-	utils.SuccessCreate(c, "")
+	utils.SuccessCreate(c)
 }
 
 func (b BasePull) PRList(c *gin.Context) {

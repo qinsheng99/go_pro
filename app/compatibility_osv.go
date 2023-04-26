@@ -17,15 +17,15 @@ func NewOsvService(osv repository.RepoOsvImpl) OsvServiceImpl {
 
 type OsvServiceImpl interface {
 	SyncOsv() (string, error)
-	Find(domain.OsvOptions) (*compatibilityOsvDTO, error)
+	List(domain.OsvOptions) (*CompatibilityOsvDTO, error)
 }
 
 func (o *osvService) SyncOsv() (string, error) {
 	return o.osv.SyncOsv()
 }
 
-func (o *osvService) Find(opt domain.OsvOptions) (*compatibilityOsvDTO, error) {
-	list, total, err := o.osv.Find(opt)
+func (o *osvService) List(opt domain.OsvOptions) (*CompatibilityOsvDTO, error) {
+	list, total, err := o.osv.OsvList(opt)
 	if err != nil {
 		return nil, err
 	}

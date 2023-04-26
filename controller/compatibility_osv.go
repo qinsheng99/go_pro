@@ -22,7 +22,7 @@ func AddRouteOsv(r *gin.RouterGroup, osv repository.RepoOsvImpl) {
 
 	func() {
 		group.GET("/syncOsv", baseosv.SyncOsv)
-		group.POST("/find", baseosv.Find)
+		group.POST("/list", baseosv.List)
 	}()
 }
 
@@ -36,16 +36,25 @@ func (b *BaseOsv) SyncOsv(c *gin.Context) {
 	utils.Success(c, result)
 }
 
-func (b *BaseOsv) Find(c *gin.Context) {
-	var osv RequestOsv
+// List
+// @Summary osv list
+// @Description osv list
+// @Tags  OSV
+// @Accept json
+// @Param	param  body	 requestOsv	 true	"body of get osv list"
+// @Success 200 {object} app.CompatibilityOsvDTO
+// @Failure 400 {object} ResponseData
+// @Router /v1/osv/list [post]
+func (b *BaseOsv) List(c *gin.Context) {
+	var osv requestOsv
 	if err := c.ShouldBindJSON(&osv); err != nil {
-		utils.Failure(c, err)
+		utils.QueryFailure(c, err)
 		return
 	}
 
 	o := osv.tocmd()
 
-	result, err := b.osv.Find(o)
+	result, err := b.osv.List(o)
 	if err != nil {
 		logger.Log.Error("syncOsv failed :", err)
 		utils.Failure(c, err)

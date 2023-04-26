@@ -55,5 +55,5 @@ func (b *BasePod) Create(c *gin.Context) {
 		utils.Failure(c, err)
 		return
 	}
-	utils.SuccessCreate(c, "success")
+	utils.SuccessCreate(c)
 }

@@ -34,7 +34,7 @@ func (d MqDao) GetRecords(
 	return d.Dao.GetRecords(filter, result, p, sort, db)
 }
 
-func (d MqDao) Count(filter dao.Scope) (int, error) {
+func (d MqDao) Count(filter dao.Scope) (int64, error) {
 	return d.Dao.Count(filter, db)
 }
 

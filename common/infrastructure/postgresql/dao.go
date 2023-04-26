@@ -28,17 +28,13 @@ func (d PgDao) InsertTransaction(filter, result interface{}, tx *gorm.DB) error 
 	return d.Dao.Insert(filter, result, tx)
 }
 
-//func (d PgDao) InsertBegin(filter, result interface{}, db *gorm.DB) error {
-//	return d.Dao.InsertBegin(filter, result, db)
-//}
-
 func (d PgDao) GetRecords(
 	filter dao.Scope, result interface{}, p dao.Pagination, sort []dao.SortByColumn,
 ) error {
 	return d.Dao.GetRecords(filter, result, p, sort, db)
 }
 
-func (d PgDao) Count(filter dao.Scope) (int, error) {
+func (d PgDao) Count(filter dao.Scope) (int64, error) {
 	return d.Dao.Count(filter, db)
 }
 
@@ -53,10 +49,6 @@ func (d PgDao) UpdateRecord(filter, update interface{}) error {
 func (d PgDao) UpdateTransaction(filter, update interface{}, tx *gorm.DB) error {
 	return d.Dao.Update(filter, update, tx)
 }
-
-//func (d PgDao) UpdateRecordBegin(filter, update interface{}, db *gorm.DB) error {
-//	return d.Dao.UpdateRecord(filter, update, db)
-//}
 
 func (d PgDao) Exist(filter interface{}, result interface{}) (bool, error) {
 	return d.Dao.Exist(filter, result, db)

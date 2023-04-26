@@ -15,7 +15,7 @@ type OsvOptions struct {
 	Size dp.Size
 }
 
-type CompatibilityOsv struct {
+type CompatibilityOsvInfo struct {
 	Id                   int64     `json:"id"`
 	Architecture         string    `json:"arch"`
 	OsVersion            string    `json:"osVersion"`

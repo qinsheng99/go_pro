@@ -9,18 +9,18 @@ import (
 )
 
 type CompatibilityOsv struct {
-	domain.CompatibilityOsv
+	domain.CompatibilityOsvInfo
 	Updateime      string       `json:"updateTime,omitempty"`
 	ToolsResult    []api.Record `gorm:"column:tools_result" json:"toolsResult,omitempty"`
 	PlatformResult []api.Record `gorm:"column:platform_result" json:"platformResult,omitempty"`
 }
 
-type compatibilityOsvDTO struct {
-	OsvList []CompatibilityOsv `json:"osv_list"`
+type CompatibilityOsvDTO struct {
+	OsvList []CompatibilityOsv `json:"list"`
 	Total   int64              `json:"total"`
 }
 
-func toCompatibilityOsvDTO(list []domain.CompatibilityOsv, total int64) *compatibilityOsvDTO {
+func toCompatibilityOsvDTO(list []domain.CompatibilityOsvInfo, total int64) *CompatibilityOsvDTO {
 	data := make([]CompatibilityOsv, len(list))
 	for i, v := range list {
 		var t []api.Record
@@ -29,12 +29,12 @@ func toCompatibilityOsvDTO(list []domain.CompatibilityOsv, total int64) *compati
 		_ = json.Unmarshal([]byte(v.PlatformResult), &p)
 
 		data[i] = CompatibilityOsv{
-			CompatibilityOsv: v,
-			ToolsResult:      t,
-			PlatformResult:   p,
-			Updateime:        v.Updateime.Format(_const.Format),
+			CompatibilityOsvInfo: v,
+			ToolsResult:          t,
+			PlatformResult:       p,
+			Updateime:            v.Updateime.Format(_const.Format),
 		}
 	}
 
-	return &compatibilityOsvDTO{OsvList: data, Total: total}
+	return &CompatibilityOsvDTO{OsvList: data, Total: total}
 }
