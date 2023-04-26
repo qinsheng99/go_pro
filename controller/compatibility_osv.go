@@ -2,13 +2,12 @@ package controller
 
 import (
 	"fmt"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/qinsheng99/go-domain-web/app"
+	"github.com/qinsheng99/go-domain-web/common/logger"
 	"github.com/qinsheng99/go-domain-web/domain/repository"
-	"github.com/qinsheng99/go-domain-web/logger"
 	"github.com/qinsheng99/go-domain-web/utils"
 )
 
@@ -34,7 +33,7 @@ func (b *BaseOsv) SyncOsv(c *gin.Context) {
 		utils.Failure(c, fmt.Errorf("syncOsv failed. An exception occurred."+result+err.Error()))
 		return
 	}
-	utils.Success(c, http.StatusOK, result)
+	utils.Success(c, result)
 }
 
 func (b *BaseOsv) Find(c *gin.Context) {
@@ -53,5 +52,5 @@ func (b *BaseOsv) Find(c *gin.Context) {
 		return
 	}
 
-	utils.Success(c, http.StatusOK, result)
+	utils.Success(c, result)
 }

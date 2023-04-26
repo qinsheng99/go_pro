@@ -8,8 +8,8 @@ import (
 
 	"github.com/qinsheng99/go-domain-web/common/infrastructure/mysql"
 	"github.com/qinsheng99/go-domain-web/common/infrastructure/postgresql"
+	"github.com/qinsheng99/go-domain-web/common/logger"
 	"github.com/qinsheng99/go-domain-web/config"
-	"github.com/qinsheng99/go-domain-web/logger"
 	"github.com/qinsheng99/go-domain-web/route"
 	"github.com/qinsheng99/go-domain-web/utils/server"
 )

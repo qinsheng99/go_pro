@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -38,7 +37,7 @@ func (b BaseRepo) RepoNames(c *gin.Context) {
 		return
 	}
 
-	utils.Success(c, http.StatusOK, repo)
+	utils.Success(c, repo)
 }
 
 func (b BaseRepo) FindRepo(c *gin.Context) {
@@ -50,7 +49,7 @@ func (b BaseRepo) FindRepo(c *gin.Context) {
 		return
 	}
 
-	utils.Success(c, http.StatusOK, repo)
+	utils.Success(c, repo)
 }
 
 func (b BaseRepo) FindRepoWith(c *gin.Context) {
@@ -69,5 +68,5 @@ func (b BaseRepo) FindRepoWith(c *gin.Context) {
 		return
 	}
 
-	utils.Success(c, http.StatusOK, repo)
+	utils.Success(c, repo)
 }

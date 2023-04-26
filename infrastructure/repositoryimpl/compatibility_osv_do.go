@@ -3,10 +3,10 @@ package repositoryimpl
 import (
 	"time"
 
-	"github.com/qinsheng99/go-domain-web/api"
+	"github.com/qinsheng99/go-domain-web/common/api"
 )
 
-type oeCompatibilityOsvDO struct {
+type compatibilityOsvDO struct {
 	Id                   int64     `gorm:"column:id"`
 	Architecture         string    `gorm:"column:architecture"`
 	OsVersion            string    `gorm:"column:os_version"`
@@ -24,8 +24,8 @@ type oeCompatibilityOsvDO struct {
 	Updateime            time.Time `gorm:"column:update_time"`
 }
 
-func toOeCompatibilityOsvDO(v *oeCompatibilityOsvDO, data api.Osv, tools, platform []byte) {
-	*v = oeCompatibilityOsvDO{
+func toCompatibilityOsvDO(v *compatibilityOsvDO, data api.Osv, tools, platform []byte) {
+	*v = compatibilityOsvDO{
 		Architecture:         data.Arch,
 		OsVersion:            data.OsVersion,
 		OsvName:              data.OsvName,

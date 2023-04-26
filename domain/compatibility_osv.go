@@ -6,12 +6,16 @@ import (
 	"github.com/qinsheng99/go-domain-web/domain/dp"
 )
 
-type OsvDP struct {
+type OsvOptions struct {
+	KeyWord string
+	OsvName string
+	Type    string
+
 	Page dp.Page
 	Size dp.Size
 }
 
-type OeCompatibilityOsv struct {
+type CompatibilityOsv struct {
 	Id                   int64     `json:"id"`
 	Architecture         string    `json:"arch"`
 	OsVersion            string    `json:"osVersion"`

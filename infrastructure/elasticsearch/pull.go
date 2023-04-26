@@ -7,7 +7,7 @@ import (
 
 	"github.com/olivere/elastic/v7"
 
-	"github.com/qinsheng99/go-domain-web/api"
+	"github.com/qinsheng99/go-domain-web/common/api"
 	elasticlocal "github.com/qinsheng99/go-domain-web/common/infrastructure/elastic"
 	"github.com/qinsheng99/go-domain-web/domain"
 	elastic2 "github.com/qinsheng99/go-domain-web/domain/elastic"

@@ -2,11 +2,11 @@ package controller
 
 import (
 	"context"
-	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
+
 	"github.com/qinsheng99/go-domain-web/app"
 	"github.com/qinsheng99/go-domain-web/utils"
 )
@@ -43,7 +43,7 @@ func (b *BaseRedis) Zadd(c *gin.Context) {
 		utils.Failure(c, err)
 		return
 	}
-	utils.Success(c, http.StatusOK, res)
+	utils.Success(c, res)
 }
 
 func (b *BaseRedis) Zrange(c *gin.Context) {
@@ -51,7 +51,7 @@ func (b *BaseRedis) Zrange(c *gin.Context) {
 	if err != nil {
 		utils.Failure(c, err)
 	}
-	utils.Success(c, http.StatusOK, revrange)
+	utils.Success(c, revrange)
 }
 
 // Delete
@@ -68,5 +68,5 @@ func (b *BaseRedis) Delete(c *gin.Context) {
 	if err != nil {
 		utils.Failure(c, err)
 	}
-	utils.Success(c, http.StatusOK, del)
+	utils.Success(c, del)
 }

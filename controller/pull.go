@@ -2,13 +2,12 @@ package controller
 
 import (
 	"fmt"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
-	"github.com/qinsheng99/go-domain-web/api"
 	"github.com/qinsheng99/go-domain-web/app"
+	"github.com/qinsheng99/go-domain-web/common/api"
 	"github.com/qinsheng99/go-domain-web/domain/elastic"
 	"github.com/qinsheng99/go-domain-web/utils"
 	_const "github.com/qinsheng99/go-domain-web/utils/const"
@@ -16,7 +15,6 @@ import (
 
 type BasePull struct {
 	p app.PullServiceImpl
-	base
 }
 
 func AddRoutePull(r *gin.RouterGroup, pull elastic.RepoPullImpl) {
@@ -44,23 +42,23 @@ func (b BasePull) Refresh(c *gin.Context) {
 		utils.Failure(c, err)
 		return
 	}
-	utils.Success(c, http.StatusCreated, "")
+
+	utils.SuccessCreate(c, "")
 }
 
 func (b BasePull) PRList(c *gin.Context) {
 	var req api.RequestPull
 	if err := c.ShouldBindWith(&req, binding.Form); err != nil {
 		utils.Failure(c, err)
+
 		return
 	}
 
 	req.SetDefault()
 
-	list, total, err := b.p.PullList(req, nil)
-	if err != nil {
+	if v, err := b.p.PullList(req, nil); err != nil {
 		utils.Failure(c, err)
-		return
+	} else {
+		utils.Success(c, v)
 	}
-
-	c.JSON(http.StatusOK, b.base.Response(list, req.Page, req.PerPage, int(total)))
 }

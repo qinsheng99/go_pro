@@ -2,7 +2,6 @@ package controller
 
 import (
 	"fmt"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -52,5 +51,5 @@ func (b *BaseSort) SelectSort(c *gin.Context) {
 		return
 	}
 
-	utils.Success(c, http.StatusOK, s.Fields.SortField())
+	utils.Success(c, s.Fields.SortField())
 }

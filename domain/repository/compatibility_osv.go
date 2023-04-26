@@ -6,5 +6,5 @@ import (
 
 type RepoOsvImpl interface {
 	SyncOsv() (string, error)
-	Find(domain.OsvDP) ([]domain.OeCompatibilityOsv, int64, error)
+	Find(domain.OsvOptions) ([]domain.CompatibilityOsv, int64, error)
 }

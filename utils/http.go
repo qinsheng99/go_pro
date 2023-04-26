@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/qinsheng99/go-domain-web/logger"
+	"github.com/qinsheng99/go-domain-web/common/logger"
 )
 
 var transport = &http.Transport{

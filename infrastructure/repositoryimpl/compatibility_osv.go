@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/qinsheng99/go-domain-web/api"
+	"github.com/qinsheng99/go-domain-web/common/api"
 	"github.com/qinsheng99/go-domain-web/domain"
 	"github.com/qinsheng99/go-domain-web/domain/repository"
 	"github.com/qinsheng99/go-domain-web/utils"
@@ -51,7 +51,7 @@ func (r *repoOsv) syncOsv(osvList []api.Osv) error {
 
 	for k := range osvList {
 		v := osvList[k]
-		filter := oeCompatibilityOsvDO{OsVersion: v.OsVersion}
+		filter := compatibilityOsvDO{OsVersion: v.OsVersion}
 		if len(v.PlatformResult) == 0 && len(v.ToolsResult) == 0 {
 			err = r.cli.DeleteTransaction(&filter, tx)
 			if err != nil {
@@ -70,11 +70,11 @@ func (r *repoOsv) syncOsv(osvList []api.Osv) error {
 			return err
 		}
 
-		var do oeCompatibilityOsvDO
-		toOeCompatibilityOsvDO(&do, v, tools, platform)
+		var do compatibilityOsvDO
+		toCompatibilityOsvDO(&do, v, tools, platform)
 
 		var ok bool
-		if ok, err = r.cli.Exist(&filter, &oeCompatibilityOsvDO{}); err == nil && ok {
+		if ok, err = r.cli.Exist(&filter, &compatibilityOsvDO{}); err == nil && ok {
 			err = r.cli.UpdateTransaction(&filter, &do, tx)
 			if err != nil {
 				tx.Rollback()
@@ -93,21 +93,15 @@ func (r *repoOsv) syncOsv(osvList []api.Osv) error {
 	return nil
 }
 
-func (r *repoOsv) Find(osv domain.OsvDP) (_ []domain.OeCompatibilityOsv, _ int64, _ error) {
-	return nil, 0, nil
-}
-
 func (r *repoOsv) parserOsv() (osv []api.Osv, err error) {
 	_, err = r.req.CustomRequest(
-		r.url,
-		"GET",
-		nil,
-		map[string]string{"Content-Type": "text/html"},
-		nil,
-		true,
-		&osv)
-	if err != nil {
-		return nil, err
-	}
+		r.url, "GET", nil, map[string]string{"Content-Type": "text/html"}, nil, true, &osv,
+	)
+
 	return
+}
+
+func (r *repoOsv) Find(opt domain.OsvOptions) (_ []domain.CompatibilityOsv, _ int64, _ error) {
+	//r.cli.
+	return nil, 0, nil
 }

@@ -38,7 +38,7 @@ func SetRoute(r *gin.Engine, cfg *config.Config) {
 		repositoryimpl.NewRepoOsv(
 			_const.ParserOsvJsonFile,
 			utils.NewRequest(nil),
-			mysql.NewMqDao(cfg.MysqlConfig.Table.OeCompatibilityOsv),
+			mysql.NewMqDao(cfg.MysqlConfig.Table.CompatibilityOsv),
 		),
 	)
 

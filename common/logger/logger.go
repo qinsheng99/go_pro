@@ -5,9 +5,10 @@ import (
 	"time"
 
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
-	"github.com/qinsheng99/go-domain-web/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+
+	"github.com/qinsheng99/go-domain-web/config"
 )
 
 var Log *zap.SugaredLogger

@@ -3,7 +3,7 @@ package elastic
 import (
 	"context"
 
-	"github.com/qinsheng99/go-domain-web/api"
+	"github.com/qinsheng99/go-domain-web/common/api"
 	"github.com/qinsheng99/go-domain-web/domain"
 )
 

@@ -42,7 +42,7 @@ type MysqlConfig struct {
 	DbMaxConn int    `json:"db_max_conn"`
 	DbMaxidle int    `json:"db_maxidle"`
 	Table     struct {
-		OeCompatibilityOsv string `json:"oe_compatibility_osv"`
+		CompatibilityOsv string `json:"compatibility_osv"`
 	} `json:"table"`
 }
 
