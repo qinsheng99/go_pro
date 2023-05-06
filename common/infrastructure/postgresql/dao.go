@@ -28,6 +28,10 @@ func (d PgDao) InsertTransaction(filter, result interface{}, tx *gorm.DB) error 
 	return d.Dao.Insert(filter, result, tx)
 }
 
+func (d PgDao) Transaction(f func(tx *gorm.DB) error, opts ...*sql.TxOptions) error {
+	return db.Transaction(f, opts...)
+}
+
 func (d PgDao) GetRecords(
 	filter dao.Scope, result interface{}, p dao.Pagination, sort []dao.SortByColumn,
 ) error {

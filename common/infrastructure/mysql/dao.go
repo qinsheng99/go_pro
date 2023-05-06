@@ -42,6 +42,10 @@ func (d MqDao) GetRecord(filter dao.Scope, result interface{}) error {
 	return d.Dao.GetRecord(filter, result, db)
 }
 
+func (d MqDao) Transaction(f func(tx *gorm.DB) error, opts ...*sql.TxOptions) error {
+	return db.Transaction(f, opts...)
+}
+
 func (d MqDao) UpdateRecord(filter, update interface{}) error {
 	return d.Dao.Update(filter, update, db)
 }

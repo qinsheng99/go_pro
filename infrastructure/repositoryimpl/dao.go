@@ -12,6 +12,8 @@ type dbImpl interface {
 	InsertTransaction(filter, result interface{}, db *gorm.DB) error
 	UpdateTransaction(filter, update interface{}, db *gorm.DB) error
 
+	Transaction(f func(tx *gorm.DB) error, opts ...*sql.TxOptions) error
+
 	GetRecords(dao.Scope, interface{}, dao.Pagination, []dao.SortByColumn) error
 	Count(dao.Scope) (int64, error)
 
