@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/qinsheng99/go-domain-web/common/api"
-	"github.com/qinsheng99/go-domain-web/domain"
+	"github.com/qinsheng99/go-domain-web/project/openbackend/domain"
 	_const "github.com/qinsheng99/go-domain-web/utils/const"
 )
 

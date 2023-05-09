@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"github.com/qinsheng99/go-domain-web/domain"
+	"github.com/qinsheng99/go-domain-web/project/openbackend/domain"
 )
 
 type RepoOsvImpl interface {

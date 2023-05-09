@@ -8,7 +8,7 @@ import (
 
 	"github.com/qinsheng99/go-domain-web/common/api"
 	"github.com/qinsheng99/go-domain-web/common/infrastructure/dao"
-	"github.com/qinsheng99/go-domain-web/domain"
+	"github.com/qinsheng99/go-domain-web/project/openbackend/domain"
 	"github.com/qinsheng99/go-domain-web/project/openbackend/domain/repository"
 	"github.com/qinsheng99/go-domain-web/utils"
 )
