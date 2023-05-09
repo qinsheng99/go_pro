@@ -5,10 +5,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/qinsheng99/go-domain-web/app"
 	commonctl "github.com/qinsheng99/go-domain-web/common/controller"
 	"github.com/qinsheng99/go-domain-web/common/logger"
-	"github.com/qinsheng99/go-domain-web/domain/repository"
+	"github.com/qinsheng99/go-domain-web/project/openbackend/app"
+	"github.com/qinsheng99/go-domain-web/project/openbackend/domain/repository"
 )
 
 type BaseOsv struct {

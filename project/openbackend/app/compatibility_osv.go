@@ -2,7 +2,7 @@ package app
 
 import (
 	"github.com/qinsheng99/go-domain-web/domain"
-	"github.com/qinsheng99/go-domain-web/domain/repository"
+	"github.com/qinsheng99/go-domain-web/project/openbackend/domain/repository"
 )
 
 type osvService struct {

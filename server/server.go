@@ -16,7 +16,8 @@ import (
 	"github.com/qinsheng99/go-domain-web/infrastructure/elasticsearch"
 	"github.com/qinsheng99/go-domain-web/infrastructure/kubernetes"
 	"github.com/qinsheng99/go-domain-web/infrastructure/redis"
-	"github.com/qinsheng99/go-domain-web/infrastructure/repositoryimpl"
+	openctl "github.com/qinsheng99/go-domain-web/project/openbackend/controller"
+	"github.com/qinsheng99/go-domain-web/project/openbackend/infrastructure/repositoryimpl"
 	sortapp "github.com/qinsheng99/go-domain-web/project/sort/app"
 	sortctl "github.com/qinsheng99/go-domain-web/project/sort/controller"
 	"github.com/qinsheng99/go-domain-web/project/sort/infrastructure/sort"
@@ -35,7 +36,7 @@ func SetRoute(r *gin.Engine, cfg *config.Config) {
 
 	group := r.Group("/v1")
 
-	controller.AddRouteOsv(
+	openctl.AddRouteOsv(
 		group,
 		repositoryimpl.NewRepoOsv(_const.ParserOsvJsonFile, utils.NewRequest(nil),
 			mysql.NewMqDao(cfg.Mysql.Table.CompatibilityOsv),
