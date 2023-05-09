@@ -8,7 +8,7 @@ import (
 	"github.com/go-redis/redis/v8"
 
 	"github.com/qinsheng99/go-domain-web/app"
-	"github.com/qinsheng99/go-domain-web/utils"
+	commonctl "github.com/qinsheng99/go-domain-web/common/controller"
 )
 
 type BaseRedis struct {
@@ -38,20 +38,20 @@ func (b *BaseRedis) Zadd(c *gin.Context) {
 			Member: "店铺号:" + strconv.Itoa(v),
 		})
 	}
-	res, err := b.r.Zadd(context.Background(), "score", data...)
-	if err != nil {
-		utils.Failure(c, err)
-		return
+	if res, err := b.r.Zadd(context.Background(), "score", data...); err != nil {
+		commonctl.Failure(c, err)
+	} else {
+		commonctl.Success(c, res)
 	}
-	utils.Success(c, res)
 }
 
 func (b *BaseRedis) Zrange(c *gin.Context) {
 	revrange, err := b.r.ZRevrange(context.Background(), "score", 0, -1)
 	if err != nil {
-		utils.Failure(c, err)
+		commonctl.Failure(c, err)
+	} else {
+		commonctl.Success(c, revrange)
 	}
-	utils.Success(c, revrange)
 }
 
 // Delete
@@ -64,9 +64,11 @@ func (b *BaseRedis) Zrange(c *gin.Context) {
 // @Failure 500 system_error system error
 // @Router /del/:key [delete]
 func (b *BaseRedis) Delete(c *gin.Context) {
-	del, err := b.r.Del(context.Background(), c.Param("key"))
-	if err != nil {
-		utils.Failure(c, err)
+	if del, err := b.r.Del(context.Background(), c.Param("key")); err != nil {
+		commonctl.Failure(c, err)
+
+		return
+	} else {
+		commonctl.Success(c, del)
 	}
-	utils.Success(c, del)
 }

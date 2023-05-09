@@ -8,8 +8,8 @@ import (
 
 	"github.com/qinsheng99/go-domain-web/app"
 	"github.com/qinsheng99/go-domain-web/common/api"
+	commonctl "github.com/qinsheng99/go-domain-web/common/controller"
 	"github.com/qinsheng99/go-domain-web/domain/elastic"
-	"github.com/qinsheng99/go-domain-web/utils"
 	_const "github.com/qinsheng99/go-domain-web/utils/const"
 )
 
@@ -34,22 +34,22 @@ func (b BasePull) Refresh(c *gin.Context) {
 	case _const.RefreshIssue:
 	case _const.RefreshRepo:
 	default:
-		utils.Failure(c, fmt.Errorf("unkonwn refresh type: %s", c.Param("type")))
+		commonctl.Failure(c, fmt.Errorf("unkonwn refresh type: %s", c.Param("type")))
+
 		return
 	}
 
 	if err != nil {
-		utils.Failure(c, err)
-		return
+		commonctl.Failure(c, err)
+	} else {
+		commonctl.SuccessCreate(c)
 	}
-
-	utils.SuccessCreate(c)
 }
 
 func (b BasePull) PRList(c *gin.Context) {
 	var req api.RequestPull
 	if err := c.ShouldBindWith(&req, binding.Form); err != nil {
-		utils.Failure(c, err)
+		commonctl.Failure(c, err)
 
 		return
 	}
@@ -57,8 +57,8 @@ func (b BasePull) PRList(c *gin.Context) {
 	req.SetDefault()
 
 	if v, err := b.p.PullList(req, nil); err != nil {
-		utils.Failure(c, err)
+		commonctl.Failure(c, err)
 	} else {
-		utils.Success(c, v)
+		commonctl.Success(c, v)
 	}
 }

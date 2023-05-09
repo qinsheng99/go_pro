@@ -9,15 +9,13 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	gormmysql "gorm.io/driver/mysql"
 	"gorm.io/gorm"
-
-	"github.com/qinsheng99/go-domain-web/config"
 )
 
 var db *gorm.DB
 
 const CONNMAXLIFTIME = 900
 
-func Init(cfg *config.MysqlConfig) (err error) {
+func Init(cfg *Config) (err error) {
 	var sqlDB *sql.DB
 	dsn := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?charset=utf8&parseTime=True&loc=Local", cfg.DbUser, cfg.DbPwd, cfg.DbHost, cfg.DbPort, cfg.DbName)
 	db, err = gorm.Open(gormmysql.New(gormmysql.Config{

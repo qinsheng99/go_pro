@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin/binding"
 
 	"github.com/qinsheng99/go-domain-web/app"
-	"github.com/qinsheng99/go-domain-web/utils"
+	commonctl "github.com/qinsheng99/go-domain-web/common/controller"
 )
 
 type BaseSort struct {
@@ -27,13 +27,15 @@ func AddRouteSort(r *gin.RouterGroup, s app.SortServiceImpl) {
 func (b *BaseSort) SelectSort(c *gin.Context) {
 	var req Sort
 	if err := c.ShouldBindBodyWith(&req, binding.JSON); err != nil {
-		utils.QueryFailure(c)
+		commonctl.QueryFailure(c, err)
+
 		return
 	}
 
 	s, err := req.tocmd()
 	if err != nil {
-		utils.Failure(c, err)
+		commonctl.Failure(c, err)
+
 		return
 	}
 
@@ -47,9 +49,10 @@ func (b *BaseSort) SelectSort(c *gin.Context) {
 	case "quick":
 		b.s.Quick(s)
 	default:
-		utils.Failure(c, fmt.Errorf("unknown typ %s", c.Param("type")))
+		commonctl.Failure(c, fmt.Errorf("unknown typ %s", c.Param("type")))
+
 		return
 	}
 
-	utils.Success(c, s.Fields.SortField())
+	commonctl.Success(c, s.Fields.SortField())
 }

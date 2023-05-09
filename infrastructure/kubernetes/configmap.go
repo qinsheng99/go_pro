@@ -4,17 +4,17 @@ import (
 	"context"
 	"os"
 
-	"github.com/qinsheng99/go-domain-web/config"
-	"github.com/qinsheng99/go-domain-web/domain/kubernetes"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	"github.com/qinsheng99/go-domain-web/domain/kubernetes"
 )
 
 type configImpl struct {
-	cfg *config.KubernetesConfig
+	cfg *Config
 }
 
-func NewConfigImpl(cfg *config.KubernetesConfig) kubernetes.ConfigMap {
+func NewConfigImpl(cfg *Config) kubernetes.ConfigMap {
 	return &configImpl{cfg: cfg}
 }
 

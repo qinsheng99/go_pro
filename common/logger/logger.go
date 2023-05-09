@@ -7,14 +7,12 @@ import (
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-
-	"github.com/qinsheng99/go-domain-web/config"
 )
 
 var Log *zap.SugaredLogger
 
 // InitLogger 初始化Logger
-func InitLogger(cfg *config.LogConfig) error {
+func InitLogger(cfg *Config) error {
 	writeSyncer, err := getWriter(cfg.Filename)
 	if err != nil {
 		return err

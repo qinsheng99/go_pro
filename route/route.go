@@ -38,15 +38,15 @@ func SetRoute(r *gin.Engine, cfg *config.Config) {
 		repositoryimpl.NewRepoOsv(
 			_const.ParserOsvJsonFile,
 			utils.NewRequest(nil),
-			mysql.NewMqDao(cfg.MysqlConfig.Table.CompatibilityOsv),
+			mysql.NewMqDao(cfg.Mysql.Table.CompatibilityOsv),
 		),
 	)
 
-	pull := elastic.NewPullMapper(cfg.EsConfig.Indexs.PullIndex)
+	pull := elastic.NewPullMapper(cfg.Es.Indexs.PullIndex)
 
-	controller.AddRoutePod(group, kubernetes.NewPodImpl(cfg.KubernetesConfig))
+	controller.AddRoutePod(group, kubernetes.NewPodImpl(cfg.Kubernetes))
 
-	controller.AddRouteConfigMap(group, kubernetes.NewConfigImpl(cfg.KubernetesConfig))
+	controller.AddRouteConfigMap(group, kubernetes.NewConfigImpl(cfg.Kubernetes))
 
 	controller.AddRouteSort(group, app.NewSortService(sort.NewSort()))
 

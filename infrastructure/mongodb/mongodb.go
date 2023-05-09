@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/qinsheng99/go-domain-web/config"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -17,7 +16,7 @@ type Mongo struct {
 	collection string
 }
 
-func Init(cfg *config.MongoConfig) error {
+func Init(cfg *Config) error {
 	var err error
 	clientOptions := options.Client().ApplyURI(fmt.Sprintf("mongodb://%s:%d", cfg.Host, cfg.Port))
 

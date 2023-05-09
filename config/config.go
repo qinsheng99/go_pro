@@ -1,128 +1,52 @@
 package config
 
 import (
-	"flag"
 	"os"
 
 	"sigs.k8s.io/yaml"
 
+	"github.com/qinsheng99/go-domain-web/common/infrastructure/elastic"
+	"github.com/qinsheng99/go-domain-web/common/infrastructure/mysql"
+	"github.com/qinsheng99/go-domain-web/common/infrastructure/postgresql"
+	"github.com/qinsheng99/go-domain-web/common/logger"
+	"github.com/qinsheng99/go-domain-web/infrastructure/etcd"
+	"github.com/qinsheng99/go-domain-web/infrastructure/kafka"
+	"github.com/qinsheng99/go-domain-web/infrastructure/kubernetes"
+	"github.com/qinsheng99/go-domain-web/infrastructure/mongodb"
+	"github.com/qinsheng99/go-domain-web/infrastructure/redis"
 	"github.com/qinsheng99/go-domain-web/utils/validate"
 )
 
 // Config 整个项目的配置
 type Config struct {
-	Mode              string `json:"mode"`
-	Port              int    `json:"port"`
-	*LogConfig        `json:"log"`
-	*MysqlConfig      `json:"mysql"`
-	*EsConfig         `json:"es"`
-	*RedisConfig      `json:"redis"`
-	*MongoConfig      `json:"mongo"`
-	*PostgresqlConfig `json:"postgresql"`
-	*EtcdConfig       `json:"etcd"`
-	*KafkaConfig      `json:"kafka"`
-	*KubernetesConfig `json:"kubernetes"`
+	Mode       string             `json:"mode"`
+	Port       int                `json:"port"`
+	Logger     *logger.Config     `json:"log"`
+	Mysql      *mysql.Config      `json:"mysql"`
+	Es         *elastic.Config    `json:"es"`
+	Redis      *redis.Config      `json:"redis"`
+	Mongo      *mongodb.Config    `json:"mongo"`
+	Postgresql *postgresql.Config `json:"postgresql"`
+	Etcd       *etcd.Config       `json:"etcd"`
+	Kafka      *kafka.Config      `json:"kafka"`
+	Kubernetes *kubernetes.Config `json:"kubernetes"`
 }
 
-// LogConfig 日志配置
-type LogConfig struct {
-	Level      string `json:"level"`
-	Filename   string `json:"filename"`
-	MaxSize    int    `json:"maxsize"`
-	MaxAge     int    `json:"max_age"`
-	MaxBackups int    `json:"max_backups"`
-}
+func Init(path string) (*Config, error) {
+	var cfg Config
 
-type MysqlConfig struct {
-	DbHost    string `json:"db_host"`
-	DbPort    int64  `json:"db_port"`
-	DbUser    string `json:"db_user"`
-	DbPwd     string `json:"db_pwd"`
-	DbName    string `json:"db_name"`
-	DbMaxConn int    `json:"db_max_conn"`
-	DbMaxidle int    `json:"db_maxidle"`
-	Table     struct {
-		CompatibilityOsv string `json:"compatibility_osv"`
-	} `json:"table"`
-}
-
-type PostgresqlConfig struct {
-	DbHost    string `json:"db_host"`
-	DbPort    int64  `json:"db_port"`
-	DbUser    string `json:"db_user"`
-	DbPwd     string `json:"db_pwd"`
-	DbName    string `json:"db_name"`
-	DbMaxConn int    `json:"db_max_conn"`
-	DbMaxidle int    `json:"db_maxidle"`
-}
-
-type EsConfig struct {
-	Host   string `json:"host"`
-	Port   int64  `json:"port"`
-	Indexs struct {
-		PullIndex string `json:"pull_index"`
-	} `json:"indexs"`
-}
-
-type RedisConfig struct {
-	Host string `json:"host"`
-	Port int64  `json:"port"`
-}
-
-type MongoConfig struct {
-	Host       string `json:"host"`
-	Port       int64  `json:"port"`
-	Database   string `json:"database"`
-	Collection string `json:"collection"`
-}
-
-type EtcdConfig struct {
-	Host string `json:"host"`
-	Port int64  `json:"port"`
-}
-
-type KafkaConfig struct {
-	Host string `json:"host"`
-	Port int64  `json:"port"`
-}
-
-type KubernetesConfig struct {
-	NameSpace string `json:"namespace"`
-	Pod       struct {
-		Image  string   `json:"image"`
-		Secret string   `json:"secret"`
-		Name   string   `json:"name" required:"true"`
-		Args   []string `json:"args" required:"true"`
-		Port   int32    `json:"port" required:"true"`
-	} `json:"pod"`
-	ConfigMap struct {
-		ConfigMapName string `json:"config_map_name"`
-		ConfigName    string `json:"config_name"`
-		MounthPath    string `json:"mounth_path"`
-	} `json:"config_map"`
-	Crd struct {
-		Group   string `json:"group"`
-		Kind    string `json:"kind"`
-		Version string `json:"version"`
-	} `json:"crd"`
-}
-
-var path = flag.String("config-file", "", "")
-var Conf = new(Config)
-
-func Init() error {
-	var file = "config/config.yaml"
-	if *path != "" {
-		file = *path
-	}
-	bys, err := os.ReadFile(file)
+	bys, err := os.ReadFile(path)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	err = yaml.Unmarshal([]byte(os.ExpandEnv(string(bys))), Conf)
+	err = yaml.Unmarshal([]byte(os.ExpandEnv(string(bys))), &cfg)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return validate.Vali(Conf)
+	if err = validate.Vali(&cfg); err != nil {
+		return nil, err
+	}
+
+	return &cfg, nil
 }

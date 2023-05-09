@@ -1,18 +1,18 @@
 package kubernetes
 
 import (
-	"github.com/qinsheng99/go-domain-web/config"
-	"github.com/qinsheng99/go-domain-web/domain/kubernetes"
 	"golang.org/x/net/context"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	"github.com/qinsheng99/go-domain-web/domain/kubernetes"
 )
 
 type podImpl struct {
-	cfg *config.KubernetesConfig
+	cfg *Config
 }
 
-func NewPodImpl(cfg *config.KubernetesConfig) kubernetes.Pod {
+func NewPodImpl(cfg *Config) kubernetes.Pod {
 	return &podImpl{cfg: cfg}
 }
 

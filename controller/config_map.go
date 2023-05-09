@@ -6,8 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/qinsheng99/go-domain-web/app"
+	commonctl "github.com/qinsheng99/go-domain-web/common/controller"
 	"github.com/qinsheng99/go-domain-web/domain/kubernetes"
-	"github.com/qinsheng99/go-domain-web/utils"
 )
 
 type BaseConfigMap struct {
@@ -27,11 +27,9 @@ func AddRouteConfigMap(r *gin.RouterGroup, c kubernetes.ConfigMap) {
 }
 
 func (b *BaseConfigMap) Create(c *gin.Context) {
-	err := b.c.Create(context.TODO())
-	if err != nil {
-		utils.Failure(c, err)
-		return
+	if err := b.c.Create(context.TODO()); err != nil {
+		commonctl.Failure(c, err)
+	} else {
+		commonctl.SuccessCreate(c)
 	}
-
-	utils.SuccessCreate(c)
 }

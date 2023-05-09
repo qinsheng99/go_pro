@@ -6,9 +6,9 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/qinsheng99/go-domain-web/app"
+	commonctl "github.com/qinsheng99/go-domain-web/common/controller"
 	"github.com/qinsheng99/go-domain-web/common/logger"
 	"github.com/qinsheng99/go-domain-web/domain/repository"
-	"github.com/qinsheng99/go-domain-web/utils"
 )
 
 type BaseOsv struct {
@@ -27,13 +27,13 @@ func AddRouteOsv(r *gin.RouterGroup, osv repository.RepoOsvImpl) {
 }
 
 func (b *BaseOsv) SyncOsv(c *gin.Context) {
-	result, err := b.osv.SyncOsv()
-	if err != nil {
+	if result, err := b.osv.SyncOsv(); err != nil {
 		logger.Log.Error("syncOsv failed :", err)
-		utils.Failure(c, fmt.Errorf("syncOsv failed. An exception occurred."+result+err.Error()))
-		return
+		commonctl.Failure(c, fmt.Errorf("syncOsv failed. An exception occurred."+result+err.Error()))
+	} else {
+		commonctl.Success(c, result)
 	}
-	utils.Success(c, result)
+
 }
 
 // List
@@ -48,18 +48,17 @@ func (b *BaseOsv) SyncOsv(c *gin.Context) {
 func (b *BaseOsv) List(c *gin.Context) {
 	var osv requestOsv
 	if err := c.ShouldBindJSON(&osv); err != nil {
-		utils.QueryFailure(c, err)
+		commonctl.QueryFailure(c, err)
+
 		return
 	}
 
 	o := osv.tocmd()
 
-	result, err := b.osv.List(o)
-	if err != nil {
+	if result, err := b.osv.List(o); err != nil {
 		logger.Log.Error("syncOsv failed :", err)
-		utils.Failure(c, err)
-		return
+		commonctl.Failure(c, err)
+	} else {
+		commonctl.Success(c, result)
 	}
-
-	utils.Success(c, result)
 }

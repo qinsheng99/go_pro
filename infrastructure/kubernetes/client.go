@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os/user"
 
-	"github.com/qinsheng99/go-domain-web/config"
 	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/discovery"
@@ -34,7 +33,7 @@ func getHome() string {
 	return u.HomeDir
 }
 
-func Init(cfg *config.KubernetesConfig) (err error) {
+func Init(cfg *Config) (err error) {
 	k8sConfig, err = clientcmd.BuildConfigFromFlags("", getHome()+"/.kube/config")
 	if err != nil {
 		return

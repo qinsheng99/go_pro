@@ -10,15 +10,13 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-
-	"github.com/qinsheng99/go-domain-web/config"
 )
 
 const CONNMAXLIFTIME = 900
 
 var db *gorm.DB
 
-func Init(cfg *config.PostgresqlConfig) (err error) {
+func Init(cfg *Config) (err error) {
 	var sqlDB *sql.DB
 	dsn := fmt.Sprintf("host=%v user=%v password=%v dbname=%v port=%v sslmode=disable TimeZone=Asia/Shanghai", cfg.DbHost, cfg.DbUser, cfg.DbPwd, cfg.DbName, cfg.DbPort)
 	l := logger.New(log.New(os.Stdout, "\r\n", log.LstdFlags), logger.Config{
