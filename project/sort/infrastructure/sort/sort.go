@@ -1,7 +1,7 @@
 package sort
 
 import (
-	"github.com/qinsheng99/go-domain-web/domain/sort"
+	"github.com/qinsheng99/go-domain-web/project/sort/domain/sort"
 )
 
 type sortImpl struct {

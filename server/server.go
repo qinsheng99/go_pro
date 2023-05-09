@@ -1,4 +1,4 @@
-package route
+package server
 
 import (
 	"net/http"
@@ -17,7 +17,9 @@ import (
 	"github.com/qinsheng99/go-domain-web/infrastructure/kubernetes"
 	"github.com/qinsheng99/go-domain-web/infrastructure/redis"
 	"github.com/qinsheng99/go-domain-web/infrastructure/repositoryimpl"
-	"github.com/qinsheng99/go-domain-web/infrastructure/sort"
+	sortapp "github.com/qinsheng99/go-domain-web/project/sort/app"
+	sortctl "github.com/qinsheng99/go-domain-web/project/sort/controller"
+	"github.com/qinsheng99/go-domain-web/project/sort/infrastructure/sort"
 	"github.com/qinsheng99/go-domain-web/utils"
 	_const "github.com/qinsheng99/go-domain-web/utils/const"
 )
@@ -35,9 +37,7 @@ func SetRoute(r *gin.Engine, cfg *config.Config) {
 
 	controller.AddRouteOsv(
 		group,
-		repositoryimpl.NewRepoOsv(
-			_const.ParserOsvJsonFile,
-			utils.NewRequest(nil),
+		repositoryimpl.NewRepoOsv(_const.ParserOsvJsonFile, utils.NewRequest(nil),
 			mysql.NewMqDao(cfg.Mysql.Table.CompatibilityOsv),
 		),
 	)
@@ -48,7 +48,7 @@ func SetRoute(r *gin.Engine, cfg *config.Config) {
 
 	controller.AddRouteConfigMap(group, kubernetes.NewConfigImpl(cfg.Kubernetes))
 
-	controller.AddRouteSort(group, app.NewSortService(sort.NewSort()))
+	sortctl.AddRouteSort(group, sortapp.NewSortService(sort.NewSort()))
 
 	controller.AddRouteRedis(group, app.NewRedisService(redis.NewredisImpl(redis.GetRedis())))
 

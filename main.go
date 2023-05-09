@@ -10,8 +10,8 @@ import (
 	"github.com/qinsheng99/go-domain-web/common/infrastructure/postgresql"
 	"github.com/qinsheng99/go-domain-web/common/logger"
 	"github.com/qinsheng99/go-domain-web/config"
-	"github.com/qinsheng99/go-domain-web/route"
-	"github.com/qinsheng99/go-domain-web/utils/server"
+	"github.com/qinsheng99/go-domain-web/server"
+	"github.com/qinsheng99/go-domain-web/utils"
 )
 
 func init() {
@@ -28,53 +28,71 @@ func main() {
 
 	cfg, err := config.Init(*path)
 	if err != nil {
-		logrus.WithError(err).Fatal("config init failed")
+		logrus.WithError(err).Error("config init failed")
+
+		return
 	}
 
 	err = logger.InitLogger(cfg.Logger)
 	if err != nil {
-		logrus.WithError(err).Fatal("logger init failed")
+		logrus.WithError(err).Error("logger init failed")
+
+		return
 	}
 
 	//err = kubernetes.Init(cfg.KubernetesConfig)
 	//if err != nil {
-	//	logrus.WithError(err).Fatal("kubernetes init failed")
+	//	logrus.WithError(err).Error("kubernetes init failed")
+	//
+	//  return
 	//}
 	err = mysql.Init(cfg.Mysql)
 	if err != nil {
-		logrus.WithError(err).Fatal("mysql init failed")
+		logrus.WithError(err).Error("mysql init failed")
+
+		return
 	}
 
 	err = postgresql.Init(cfg.Postgresql)
 	if err != nil {
-		logrus.WithError(err).Fatal("postgresql init failed")
+		logrus.WithError(err).Error("postgresql init failed")
+
+		return
 	}
 
 	//err = elastic.Init(cfg.Es)
 	//if err != nil {
-	//	logrus.WithError(err).Fatal("elasticsearch init failed")
+	//	logrus.WithError(err).Error("elasticsearch init failed")
+	//
+	//	return
 	//}
 	//
 	//err = redis.Init(cfg.Redis)
 	//if err != nil {
-	//	logrus.WithError(err).Fatal("redis init failed")
+	//	logrus.WithError(err).Error("redis init failed")
+	//
+	//	return
 	//}
 	//
 	//err = mongodb.Init(cfg.Mongo)
 	//if err != nil {
-	//	logrus.WithError(err).Fatal("mongodb init failed")
+	//	logrus.WithError(err).Error("mongodb init failed")
+	//
+	//	return
 	//}
 	//
 	//err = etcd.Init(cfg.Etcd)
 	//if err != nil {
-	//	logrus.WithError(err).Fatal("etcd init failed")
+	//	logrus.WithError(err).Error("etcd init failed")
+	//
+	// return
 	//}
 
 	//task.RepoTask()
-	route.SetRoute(r, cfg)
+	server.SetRoute(r, cfg)
 
 	//lis := kubernetes.NewListen(kubernetes.GetClient(), kubernetes.GetDyna(), kubernetes.GetResource(), *listen)
 	//go lis.ListenResource()
 
-	server.Start(cfg.Port, r.Handler())
+	utils.Start(cfg.Port, r.Handler())
 }

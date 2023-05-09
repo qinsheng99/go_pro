@@ -7,8 +7,8 @@ import (
 
 	"github.com/qinsheng99/go-domain-web/app"
 	commonctl "github.com/qinsheng99/go-domain-web/common/controller"
-	"github.com/qinsheng99/go-domain-web/domain/dp"
 	"github.com/qinsheng99/go-domain-web/domain/repository"
+	"github.com/qinsheng99/go-domain-web/project/sort/domain/dp"
 )
 
 type BaseRepo struct {

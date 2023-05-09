@@ -2,8 +2,8 @@ package app
 
 import (
 	"github.com/qinsheng99/go-domain-web/domain"
-	"github.com/qinsheng99/go-domain-web/domain/dp"
 	"github.com/qinsheng99/go-domain-web/domain/repository"
+	"github.com/qinsheng99/go-domain-web/project/sort/domain/dp"
 )
 
 type repoService struct {

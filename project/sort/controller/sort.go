@@ -6,8 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
-	"github.com/qinsheng99/go-domain-web/app"
 	commonctl "github.com/qinsheng99/go-domain-web/common/controller"
+	"github.com/qinsheng99/go-domain-web/project/sort/app"
 )
 
 type BaseSort struct {

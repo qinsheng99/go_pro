@@ -1,8 +1,8 @@
 package app
 
 import (
-	"github.com/qinsheng99/go-domain-web/domain"
-	"github.com/qinsheng99/go-domain-web/domain/sort"
+	"github.com/qinsheng99/go-domain-web/project/sort/domain"
+	"github.com/qinsheng99/go-domain-web/project/sort/domain/sort"
 )
 
 type sortService struct {
