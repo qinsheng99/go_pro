@@ -7,7 +7,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"github.com/qinsheng99/go-domain-web/domain/kubernetes"
+	"github.com/qinsheng99/go-domain-web/project/kebernetes/domain/kubernetes"
 )
 
 type configImpl struct {

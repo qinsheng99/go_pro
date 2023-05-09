@@ -5,9 +5,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/qinsheng99/go-domain-web/app"
 	commonctl "github.com/qinsheng99/go-domain-web/common/controller"
-	"github.com/qinsheng99/go-domain-web/domain/kubernetes"
+	"github.com/qinsheng99/go-domain-web/project/kebernetes/app"
+	"github.com/qinsheng99/go-domain-web/project/kebernetes/domain/kubernetes"
 )
 
 type BasePod struct {

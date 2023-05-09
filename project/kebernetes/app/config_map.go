@@ -3,7 +3,7 @@ package app
 import (
 	"context"
 
-	"github.com/qinsheng99/go-domain-web/domain/kubernetes"
+	"github.com/qinsheng99/go-domain-web/project/kebernetes/domain/kubernetes"
 )
 
 type ConfigMapServiceImpl interface {

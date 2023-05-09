@@ -16,6 +16,7 @@ import (
 	"github.com/qinsheng99/go-domain-web/infrastructure/elasticsearch"
 	"github.com/qinsheng99/go-domain-web/infrastructure/kubernetes"
 	"github.com/qinsheng99/go-domain-web/infrastructure/redis"
+	kebectl "github.com/qinsheng99/go-domain-web/project/kebernetes/controller"
 	openctl "github.com/qinsheng99/go-domain-web/project/openbackend/controller"
 	"github.com/qinsheng99/go-domain-web/project/openbackend/infrastructure/repositoryimpl"
 	sortapp "github.com/qinsheng99/go-domain-web/project/sort/app"
@@ -45,9 +46,9 @@ func SetRoute(r *gin.Engine, cfg *config.Config) {
 
 	pull := elastic.NewPullMapper(cfg.Es.Indexs.PullIndex)
 
-	controller.AddRoutePod(group, kubernetes.NewPodImpl(cfg.Kubernetes))
+	kebectl.AddRoutePod(group, kubernetes.NewPodImpl(cfg.Kubernetes))
 
-	controller.AddRouteConfigMap(group, kubernetes.NewConfigImpl(cfg.Kubernetes))
+	kebectl.AddRouteConfigMap(group, kubernetes.NewConfigImpl(cfg.Kubernetes))
 
 	sortctl.AddRouteSort(group, sortapp.NewSortService(sort.NewSort()))
 
