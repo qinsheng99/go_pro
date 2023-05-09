@@ -6,8 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 
 	commonctl "github.com/qinsheng99/go-domain-web/common/controller"
-	"github.com/qinsheng99/go-domain-web/project/kebernetes/app"
-	"github.com/qinsheng99/go-domain-web/project/kebernetes/domain/kubernetes"
+	"github.com/qinsheng99/go-domain-web/project/kubernetes/app"
+	"github.com/qinsheng99/go-domain-web/project/kubernetes/domain/kubernetes"
 )
 
 type BaseConfigMap struct {

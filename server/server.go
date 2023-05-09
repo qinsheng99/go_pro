@@ -16,7 +16,7 @@ import (
 	"github.com/qinsheng99/go-domain-web/infrastructure/elasticsearch"
 	"github.com/qinsheng99/go-domain-web/infrastructure/kubernetes"
 	"github.com/qinsheng99/go-domain-web/infrastructure/redis"
-	kebectl "github.com/qinsheng99/go-domain-web/project/kebernetes/controller"
+	kebectl "github.com/qinsheng99/go-domain-web/project/kubernetes/controller"
 	openctl "github.com/qinsheng99/go-domain-web/project/openbackend/controller"
 	"github.com/qinsheng99/go-domain-web/project/openbackend/infrastructure/repositoryimpl"
 	sortapp "github.com/qinsheng99/go-domain-web/project/sort/app"

@@ -5,7 +5,7 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 
-	"github.com/qinsheng99/go-domain-web/project/kebernetes/domain/kubernetes"
+	"github.com/qinsheng99/go-domain-web/project/kubernetes/domain/kubernetes"
 )
 
 type PodServiceImpl interface {
