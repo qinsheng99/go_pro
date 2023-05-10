@@ -2,24 +2,35 @@ package domain
 
 import (
 	"github.com/qinsheng99/go-domain-web/project/cve/domain/dp"
+	"github.com/qinsheng99/go-domain-web/utils"
 )
 
 type CveOriginRecordInfo struct {
 	Id        string
+	CreatedAt int64
+
+	Status dp.CVEStatus
+
+	Source Source
+
+	CveSourceData
+
+	BaseOrigin
+}
+
+type BaseOrigin struct {
 	Pushed    string
 	PushType  string
 	Published string
-	CreatedAt int64
-	Affected  []string
+}
 
+type CveSourceData struct {
+	CVENum         dp.CVENum
+	Desc           dp.Description
 	Patch          []Patch
-	Source         Source
 	Severity       []Severity
 	ReferencesData []ReferencesData
-
-	CVENum dp.CVENum
-	Status dp.CVEStatus
-	Desc   dp.Description
+	Affected       []dp.Purl
 }
 
 type Source struct {
@@ -45,4 +56,17 @@ type Patch struct {
 	BreakPatch string `json:"break_patch"`
 	Source     string `json:"source"`
 	Branch     string `json:"branch"`
+}
+
+func NewCveOriginRecordInfo(s dp.Source, base BaseOrigin, cve CveSourceData) CveOriginRecordInfo {
+	return CveOriginRecordInfo{
+		CreatedAt: utils.Now(),
+		Source: Source{
+			Source:        s,
+			UpdatedSource: s,
+		},
+		CveSourceData: cve,
+		BaseOrigin:    base,
+		Status:        dp.Add,
+	}
 }

@@ -1,34 +1,54 @@
 package controller
 
-type UvpData struct {
-	Id         string           `json:"id"         binding:"required"`
-	Desc       string           `json:"desc"       binding:"required"`
-	Source     string           `json:"source"     binding:"required"`
-	Pushed     string           `json:"pushed"     binding:"required"`
-	PushType   string           `json:"push_type"  binding:"required"`
-	Affected   []string         `json:"affected"   binding:"required"`
-	Published  string           `json:"published"  binding:"required"`
-	Severity   []severity       `json:"severity"`
-	References []referencesData `json:"references"`
-	Patch      []patch          `json:"patch"`
+import (
+	"errors"
+
+	"github.com/qinsheng99/go-domain-web/project/cve/app"
+	"github.com/qinsheng99/go-domain-web/project/cve/domain/dp"
+)
+
+type uvpDataRequest struct {
+	Id         string               `json:"id"         binding:"required"`
+	Desc       string               `json:"desc"       binding:"required"`
+	Source     string               `json:"source"     binding:"required"`
+	Pushed     string               `json:"pushed"     binding:"required"`
+	PushType   string               `json:"push_type"  binding:"required"`
+	Affected   []string             `json:"affected"   binding:"required"`
+	Published  string               `json:"published"  binding:"required"`
+	Severity   []app.Severity       `json:"severity"`
+	References []app.ReferencesData `json:"references"`
+	Patch      []app.Patch          `json:"patch"`
 }
 
-type severity struct {
-	Type   string `json:"type"`
-	Score  string `json:"score"`
-	Vector string `json:"vector"`
-}
+func (u *uvpDataRequest) toCmd() (v app.OriginRecordCmd, err error) {
+	v.BaseOrigin = app.BaseOrigin{
+		Pushed:    u.Pushed,
+		PushType:  u.PushType,
+		Published: u.Published,
+	}
 
-type referencesData struct {
-	Url  string `json:"url"`
-	Type string `json:"type"`
-}
+	s := &v.CveSourceData
+	for _, a := range u.Affected {
+		if p, err := dp.NewPurl(a); err == nil {
+			s.Affected = append(v.Affected, p)
+		}
+	}
 
-type patch struct {
-	Package    string `json:"package"`
-	FixVersion string `json:"fix_version"`
-	FixPatch   string `json:"fix_patch"`
-	BreakPatch string `json:"break_patch"`
-	Source     string `json:"source"`
-	Branch     string `json:"branch"`
+	if len(s.Affected) == 0 {
+		err = errors.New("affected is empty")
+
+		return
+	}
+
+	s.Patch = u.Patch
+	s.Severity = u.Severity
+	s.ReferencesData = u.References
+	if v.Source, err = dp.NewSource(u.Source); err != nil {
+		return
+	}
+
+	s.Desc = dp.NewDescription(u.Desc)
+	s.CVENum, err = dp.NewCVENum(u.Id)
+
+	return
 }

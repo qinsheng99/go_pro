@@ -7,7 +7,7 @@ import (
 
 type cveNum string
 
-var cveReg = regexp.MustCompile(`CVE-\d+-\d+`)
+var cveReg = regexp.MustCompile(`^CVE-\d+-\d+$`)
 
 type CVENum interface {
 	CVENum() string

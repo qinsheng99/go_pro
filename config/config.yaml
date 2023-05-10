@@ -32,13 +32,15 @@ mongo:
   collection: "dd"
 
 postgresql:
-  db_host: "localhost"
-  db_port: 5432
-  db_user: "postgres"
-  db_pwd: "root"
-  db_name: "postgres"
-  db_max_conn: 20
-  db_maxidle: 100
+  db_host: "49.0.247.41"
+  db_port: 30051
+  db_user: "cve-manager"
+  db_pwd: "BW2Rynr!LKWwjA2s"
+  db_name: "cve-manager"
+  db_max_conn: 500
+  db_maxidle: 1000
+  table:
+    cve_origin_record: cve_origin_record_test
 
 etcd:
   host: ${DB_HOST}

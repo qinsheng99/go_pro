@@ -9,9 +9,9 @@ const (
 )
 
 var (
-	//Add      = cveStatus(add)
-	//Update   = cveStatus(update)
-	//Complete = cveStatus(complete)
+	Add      = cveStatus(add)
+	Update   = cveStatus(update)
+	Complete = cveStatus(complete)
 
 	valiateStatus = map[string]bool{
 		add:      true,

@@ -5,20 +5,22 @@ import "errors"
 type source string
 
 const (
-	uvp    = "uvp"
-	majun  = "majun"
-	vtopia = "vtopia"
+	uvp        = "uvp"
+	majun      = "majun"
+	vtopia     = "vtopia"
+	artificial = "artificial"
 )
 
 var (
-	Uvp    = source(uvp)
-	Majun  = source(majun)
-	Vtopia = source(vtopia)
+	Uvp        = source(uvp)
+	Majun      = source(majun)
+	Vtopia     = source(vtopia)
+	Artificial = source(artificial)
 
 	valiate = map[string]bool{
-		uvp:    true,
-		majun:  true,
-		vtopia: true,
+		uvp:        true,
+		majun:      true,
+		artificial: true,
 	}
 )
 
@@ -27,6 +29,7 @@ type Source interface {
 	IsVtopia() bool
 	IsMajun() bool
 	IsUvp() bool
+	IsArtificial() bool
 }
 
 func NewSource(v string) (Source, error) {
@@ -51,4 +54,8 @@ func (s source) IsMajun() bool {
 
 func (s source) IsUvp() bool {
 	return s == Uvp
+}
+
+func (s source) IsArtificial() bool {
+	return s == Artificial
 }
