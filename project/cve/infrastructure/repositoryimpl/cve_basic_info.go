@@ -6,13 +6,14 @@ import (
 
 	"github.com/qinsheng99/go-domain-web/project/cve/domain"
 	"github.com/qinsheng99/go-domain-web/project/cve/domain/dp"
+	"github.com/qinsheng99/go-domain-web/utils"
 )
 
-type originRecord struct {
+type basicInfo struct {
 	cli dbimpl
 }
 
-func (o originRecord) FindCVEBasicInfo(num dp.CVENum) (domain.CveBasicInfo, error) {
+func (o basicInfo) FindCVEBasicInfo(num dp.CVENum) (domain.CveBasicInfo, error) {
 	filter := func(tx *gorm.DB) *gorm.DB {
 		return tx.Where("cve_num = ?", num.CVENum())
 	}
@@ -23,16 +24,26 @@ func (o originRecord) FindCVEBasicInfo(num dp.CVENum) (domain.CveBasicInfo, erro
 		return domain.CveBasicInfo{}, err
 	}
 
-	return res.toCveOriginRecordInfo()
+	return res.toCveBasicInfo()
 }
 
-func (o originRecord) AddCVEBasicInfo(v *domain.CveBasicInfo) error {
+func (o basicInfo) AddCVEBasicInfo(v *domain.CveBasicInfo) error {
 	do, err := o.toCveBasicInfoDO(v)
 	if err != nil {
 		return err
 	}
 
-	err = o.cli.Insert(&cveBasicInfoDO{CveNum: do.CveNum}, &do)
+	res, err := do.toMap()
+	if err != nil {
+		return err
+	}
+
+	res[fieldId] = do.Id.String()
+	res[fieldCreatedAt] = v.Basic.CreatedAt
+	res[fieldCveNum] = do.CveNum
+	res[fieldSource] = do.Source
+
+	err = o.cli.Insert(&cveBasicInfoDO{CveNum: do.CveNum}, res)
 	if err != nil {
 		return err
 	}
@@ -42,8 +53,15 @@ func (o originRecord) AddCVEBasicInfo(v *domain.CveBasicInfo) error {
 	return err
 }
 
-func (o originRecord) SaveCVEBasicInfo(v *domain.CveBasicInfo) error {
+func (o basicInfo) SaveCVEBasicInfo(v *domain.CveBasicInfo) error {
 	do, err := o.toCveBasicInfoDO(v)
+	if err != nil {
+		return err
+	}
+
+	do.UpdatedAt = utils.Now()
+
+	d, err := do.toMap()
 	if err != nil {
 		return err
 	}
@@ -53,5 +71,5 @@ func (o originRecord) SaveCVEBasicInfo(v *domain.CveBasicInfo) error {
 		return err
 	}
 
-	return o.cli.UpdateRecord(&cveBasicInfoDO{Id: u}, &do)
+	return o.cli.UpdateRecord(&cveBasicInfoDO{Id: u}, d)
 }

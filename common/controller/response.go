@@ -13,10 +13,15 @@ type ResponseData struct {
 	Result  interface{} `json:"result"`
 }
 
-func Success(c *gin.Context, data interface{}) {
+func SendRespPost(c *gin.Context, data interface{}) {
 	c.JSON(http.StatusOK, ResponseData{
-		Code:    200,
-		Msg:     "",
+		Success: true,
+		Result:  data,
+	})
+}
+
+func SendRespGet(c *gin.Context, data interface{}) {
+	c.JSON(http.StatusOK, ResponseData{
 		Success: true,
 		Result:  data,
 	})
@@ -24,10 +29,7 @@ func Success(c *gin.Context, data interface{}) {
 
 func SuccessCreate(c *gin.Context) {
 	c.JSON(http.StatusCreated, ResponseData{
-		Code:    201,
-		Msg:     "",
 		Success: true,
-		Result:  "",
 	})
 }
 
@@ -36,7 +38,6 @@ func Failure(c *gin.Context, err error) {
 		Code:    http.StatusBadRequest,
 		Msg:     err.Error(),
 		Success: false,
-		Result:  "",
 	})
 }
 

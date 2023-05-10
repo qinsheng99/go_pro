@@ -54,5 +54,5 @@ func (b *BaseSort) SelectSort(c *gin.Context) {
 		return
 	}
 
-	commonctl.Success(c, s.Fields.SortField())
+	commonctl.SendRespGet(c, s.Fields.SortField())
 }

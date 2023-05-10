@@ -59,6 +59,6 @@ func (b BasePull) PRList(c *gin.Context) {
 	if v, err := b.p.PullList(req, nil); err != nil {
 		commonctl.Failure(c, err)
 	} else {
-		commonctl.Success(c, v)
+		commonctl.SendRespGet(c, v)
 	}
 }

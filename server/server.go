@@ -16,9 +16,12 @@ import (
 	"github.com/qinsheng99/go-domain-web/infrastructure/elasticsearch"
 	"github.com/qinsheng99/go-domain-web/infrastructure/kubernetes"
 	"github.com/qinsheng99/go-domain-web/infrastructure/redis"
+	cveapp "github.com/qinsheng99/go-domain-web/project/cve/app"
+	cvectl "github.com/qinsheng99/go-domain-web/project/cve/controller"
+	cverepository "github.com/qinsheng99/go-domain-web/project/cve/infrastructure/repositoryimpl"
 	kebectl "github.com/qinsheng99/go-domain-web/project/kubernetes/controller"
 	openctl "github.com/qinsheng99/go-domain-web/project/openbackend/controller"
-	"github.com/qinsheng99/go-domain-web/project/openbackend/infrastructure/repositoryimpl"
+	openrepository "github.com/qinsheng99/go-domain-web/project/openbackend/infrastructure/repositoryimpl"
 	sortapp "github.com/qinsheng99/go-domain-web/project/sort/app"
 	sortctl "github.com/qinsheng99/go-domain-web/project/sort/controller"
 	"github.com/qinsheng99/go-domain-web/project/sort/infrastructure/sort"
@@ -39,7 +42,7 @@ func SetRoute(r *gin.Engine, cfg *config.Config) {
 
 	openctl.AddRouteOsv(
 		group,
-		repositoryimpl.NewRepoOsv(_const.ParserOsvJsonFile, utils.NewRequest(nil),
+		openrepository.NewRepoOsv(_const.ParserOsvJsonFile, utils.NewRequest(nil),
 			mysql.NewMqDao(cfg.Mysql.Table.CompatibilityOsv),
 		),
 	)
@@ -55,6 +58,8 @@ func SetRoute(r *gin.Engine, cfg *config.Config) {
 	controller.AddRouteRedis(group, app.NewRedisService(redis.NewredisImpl(redis.GetRedis())))
 
 	controller.AddRoutePull(group, elasticsearch.NewRepoPull(pull, utils.NewRequest(nil)))
+
+	cvectl.AddRouteCve(group, cveapp.NewCveService(cverepository.NewCVEImpl(cfg.Postgresql)))
 
 	//controller.AddRouteRepo(group, repositoryimpl.NewRepoR(mysql.NewRepoMapper()))
 }

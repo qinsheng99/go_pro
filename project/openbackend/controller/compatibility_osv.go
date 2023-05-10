@@ -31,7 +31,7 @@ func (b *BaseOsv) SyncOsv(c *gin.Context) {
 		logger.Log.Error("syncOsv failed :", err)
 		commonctl.Failure(c, fmt.Errorf("syncOsv failed. An exception occurred."+result+err.Error()))
 	} else {
-		commonctl.Success(c, result)
+		commonctl.SendRespGet(c, result)
 	}
 
 }
@@ -59,6 +59,6 @@ func (b *BaseOsv) List(c *gin.Context) {
 		logger.Log.Error("syncOsv failed :", err)
 		commonctl.Failure(c, err)
 	} else {
-		commonctl.Success(c, result)
+		commonctl.SendRespGet(c, result)
 	}
 }

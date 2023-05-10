@@ -41,7 +41,7 @@ func (b *BaseRedis) Zadd(c *gin.Context) {
 	if res, err := b.r.Zadd(context.Background(), "score", data...); err != nil {
 		commonctl.Failure(c, err)
 	} else {
-		commonctl.Success(c, res)
+		commonctl.SendRespGet(c, res)
 	}
 }
 
@@ -50,7 +50,7 @@ func (b *BaseRedis) Zrange(c *gin.Context) {
 	if err != nil {
 		commonctl.Failure(c, err)
 	} else {
-		commonctl.Success(c, revrange)
+		commonctl.SendRespGet(c, revrange)
 	}
 }
 
@@ -69,6 +69,6 @@ func (b *BaseRedis) Delete(c *gin.Context) {
 
 		return
 	} else {
-		commonctl.Success(c, del)
+		commonctl.SendRespGet(c, del)
 	}
 }

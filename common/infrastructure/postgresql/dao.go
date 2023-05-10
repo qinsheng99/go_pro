@@ -21,7 +21,7 @@ func (d PgDao) Begin(opts ...*sql.TxOptions) *gorm.DB {
 }
 
 func (d PgDao) Insert(filter, result interface{}) error {
-	return d.Dao.Insert(filter, result, db)
+	return db.Table(d.Dao.Name).Create(result).Error
 }
 
 func (d PgDao) InsertTransaction(filter, result interface{}, tx *gorm.DB) error {

@@ -20,6 +20,7 @@ var (
 	valiate = map[string]bool{
 		uvp:        true,
 		majun:      true,
+		vtopia:     true,
 		artificial: true,
 	}
 )

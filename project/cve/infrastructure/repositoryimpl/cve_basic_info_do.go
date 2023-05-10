@@ -12,25 +12,82 @@ import (
 	"github.com/qinsheng99/go-domain-web/utils"
 )
 
+const (
+	fieldId         = "uuid"
+	fieldPatch      = "patch"
+	fieldSource     = "source"
+	fieldCveNum     = "cve_num"
+	fieldAffected   = "affected"
+	fieldSeverity   = "severity"
+	fieldCreatedAt  = "created_at"
+	fieldReferences = "references"
+)
+
 type cveBasicInfoDO struct {
 	Id            uuid.UUID      `gorm:"column:uuid;type:uuid"                        json:"-"`
 	Desc          string         `gorm:"column:desc"                                  json:"desc"`
-	Source        string         `gorm:"column:source"`
-	CveNum        string         `gorm:"column:cve_num"`
-	Pushed        string         `gorm:"column:pushed"`
-	Status        string         `gorm:"column:cve_status"`
-	PushType      string         `gorm:"column:push_type"`
-	Published     string         `gorm:"column:published" `
-	UpdatedSource string         `gorm:"column:updated_source"`
-	CreatedAt     int64          `gorm:"column:created_at"`
-	UpdatedAt     int64          `gorm:"column:updated_at"`
-	Affected      pq.StringArray `gorm:"column:affected;type:text[];default:'{}'"`
-	Patch         postgres.Jsonb `gorm:"column:patch;type:jsonb;default:'{}'"`
-	Severity      postgres.Jsonb `gorm:"column:severity;type:jsonb;default:'{}'"`
-	References    postgres.Jsonb `gorm:"column:references;type:jsonb;default:'{}'"`
+	Source        string         `gorm:"column:source"                                json:"-"`
+	CveNum        string         `gorm:"column:cve_num"                               json:"-"`
+	Pushed        string         `gorm:"column:pushed"                                json:"pushed"`
+	Status        string         `gorm:"column:cve_status"                            json:"cve_status"`
+	PushType      string         `gorm:"column:push_type"                             json:"push_type"`
+	Published     string         `gorm:"column:published"                             json:"published"`
+	UpdatedSource string         `gorm:"column:updated_source"                        json:"updated_source"`
+	CreatedAt     int64          `gorm:"column:created_at"                            json:"-"`
+	UpdatedAt     int64          `gorm:"column:updated_at"                            json:"updated_at"`
+	Affected      pq.StringArray `gorm:"column:affected;type:text[];default:'{}'"     json:"-"`
+	Patch         postgres.Jsonb `gorm:"column:patch;type:jsonb;default:'{}'"         json:"-"`
+	Severity      postgres.Jsonb `gorm:"column:severity;type:jsonb;default:'{}'"      json:"-"`
+	References    postgres.Jsonb `gorm:"column:references;type:jsonb;default:'{}'"    json:"-"`
 }
 
-func (do *cveBasicInfoDO) toCveOriginRecordInfo() (v domain.CveBasicInfo, err error) {
+func (do *cveBasicInfoDO) toMap() (res map[string]any, _ error) {
+	v, err := json.Marshal(do)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(v, &res)
+
+	res[fieldAffected] = marshalStringArray(do.Affected)
+	res[fieldPatch] = marshalJsonb(do.Patch)
+	res[fieldSeverity] = marshalJsonb(do.Severity)
+	res[fieldReferences] = marshalJsonb(do.References)
+
+	return res, err
+}
+
+func marshalJsonb(v postgres.Jsonb) string {
+	value, err := v.Value()
+	if err != nil {
+		return "{}"
+	}
+
+	if value != nil {
+		if s, ok := value.([]byte); ok {
+			return string(s)
+		}
+	}
+
+	return "{}"
+}
+
+func marshalStringArray(sa pq.StringArray) string {
+	v, err := sa.Value()
+	if err != nil {
+		return ""
+	}
+
+	if v != nil {
+		if s, ok := v.(string); ok {
+			return s
+		}
+	}
+
+	return "{}"
+}
+
+func (do *cveBasicInfoDO) toCveBasicInfo() (v domain.CveBasicInfo, err error) {
 	v.Id = do.Id.String()
 
 	if v.CVENum, err = dp.NewCVENum(do.CveNum); err != nil {
@@ -77,9 +134,10 @@ func (do *cveBasicInfoDO) toCveOriginRecordInfo() (v domain.CveBasicInfo, err er
 	return
 }
 
-func (o originRecord) toCveBasicInfoDO(v *domain.CveBasicInfo) (do cveBasicInfoDO, err error) {
+func (o basicInfo) toCveBasicInfoDO(v *domain.CveBasicInfo) (do cveBasicInfoDO, err error) {
 	app := &v.CveApplication
 	do = cveBasicInfoDO{
+		Id:            uuid.New(),
 		Desc:          v.Desc.Description(),
 		Source:        v.Source.Source.Source(),
 		CveNum:        v.CVENum.CVENum(),

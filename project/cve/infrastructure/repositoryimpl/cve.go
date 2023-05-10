@@ -6,13 +6,13 @@ import (
 )
 
 type cveImpl struct {
-	originRecord
+	basicInfo
 }
 
 func NewCVEImpl(cfg *postgresql.Config) repository.CVE {
 	return &cveImpl{
-		originRecord: originRecord{
-			postgresql.NewPgDao(cfg.Table.CveOriginRecord),
+		basicInfo: basicInfo{
+			postgresql.NewPgDao(cfg.Table.CveBasicInfoTest),
 		},
 	}
 }

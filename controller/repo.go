@@ -34,7 +34,7 @@ func (b BaseRepo) RepoNames(c *gin.Context) {
 	if repo, err := b.r.RepoNames(dp.NewPage(page), dp.NewSize(size), c.DefaultQuery("name", "")); err != nil {
 		commonctl.Failure(c, err)
 	} else {
-		commonctl.Success(c, repo)
+		commonctl.SendRespGet(c, repo)
 	}
 }
 
@@ -44,7 +44,7 @@ func (b BaseRepo) FindRepo(c *gin.Context) {
 	if repo, err := b.r.FindRepo(name); err != nil {
 		commonctl.Failure(c, err)
 	} else {
-		commonctl.Success(c, repo)
+		commonctl.SendRespGet(c, repo)
 	}
 }
 
@@ -62,6 +62,6 @@ func (b BaseRepo) FindRepoWith(c *gin.Context) {
 	if repo, err := b.r.FindRepoWith(id.Id); err != nil {
 		commonctl.Failure(c, err)
 	} else {
-		commonctl.Success(c, repo)
+		commonctl.SendRespGet(c, repo)
 	}
 }

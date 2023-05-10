@@ -33,7 +33,7 @@ func (b *BasePod) Get(c *gin.Context) {
 	if pod, err := b.p.GetPod(context.TODO(), c.Param("name")); err != nil {
 		commonctl.Failure(c, err)
 	} else {
-		commonctl.Success(c, pod)
+		commonctl.SendRespGet(c, pod)
 	}
 }
 
@@ -41,7 +41,7 @@ func (b *BasePod) List(c *gin.Context) {
 	if pod, err := b.p.PodList(context.TODO()); err != nil {
 		commonctl.Failure(c, err)
 	} else {
-		commonctl.Success(c, pod)
+		commonctl.SendRespGet(c, pod)
 	}
 }
 

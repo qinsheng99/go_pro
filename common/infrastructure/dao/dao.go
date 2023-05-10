@@ -168,9 +168,9 @@ func (d Dao) ExecSQL(sql string, result interface{}, db *gorm.DB, args ...interf
 }
 
 func (d Dao) IsRowNotFound(err error) bool {
-	return errors.Is(err, errRowExists)
+	return errors.Is(err, errRowNotFound)
 }
 
 func (d Dao) IsRowExists(err error) bool {
-	return errors.Is(err, errRowNotFound)
+	return errors.Is(err, errRowExists)
 }
