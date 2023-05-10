@@ -5,15 +5,14 @@ import (
 	"github.com/qinsheng99/go-domain-web/project/cve/domain/dp"
 )
 
-type OriginRecordCmd struct {
+type CmdToAddCVEBasicInfo struct {
 	Source dp.Source
+	CVENum dp.CVENum
 
-	BaseOrigin
-	CveSourceData
+	CveApplication
 }
 
 type Severity = domain.Severity
-type ReferencesData = domain.ReferencesData
+type References = domain.References
 type Patch = domain.Patch
-type BaseOrigin = domain.BaseOrigin
-type CveSourceData = domain.CveSourceData
+type CveApplication = domain.CveApplication

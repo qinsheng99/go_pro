@@ -40,7 +40,7 @@ postgresql:
   db_max_conn: 500
   db_maxidle: 1000
   table:
-    cve_origin_record: cve_origin_record_test
+    cve_basic_info_test: cve_basic_info_test
 
 etcd:
   host: ${DB_HOST}

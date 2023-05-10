@@ -8,26 +8,20 @@ import (
 )
 
 type uvpDataRequest struct {
-	Id         string               `json:"id"         binding:"required"`
-	Desc       string               `json:"desc"       binding:"required"`
-	Source     string               `json:"source"     binding:"required"`
-	Pushed     string               `json:"pushed"     binding:"required"`
-	PushType   string               `json:"push_type"  binding:"required"`
-	Affected   []string             `json:"affected"   binding:"required"`
-	Published  string               `json:"published"  binding:"required"`
-	Severity   []app.Severity       `json:"severity"`
-	References []app.ReferencesData `json:"references"`
-	Patch      []app.Patch          `json:"patch"`
+	Id         string           `json:"id"         binding:"required"`
+	Desc       string           `json:"desc"       binding:"required"`
+	Source     string           `json:"source"     binding:"required"`
+	Pushed     string           `json:"pushed"     binding:"required"`
+	PushType   string           `json:"push_type"  binding:"required"`
+	Affected   []string         `json:"affected"   binding:"required"`
+	Published  string           `json:"published"  binding:"required"`
+	Severity   []app.Severity   `json:"severity"`
+	References []app.References `json:"references"`
+	Patch      []app.Patch      `json:"patch"`
 }
 
-func (u *uvpDataRequest) toCmd() (v app.OriginRecordCmd, err error) {
-	v.BaseOrigin = app.BaseOrigin{
-		Pushed:    u.Pushed,
-		PushType:  u.PushType,
-		Published: u.Published,
-	}
-
-	s := &v.CveSourceData
+func (u *uvpDataRequest) toCmd() (v app.CmdToAddCVEBasicInfo, err error) {
+	s := &v.CveApplication
 	for _, a := range u.Affected {
 		if p, err := dp.NewPurl(a); err == nil {
 			s.Affected = append(v.Affected, p)
@@ -40,15 +34,20 @@ func (u *uvpDataRequest) toCmd() (v app.OriginRecordCmd, err error) {
 		return
 	}
 
+	s.Basic.Pushed = u.Pushed
+	s.Basic.PushType = u.PushType
+	s.Basic.Published = u.Published
+
 	s.Patch = u.Patch
 	s.Severity = u.Severity
-	s.ReferencesData = u.References
+	s.References = u.References
+	s.Desc = dp.NewDescription(u.Desc)
+
 	if v.Source, err = dp.NewSource(u.Source); err != nil {
 		return
 	}
 
-	s.Desc = dp.NewDescription(u.Desc)
-	s.CVENum, err = dp.NewCVENum(u.Id)
+	v.CVENum, err = dp.NewCVENum(u.Id)
 
 	return
 }

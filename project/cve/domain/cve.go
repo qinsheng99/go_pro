@@ -5,32 +5,31 @@ import (
 	"github.com/qinsheng99/go-domain-web/utils"
 )
 
-type CveOriginRecordInfo struct {
-	Id        string
-	CreatedAt int64
-
-	Status dp.CVEStatus
-
+type CveBasicInfo struct {
+	Id     string
+	CVENum dp.CVENum
 	Source Source
 
-	CveSourceData
-
-	BaseOrigin
+	CveApplication
 }
 
-type BaseOrigin struct {
+type CveRecord struct {
 	Pushed    string
 	PushType  string
 	Published string
+	CreatedAt int64
+
+	Status dp.CVEStatus
 }
 
-type CveSourceData struct {
-	CVENum         dp.CVENum
-	Desc           dp.Description
-	Patch          []Patch
-	Severity       []Severity
-	ReferencesData []ReferencesData
-	Affected       []dp.Purl
+type CveApplication struct {
+	Basic CveRecord
+
+	Desc       dp.Description
+	Patch      []Patch
+	Affected   []dp.Purl
+	Severity   []Severity
+	References []References
 }
 
 type Source struct {
@@ -44,7 +43,7 @@ type Severity struct {
 	Vector string `json:"vector"`
 }
 
-type ReferencesData struct {
+type References struct {
 	Url  string `json:"url"`
 	Type string `json:"type"`
 }
@@ -58,15 +57,23 @@ type Patch struct {
 	Branch     string `json:"branch"`
 }
 
-func NewCveOriginRecordInfo(s dp.Source, base BaseOrigin, cve CveSourceData) CveOriginRecordInfo {
-	return CveOriginRecordInfo{
-		CreatedAt: utils.Now(),
+func (entity *CveBasicInfo) UpdateStatus(v dp.CVEStatus) {
+	entity.CveApplication.Basic.Status = v
+}
+
+func (entity *CveBasicInfo) UpdateCveApplication(v *CveApplication) {
+	entity.CveApplication = *v
+}
+
+func NewCveBasicInfo(s dp.Source, app CveApplication, cve dp.CVENum) CveBasicInfo {
+	app.Basic.CreatedAt = utils.Now()
+	app.Basic.Status = dp.Add
+	return CveBasicInfo{
 		Source: Source{
 			Source:        s,
 			UpdatedSource: s,
 		},
-		CveSourceData: cve,
-		BaseOrigin:    base,
-		Status:        dp.Add,
+		CVENum:         cve,
+		CveApplication: app,
 	}
 }

@@ -12,7 +12,7 @@ import (
 	"github.com/qinsheng99/go-domain-web/utils"
 )
 
-type cveOriginRecordDO struct {
+type cveBasicInfoDO struct {
 	Id            uuid.UUID      `gorm:"column:uuid;type:uuid"                        json:"-"`
 	Desc          string         `gorm:"column:desc"                                  json:"desc"`
 	Source        string         `gorm:"column:source"`
@@ -30,25 +30,12 @@ type cveOriginRecordDO struct {
 	References    postgres.Jsonb `gorm:"column:references;type:jsonb;default:'{}'"`
 }
 
-func (do *cveOriginRecordDO) toCveOriginRecordInfo() (v domain.CveOriginRecordInfo, err error) {
+func (do *cveBasicInfoDO) toCveOriginRecordInfo() (v domain.CveBasicInfo, err error) {
 	v.Id = do.Id.String()
-	v.PushType = do.PushType
-	v.Published = do.Published
-	v.CreatedAt = do.CreatedAt
-	v.Pushed = do.Pushed
 
-	v.Affected = make([]dp.Purl, len(do.Affected))
-
-	for i := range do.Affected {
-		if v.Affected[i], err = dp.NewPurl(do.Affected[i]); err != nil {
-			return
-		}
-	}
-
-	if err = json.Unmarshal(do.Patch.RawMessage, &v.Patch); err != nil {
+	if v.CVENum, err = dp.NewCVENum(do.CveNum); err != nil {
 		return
 	}
-
 	if v.Source.Source, err = dp.NewSource(do.Source); err != nil {
 		return
 	}
@@ -57,54 +44,69 @@ func (do *cveOriginRecordDO) toCveOriginRecordInfo() (v domain.CveOriginRecordIn
 		return
 	}
 
-	if err = json.Unmarshal(do.Severity.RawMessage, &v.Severity); err != nil {
+	app := &v.CveApplication
+	app.Basic.PushType = do.PushType
+	app.Basic.Published = do.Published
+	app.Basic.CreatedAt = do.CreatedAt
+	app.Basic.Pushed = do.Pushed
+
+	app.Desc = dp.NewDescription(do.Desc)
+
+	if app.Basic.Status, err = dp.NewCVEStatus(do.Status); err != nil {
 		return
 	}
 
-	if err = json.Unmarshal(do.References.RawMessage, &v.ReferencesData); err != nil {
+	app.Affected = make([]dp.Purl, len(do.Affected))
+
+	for i := range do.Affected {
+		if app.Affected[i], err = dp.NewPurl(do.Affected[i]); err != nil {
+			return
+		}
+	}
+
+	if err = json.Unmarshal(do.Patch.RawMessage, &app.Patch); err != nil {
 		return
 	}
 
-	if v.CVENum, err = dp.NewCVENum(do.CveNum); err != nil {
+	if err = json.Unmarshal(do.Severity.RawMessage, &app.Severity); err != nil {
 		return
 	}
 
-	v.Desc = dp.NewDescription(do.Desc)
-
-	v.Status, err = dp.NewCVEStatus(do.Status)
+	err = json.Unmarshal(do.References.RawMessage, &app.References)
 
 	return
 }
 
-func (o originRecord) toCveOriginRecordDO(v *domain.CveOriginRecordInfo) (do cveOriginRecordDO, err error) {
-	do = cveOriginRecordDO{
+func (o originRecord) toCveBasicInfoDO(v *domain.CveBasicInfo) (do cveBasicInfoDO, err error) {
+	app := &v.CveApplication
+	do = cveBasicInfoDO{
 		Desc:          v.Desc.Description(),
 		Source:        v.Source.Source.Source(),
 		CveNum:        v.CVENum.CVENum(),
-		Pushed:        v.Pushed,
-		Status:        v.Status.CVEStatus(),
-		PushType:      v.PushType,
-		Published:     v.Published,
+		Pushed:        app.Basic.Pushed,
+		Status:        app.Basic.Status.CVEStatus(),
+		PushType:      app.Basic.PushType,
+		Published:     app.Basic.Published,
 		UpdatedSource: v.Source.UpdatedSource.Source(),
-		CreatedAt:     v.CreatedAt,
-		UpdatedAt:     v.CreatedAt,
+		CreatedAt:     app.Basic.CreatedAt,
+		UpdatedAt:     app.Basic.CreatedAt,
 	}
 
-	do.Affected = make(pq.StringArray, len(v.Affected))
+	do.Affected = make(pq.StringArray, len(app.Affected))
 
-	for i := range v.Affected {
-		do.Affected[i] = v.Affected[i].Purl()
+	for i := range app.Affected {
+		do.Affected[i] = app.Affected[i].Purl()
 	}
 
-	if do.Patch, err = utils.ToJsonB(v.Patch); err != nil {
+	if do.Patch, err = utils.ToJsonB(app.Patch); err != nil {
 		return
 	}
 
-	if do.Severity, err = utils.ToJsonB(v.Severity); err != nil {
+	if do.Severity, err = utils.ToJsonB(app.Severity); err != nil {
 		return
 	}
 
-	if do.References, err = utils.ToJsonB(v.ReferencesData); err != nil {
+	if do.References, err = utils.ToJsonB(app.References); err != nil {
 		return
 	}
 

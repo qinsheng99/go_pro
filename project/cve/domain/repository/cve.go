@@ -6,7 +6,7 @@ import (
 )
 
 type CVE interface {
-	FindOriginRecord(dp.CVENum) (domain.CveOriginRecordInfo, error)
-	AddOriginRecord(*domain.CveOriginRecordInfo) error
-	SaveOriginRecord(v *domain.CveOriginRecordInfo) error
+	FindCVEBasicInfo(dp.CVENum) (domain.CveBasicInfo, error)
+	AddCVEBasicInfo(*domain.CveBasicInfo) error
+	SaveCVEBasicInfo(v *domain.CveBasicInfo) error
 }

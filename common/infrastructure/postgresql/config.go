@@ -8,5 +8,5 @@ type Config struct {
 }
 
 type table struct {
-	CveOriginRecord string `json:"cve_origin_record"`
+	CveBasicInfoTest string `json:"cve_basic_info_test"`
 }
