@@ -43,7 +43,7 @@ func (o basicInfo) AddCVEBasicInfo(v *domain.CveBasicInfo) error {
 	res[fieldCveNum] = do.CveNum
 	res[fieldSource] = do.Source
 
-	err = o.cli.Insert(&cveBasicInfoDO{CveNum: do.CveNum}, res)
+	err = o.cli.FirstOrCreate(&cveBasicInfoDO{CveNum: do.CveNum}, res)
 	if err != nil {
 		return err
 	}

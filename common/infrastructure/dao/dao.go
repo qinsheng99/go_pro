@@ -78,18 +78,18 @@ func (d Dao) Begin(db *gorm.DB, opts ...*sql.TxOptions) *gorm.DB {
 	return db.Begin(opts...)
 }
 
-func (d Dao) Insert(filter, result interface{}, db *gorm.DB) error {
-	query := db.Table(d.Name).Where(filter).FirstOrCreate(result)
+func (d Dao) FirstOrCreate(filter, result interface{}, db *gorm.DB) error {
+	query := db.Table(d.Name).Where(filter).Find(result)
 
 	if err := query.Error; err != nil {
 		return err
 	}
 
-	if query.RowsAffected == 0 {
+	if query.RowsAffected != 0 {
 		return errRowExists
 	}
 
-	return nil
+	return db.Table(d.Name).Create(result).Error
 }
 
 func (d Dao) GetRecords(

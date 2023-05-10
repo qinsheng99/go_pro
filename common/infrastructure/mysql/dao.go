@@ -21,11 +21,11 @@ func (d MqDao) Begin(opts ...*sql.TxOptions) *gorm.DB {
 }
 
 func (d MqDao) Insert(filter, result interface{}) error {
-	return d.Dao.Insert(filter, result, db)
+	return d.Dao.FirstOrCreate(filter, result, db)
 }
 
 func (d MqDao) InsertTransaction(filter, result interface{}, tx *gorm.DB) error {
-	return d.Dao.Insert(filter, result, tx)
+	return d.Dao.FirstOrCreate(filter, result, tx)
 }
 
 func (d MqDao) GetRecords(

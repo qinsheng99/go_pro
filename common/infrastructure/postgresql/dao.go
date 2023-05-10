@@ -20,12 +20,16 @@ func (d PgDao) Begin(opts ...*sql.TxOptions) *gorm.DB {
 	return d.Dao.Begin(db, opts...)
 }
 
-func (d PgDao) Insert(filter, result interface{}) error {
+func (d PgDao) Insert(result interface{}) error {
 	return db.Table(d.Dao.Name).Create(result).Error
 }
 
+func (d PgDao) FirstOrCreate(filter, result interface{}) error {
+	return d.Dao.FirstOrCreate(filter, result, db)
+}
+
 func (d PgDao) InsertTransaction(filter, result interface{}, tx *gorm.DB) error {
-	return d.Dao.Insert(filter, result, tx)
+	return d.Dao.FirstOrCreate(filter, result, tx)
 }
 
 func (d PgDao) Transaction(f func(tx *gorm.DB) error, opts ...*sql.TxOptions) error {
