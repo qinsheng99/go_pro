@@ -79,7 +79,7 @@ func (d Dao) Begin(db *gorm.DB, opts ...*sql.TxOptions) *gorm.DB {
 }
 
 func (d Dao) FirstOrCreate(filter, result interface{}, db *gorm.DB) error {
-	query := db.Table(d.Name).Where(filter).Find(result)
+	query := db.Table(d.Name).Where(filter).Limit(1).Find(result)
 
 	if err := query.Error; err != nil {
 		return err
