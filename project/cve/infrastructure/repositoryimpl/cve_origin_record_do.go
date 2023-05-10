@@ -35,8 +35,15 @@ func (do *cveOriginRecordDO) toCveOriginRecordInfo() (v domain.CveOriginRecordIn
 	v.PushType = do.PushType
 	v.Published = do.Published
 	v.CreatedAt = do.CreatedAt
-	v.Affected = do.Affected
 	v.Pushed = do.Pushed
+
+	v.Affected = make([]dp.Purl, len(do.Affected))
+
+	for i := range do.Affected {
+		if v.Affected[i], err = dp.NewPurl(do.Affected[i]); err != nil {
+			return
+		}
+	}
 
 	if err = json.Unmarshal(do.Patch.RawMessage, &v.Patch); err != nil {
 		return
@@ -81,7 +88,12 @@ func (o originRecord) toCveOriginRecordDO(v *domain.CveOriginRecordInfo) (do cve
 		UpdatedSource: v.Source.UpdatedSource.Source(),
 		CreatedAt:     v.CreatedAt,
 		UpdatedAt:     v.CreatedAt,
-		Affected:      v.Affected,
+	}
+
+	do.Affected = make(pq.StringArray, len(v.Affected))
+
+	for i := range v.Affected {
+		do.Affected[i] = v.Affected[i].Purl()
 	}
 
 	if do.Patch, err = utils.ToJsonB(v.Patch); err != nil {
