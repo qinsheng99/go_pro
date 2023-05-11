@@ -9,10 +9,10 @@ import (
 )
 
 type dbImpl interface {
-	Insert(result interface{}, tx *gorm.DB) error
+	Insert(tx *gorm.DB, result interface{}) error
 	UpdateRecord(tx *gorm.DB, filter, update interface{}) error
 	FirstOrCreate(tx *gorm.DB, filter, result interface{}) error
-	CreateOrUpdate(result interface{}, tx *gorm.DB, updates ...string) error
+	CreateOrUpdate(tx *gorm.DB, result interface{}, updates ...string) error
 
 	Transaction(tx *gorm.DB, f func(tx *gorm.DB) error, opts ...*sql.TxOptions) error
 

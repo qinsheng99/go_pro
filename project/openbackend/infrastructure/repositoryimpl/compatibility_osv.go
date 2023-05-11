@@ -71,13 +71,11 @@ func (r *repoOsv) syncOsv(osvList []api.Osv) error {
 			var res compatibilityOsvDO
 			if ok, err = r.cli.Exist(tx, &filter, &res); err != nil {
 				return err
-			}
-
-			if ok {
+			} else if ok {
 				do.Id = res.Id
 			}
 
-			if err = r.cli.CreateOrUpdate(&do, tx, osvUpdates...); err != nil {
+			if err = r.cli.CreateOrUpdate(tx, &do, osvUpdates...); err != nil {
 				return err
 			}
 		}

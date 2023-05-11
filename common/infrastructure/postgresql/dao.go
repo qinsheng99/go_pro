@@ -21,7 +21,7 @@ func (d PgDao) Begin(opts ...*sql.TxOptions) *gorm.DB {
 	return d.Dao.Begin(db, opts...)
 }
 
-func (d PgDao) Insert(result interface{}, tx *gorm.DB) error {
+func (d PgDao) Insert(tx *gorm.DB, result interface{}) error {
 	return d.checkDB(tx).Table(d.Dao.Name).Create(result).Error
 }
 
@@ -29,7 +29,7 @@ func (d PgDao) FirstOrCreate(tx *gorm.DB, filter, result interface{}) error {
 	return d.Dao.FirstOrCreate(filter, result, d.checkDB(tx))
 }
 
-func (d PgDao) CreateOrUpdate(result interface{}, tx *gorm.DB, updates ...string) error {
+func (d PgDao) CreateOrUpdate(tx *gorm.DB, result interface{}, updates ...string) error {
 	return d.checkDB(tx).Table(d.Dao.Name).Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: "uuid"}},
 		DoUpdates: clause.AssignmentColumns(updates),
