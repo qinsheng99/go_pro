@@ -5,7 +5,7 @@ import (
 )
 
 type dbimpl interface {
-	FirstOrCreate(filter, result interface{}) error
+	CreateOrUpdate(result interface{}, updates ...string) error
 	GetRecord(filter dao.Scope, result interface{}) error
 	UpdateRecord(filter, update interface{}) error
 

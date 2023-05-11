@@ -24,12 +24,7 @@ func NewCveService(repo repository.CVE) CveService {
 func (c *cveService) AddCVEBasicInfo(app *CmdToAddCVEBasicInfo) error {
 	info := domain.NewCveBasicInfo(app.Source, app.CveApplication, app.CVENum)
 
-	_, err := c.repo.FindCVEBasicInfo(app.CVENum)
-	if err == nil {
-		return c.updateCve(app)
-	}
-
-	err = c.repo.AddCVEBasicInfo(&info)
+	err := c.repo.AddCVEBasicInfo(&info)
 	if err != nil {
 		return err
 	}

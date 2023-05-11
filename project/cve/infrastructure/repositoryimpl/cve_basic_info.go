@@ -33,7 +33,14 @@ func (o basicInfo) AddCVEBasicInfo(v *domain.CveBasicInfo) error {
 		return err
 	}
 
-	err = o.cli.FirstOrCreate(&cveBasicInfoDO{CveNum: do.CveNum}, &do)
+	if info, err := o.FindCVEBasicInfo(v.CVENum); err == nil {
+		do.Id, err = uuid.Parse(info.Id)
+		if err != nil {
+			return err
+		}
+	}
+
+	err = o.cli.CreateOrUpdate(&do, updates...)
 	if err != nil {
 		return err
 	}

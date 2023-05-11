@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/qinsheng99/go-domain-web/common/infrastructure/dao"
 )
@@ -26,6 +27,14 @@ func (d PgDao) Insert(result interface{}) error {
 
 func (d PgDao) FirstOrCreate(filter, result interface{}) error {
 	return d.Dao.FirstOrCreate(filter, result, db)
+}
+
+// CreateOrUpdate use uuid if you find record can update
+func (d PgDao) CreateOrUpdate(result interface{}, updates ...string) error {
+	return db.Table(d.Dao.Name).Clauses(clause.OnConflict{
+		Columns:   []clause.Column{{Name: "uuid"}},
+		DoUpdates: clause.AssignmentColumns(updates),
+	}).Create(result).Error
 }
 
 func (d PgDao) InsertTransaction(filter, result interface{}, tx *gorm.DB) error {

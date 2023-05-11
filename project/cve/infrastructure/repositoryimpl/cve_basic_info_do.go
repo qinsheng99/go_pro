@@ -13,6 +13,7 @@ import (
 
 const (
 	fieldId         = "uuid"
+	fieldDesc       = "desc"
 	fieldPatch      = "patch"
 	fieldSource     = "source"
 	fieldCveNum     = "cve_num"
@@ -21,6 +22,10 @@ const (
 	fieldCreatedAt  = "created_at"
 	fieldReferences = "references"
 )
+
+var updates = []string{
+	"desc", "pushed", "cve_status", "push_type", "published", "updated_source", "affected", "severity", "references", "updated_at",
+}
 
 type cveBasicInfoDO struct {
 	Id            uuid.UUID      `gorm:"column:uuid;type:uuid"                        json:"-"`
