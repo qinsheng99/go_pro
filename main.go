@@ -33,62 +33,54 @@ func main() {
 		return
 	}
 
-	err = logger.InitLogger(cfg.Logger)
-	if err != nil {
+	if err = logger.InitLogger(cfg.Logger); err != nil {
 		logrus.WithError(err).Error("logger init failed")
 
 		return
 	}
-
-	//err = kubernetes.Init(cfg.KubernetesConfig)
-	//if err != nil {
+	//
+	//if err = kubernetes.Init(cfg.Kubernetes); err != nil {
 	//	logrus.WithError(err).Error("kubernetes init failed")
 	//
-	//  return
+	//	return
 	//}
-	err = mysql.Init(cfg.Mysql)
-	if err != nil {
+
+	if err = mysql.Init(cfg.Mysql); err != nil {
 		logrus.WithError(err).Error("mysql init failed")
 
 		return
 	}
 
-	err = postgresql.Init(cfg.Postgresql)
-	if err != nil {
+	if err = postgresql.Init(cfg.Postgresql); err != nil {
 		logrus.WithError(err).Error("postgresql init failed")
 
 		return
 	}
 
-	//err = elastic.Init(cfg.Es)
-	//if err != nil {
+	//if err = elastic.Init(cfg.Es); err != nil {
 	//	logrus.WithError(err).Error("elasticsearch init failed")
 	//
 	//	return
 	//}
 	//
-	//err = redis.Init(cfg.Redis)
-	//if err != nil {
+	//if err = redis.Init(cfg.Redis); err != nil {
 	//	logrus.WithError(err).Error("redis init failed")
 	//
 	//	return
 	//}
 	//
-	//err = mongodb.Init(cfg.Mongo)
-	//if err != nil {
+	//if err = mongodb.Init(cfg.Mongo); err != nil {
 	//	logrus.WithError(err).Error("mongodb init failed")
 	//
 	//	return
 	//}
 	//
-	//err = etcd.Init(cfg.Etcd)
-	//if err != nil {
+	//if err = etcd.Init(cfg.Etcd); err != nil {
 	//	logrus.WithError(err).Error("etcd init failed")
 	//
-	// return
+	//	return
 	//}
 
-	//task.RepoTask()
 	server.SetRoute(r, cfg)
 
 	//lis := kubernetes.NewListen(kubernetes.GetClient(), kubernetes.GetDyna(), kubernetes.GetResource(), *listen)

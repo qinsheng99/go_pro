@@ -10,7 +10,7 @@ type Repo struct {
 //	page := 1
 //	for {
 //		url := fmt.Sprintf("https://gitee.com/api/v5/user/repos?"+
-//			"access_token=70edeb9a72791f73ab6555a420fc2072&sort=full_name&page=%d&per_page=20", page)
+//			"access_token=&sort=full_name&page=%d&per_page=20", page)
 //
 //		get, err := http.Get(url)
 //		if err != nil {
