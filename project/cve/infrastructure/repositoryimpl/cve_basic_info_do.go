@@ -9,7 +9,6 @@ import (
 
 	"github.com/qinsheng99/go-domain-web/project/cve/domain"
 	"github.com/qinsheng99/go-domain-web/project/cve/domain/dp"
-	"github.com/qinsheng99/go-domain-web/utils"
 )
 
 const (
@@ -33,12 +32,12 @@ type cveBasicInfoDO struct {
 	PushType      string         `gorm:"column:push_type"                             json:"push_type"`
 	Published     string         `gorm:"column:published"                             json:"published"`
 	UpdatedSource string         `gorm:"column:updated_source"                        json:"updated_source"`
+	Patch         string         `gorm:"column:patch;type:jsonb;default:'{}'"         json:"affected"`
+	Severity      string         `gorm:"column:severity;type:jsonb;default:'{}'"      json:"severity"`
+	References    string         `gorm:"column:references;type:jsonb;default:'{}'"    json:"references"`
 	CreatedAt     int64          `gorm:"column:created_at"                            json:"-"`
 	UpdatedAt     int64          `gorm:"column:updated_at"                            json:"updated_at"`
 	Affected      pq.StringArray `gorm:"column:affected;type:text[];default:'{}'"     json:"-"`
-	Patch         postgres.Jsonb `gorm:"column:patch;type:jsonb;default:'{}'"         json:"-"`
-	Severity      postgres.Jsonb `gorm:"column:severity;type:jsonb;default:'{}'"      json:"-"`
-	References    postgres.Jsonb `gorm:"column:references;type:jsonb;default:'{}'"    json:"-"`
 }
 
 func (do *cveBasicInfoDO) toMap() (res map[string]any, _ error) {
@@ -50,9 +49,6 @@ func (do *cveBasicInfoDO) toMap() (res map[string]any, _ error) {
 	err = json.Unmarshal(v, &res)
 
 	res[fieldAffected] = marshalStringArray(do.Affected)
-	res[fieldPatch] = marshalJsonb(do.Patch)
-	res[fieldSeverity] = marshalJsonb(do.Severity)
-	res[fieldReferences] = marshalJsonb(do.References)
 
 	return res, err
 }
@@ -121,15 +117,15 @@ func (do *cveBasicInfoDO) toCveBasicInfo() (v domain.CveBasicInfo, err error) {
 		}
 	}
 
-	if err = json.Unmarshal(do.Patch.RawMessage, &app.Patch); err != nil {
+	if err = json.Unmarshal([]byte(do.Patch), &app.Patch); err != nil {
 		return
 	}
 
-	if err = json.Unmarshal(do.Severity.RawMessage, &app.Severity); err != nil {
+	if err = json.Unmarshal([]byte(do.Severity), &app.Severity); err != nil {
 		return
 	}
 
-	err = json.Unmarshal(do.References.RawMessage, &app.References)
+	err = json.Unmarshal([]byte(do.References), &app.References)
 
 	return
 }
@@ -156,17 +152,26 @@ func (o basicInfo) toCveBasicInfoDO(v *domain.CveBasicInfo) (do cveBasicInfoDO, 
 		do.Affected[i] = app.Affected[i].Purl()
 	}
 
-	if do.Patch, err = utils.ToJsonB(app.Patch); err != nil {
+	if do.Patch, err = toStr(app.Patch); err != nil {
 		return
 	}
 
-	if do.Severity, err = utils.ToJsonB(app.Severity); err != nil {
+	if do.Severity, err = toStr(app.Severity); err != nil {
 		return
 	}
 
-	if do.References, err = utils.ToJsonB(app.References); err != nil {
+	if do.References, err = toStr(app.References); err != nil {
 		return
 	}
 
 	return
+}
+
+func toStr(v interface{}) (string, error) {
+	bys, err := json.Marshal(v)
+	if err != nil {
+		return "", err
+	}
+
+	return string(bys), err
 }

@@ -33,17 +33,7 @@ func (o basicInfo) AddCVEBasicInfo(v *domain.CveBasicInfo) error {
 		return err
 	}
 
-	res, err := do.toMap()
-	if err != nil {
-		return err
-	}
-
-	res[fieldId] = do.Id.String()
-	res[fieldCreatedAt] = v.Basic.CreatedAt
-	res[fieldCveNum] = do.CveNum
-	res[fieldSource] = do.Source
-
-	err = o.cli.FirstOrCreate(&cveBasicInfoDO{CveNum: do.CveNum}, res)
+	err = o.cli.FirstOrCreate(&cveBasicInfoDO{CveNum: do.CveNum}, &do)
 	if err != nil {
 		return err
 	}

@@ -2,12 +2,10 @@ package utils
 
 import (
 	"bytes"
-	"encoding/json"
 	"errors"
 	"strings"
 	"time"
 
-	"github.com/jinzhu/gorm/dialects/postgres"
 	"gorm.io/gorm"
 	"k8s.io/apimachinery/pkg/util/rand"
 
@@ -60,16 +58,6 @@ func GenerateCode(length int) string {
 	}
 
 	return bys.String()
-}
-
-func ToBytes(v interface{}) ([]byte, error) {
-	return json.Marshal(v)
-}
-
-func ToJsonB(v interface{}) (postgres.Jsonb, error) {
-	s, err := ToBytes(v)
-
-	return postgres.Jsonb{RawMessage: s}, err
 }
 
 func Now() int64 {
