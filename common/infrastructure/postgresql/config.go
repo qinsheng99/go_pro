@@ -1,12 +1,14 @@
 package postgresql
 
-import "github.com/qinsheng99/go-domain-web/common/infrastructure/mysql"
+import (
+	"github.com/qinsheng99/go-domain-web/common/infrastructure/dao"
+)
 
 type Config struct {
-	mysql.DB
+	dao.DB
 	Table table `json:"table"`
 }
 
 type table struct {
-	CveBasicInfoTest string `json:"cve_basic_info_test"`
+	CveBasicInfo string `json:"cve_basic_info"`
 }

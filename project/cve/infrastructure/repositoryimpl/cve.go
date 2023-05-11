@@ -12,7 +12,7 @@ type cveImpl struct {
 func NewCVEImpl(cfg *postgresql.Config) repository.CVE {
 	return &cveImpl{
 		basicInfo: basicInfo{
-			postgresql.NewPgDao(cfg.Table.CveBasicInfoTest),
+			postgresql.NewPgDao(cfg.Table.CveBasicInfo),
 		},
 	}
 }

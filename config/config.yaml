@@ -32,15 +32,15 @@ mongo:
   collection: "dd"
 
 postgresql:
-  db_host: "49.0.247.41"
-  db_port: 30051
-  db_user: "cve-manager"
-  db_pwd: "BW2Rynr!LKWwjA2s"
+  db_host: "192.168.1.218"
+  db_port: 5432
+  db_user: "postgres"
+  db_pwd: "root"
   db_name: "cve-manager"
   db_max_conn: 500
   db_maxidle: 1000
   table:
-    cve_basic_info_test: cve_basic_info_test
+    cve_basic_info: cve_basic_info
 
 etcd:
   host: ${DB_HOST}

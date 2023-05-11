@@ -40,7 +40,7 @@ func (o basicInfo) AddCVEBasicInfo(v *domain.CveBasicInfo) error {
 		}
 	}
 
-	err = o.cli.CreateOrUpdate(&do, nil, updates...)
+	err = o.cli.CreateOrUpdate(nil, &do, updates...)
 	if err != nil {
 		return err
 	}

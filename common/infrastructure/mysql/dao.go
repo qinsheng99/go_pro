@@ -21,7 +21,7 @@ func (d MqDao) Begin(opts ...*sql.TxOptions) *gorm.DB {
 	return d.Dao.Begin(db, opts...)
 }
 
-func (d MqDao) Insert(result interface{}, tx *gorm.DB) error {
+func (d MqDao) Insert(tx *gorm.DB, result interface{}) error {
 	return d.checkDB(tx).Table(d.Dao.Name).Create(result).Error
 }
 
@@ -29,7 +29,7 @@ func (d MqDao) FirstOrCreate(tx *gorm.DB, filter, result interface{}) error {
 	return d.Dao.FirstOrCreate(filter, result, d.checkDB(tx))
 }
 
-func (d MqDao) CreateOrUpdate(result interface{}, tx *gorm.DB, updates ...string) error {
+func (d MqDao) CreateOrUpdate(tx *gorm.DB, result interface{}, updates ...string) error {
 	return d.checkDB(tx).Table(d.Dao.Name).Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: "id"}},
 		DoUpdates: clause.AssignmentColumns(updates),

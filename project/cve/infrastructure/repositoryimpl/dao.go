@@ -7,7 +7,7 @@ import (
 )
 
 type dbimpl interface {
-	CreateOrUpdate(result interface{}, tx *gorm.DB, updates ...string) error
+	CreateOrUpdate(tx *gorm.DB, result interface{}, updates ...string) error
 	GetRecord(tx *gorm.DB, filter dao.Scope, result interface{}) error
 	UpdateRecord(tx *gorm.DB, filter, update interface{}) error
 
