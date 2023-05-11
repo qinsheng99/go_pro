@@ -7,6 +7,11 @@ import (
 	"github.com/qinsheng99/go-domain-web/project/openbackend/domain"
 )
 
+var osvUpdates = []string{
+	"architecture", "osv_name", "date", "os_download_link", "type", "details",
+	"friendly_link", "total_result", "checksum", "base_openeuler_version", "tools_result", "platform_result", "update_time",
+}
+
 type compatibilityOsvDO struct {
 	Id                   int64     `gorm:"column:id"`
 	Architecture         string    `gorm:"column:architecture"`

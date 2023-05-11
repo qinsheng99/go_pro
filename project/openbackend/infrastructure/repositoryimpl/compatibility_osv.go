@@ -42,55 +42,51 @@ func (r *repoOsv) SyncOsv() (string, error) {
 
 func (r *repoOsv) syncOsv(osvList []api.Osv) error {
 	var err error
-	tx := r.cli.Begin()
-	defer func() {
-		if err == nil {
-			tx.Commit()
-			return
-		}
 
-		tx.Rollback()
-	}()
+	f := func(tx *gorm.DB) error {
+		for k := range osvList {
+			v := osvList[k]
+			filter := compatibilityOsvDO{OsVersion: v.OsVersion}
+			if len(v.PlatformResult) == 0 && len(v.ToolsResult) == 0 {
+				err = r.cli.Delete(&filter, tx)
+				if err != nil {
+					return err
+				}
 
-	for k := range osvList {
-		v := osvList[k]
-		filter := compatibilityOsvDO{OsVersion: v.OsVersion}
-		if len(v.PlatformResult) == 0 && len(v.ToolsResult) == 0 {
-			err = r.cli.DeleteTransaction(&filter, tx)
-			if err != nil {
+				continue
+			}
+			var tools, platform []byte
+			if tools, err = json.Marshal(v.ToolsResult); err != nil {
 				return err
 			}
 
-			continue
-		}
-		var tools, platform []byte
-		tools, err = json.Marshal(v.ToolsResult)
-		if err != nil {
-			return err
-		}
-		platform, err = json.Marshal(v.PlatformResult)
-		if err != nil {
-			return err
-		}
-
-		var do compatibilityOsvDO
-		toCompatibilityOsvDO(&do, v, tools, platform)
-
-		var ok bool
-		if ok, err = r.cli.Exist(&filter, &compatibilityOsvDO{}); err == nil && ok {
-			err = r.cli.UpdateTransaction(&filter, &do, tx)
-			if err != nil {
-				tx.Rollback()
+			if platform, err = json.Marshal(v.PlatformResult); err != nil {
 				return err
 			}
-		} else if err == nil {
-			if err = r.cli.InsertTransaction(&filter, &do, tx); err != nil {
-				tx.Rollback()
+
+			var do compatibilityOsvDO
+			toCompatibilityOsvDO(&do, v, tools, platform)
+
+			var ok bool
+			var res compatibilityOsvDO
+			if ok, err = r.cli.Exist(tx, &filter, &res); err != nil {
 				return err
 			}
-		} else {
-			return err
+
+			if ok {
+				do.Id = res.Id
+			}
+
+			if err = r.cli.CreateOrUpdate(&do, tx, osvUpdates...); err != nil {
+				return err
+			}
 		}
+
+		return nil
+	}
+
+	if err = r.cli.Transaction(nil, f); err != nil {
+		return err
 	}
 
 	return nil
@@ -125,14 +121,14 @@ func (r *repoOsv) OsvList(opt domain.OsvOptions) ([]domain.CompatibilityOsvInfo,
 		return db
 	}
 
-	total, err := r.cli.Count(f)
+	total, err := r.cli.Count(nil, f)
 	if err != nil {
 		return nil, 0, err
 	}
 
 	var do []compatibilityOsvDO
 	if err = r.cli.GetRecords(
-		f,
+		nil, f,
 		&do,
 		dao.Pagination{PageNum: opt.Page.Page(), CountPerPage: opt.Size.Size()},
 		[]dao.SortByColumn{{Column: "id"}},

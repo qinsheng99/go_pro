@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/qinsheng99/go-domain-web/common/infrastructure/dao"
 )
@@ -20,52 +21,63 @@ func (d MqDao) Begin(opts ...*sql.TxOptions) *gorm.DB {
 	return d.Dao.Begin(db, opts...)
 }
 
-func (d MqDao) Insert(filter, result interface{}) error {
-	return d.Dao.FirstOrCreate(filter, result, db)
+func (d MqDao) Insert(result interface{}, tx *gorm.DB) error {
+	return d.checkDB(tx).Table(d.Dao.Name).Create(result).Error
 }
 
-func (d MqDao) InsertTransaction(filter, result interface{}, tx *gorm.DB) error {
-	return d.Dao.FirstOrCreate(filter, result, tx)
+func (d MqDao) FirstOrCreate(tx *gorm.DB, filter, result interface{}) error {
+	return d.Dao.FirstOrCreate(filter, result, d.checkDB(tx))
+}
+
+func (d MqDao) CreateOrUpdate(result interface{}, tx *gorm.DB, updates ...string) error {
+	return d.checkDB(tx).Table(d.Dao.Name).Clauses(clause.OnConflict{
+		Columns:   []clause.Column{{Name: "id"}},
+		DoUpdates: clause.AssignmentColumns(updates),
+	}).Create(result).Error
 }
 
 func (d MqDao) GetRecords(
-	filter dao.Scope, result interface{}, p dao.Pagination, sort []dao.SortByColumn,
+	tx *gorm.DB, filter dao.Scope, result interface{}, p dao.Pagination, sort []dao.SortByColumn,
 ) error {
-	return d.Dao.GetRecords(filter, result, p, sort, db)
+	return d.Dao.GetRecords(filter, result, p, sort, d.checkDB(tx))
 }
 
-func (d MqDao) Count(filter dao.Scope) (int64, error) {
-	return d.Dao.Count(filter, db)
+func (d MqDao) Count(tx *gorm.DB, filter dao.Scope) (int64, error) {
+	return d.Dao.Count(filter, d.checkDB(tx))
 }
 
-func (d MqDao) GetRecord(filter dao.Scope, result interface{}) error {
-	return d.Dao.GetRecord(filter, result, db)
+func (d MqDao) GetRecord(tx *gorm.DB, filter dao.Scope, result interface{}) error {
+	return d.Dao.GetRecord(filter, result, d.checkDB(tx))
 }
 
-func (d MqDao) Transaction(f func(tx *gorm.DB) error, opts ...*sql.TxOptions) error {
-	return db.Transaction(f, opts...)
+func (d MqDao) Transaction(tx *gorm.DB, f func(tx *gorm.DB) error, opts ...*sql.TxOptions) error {
+	return d.checkDB(tx).Transaction(f, opts...)
 }
 
-func (d MqDao) UpdateRecord(filter, update interface{}) error {
-	return d.Dao.Update(filter, update, db)
+func (d MqDao) UpdateRecord(tx *gorm.DB, filter, update interface{}) error {
+	return d.Dao.Update(filter, update, d.checkDB(tx))
 }
 
-func (d MqDao) UpdateTransaction(filter, update interface{}, tx *gorm.DB) error {
-	return d.Dao.Update(filter, update, tx)
+func (d MqDao) Exist(tx *gorm.DB, filter interface{}, result interface{}) (bool, error) {
+	return d.Dao.Exist(filter, result, d.checkDB(tx))
 }
 
-func (d MqDao) Exist(filter interface{}, result interface{}) (bool, error) {
-	return d.Dao.Exist(filter, result, db)
+func (d MqDao) ExecSQL(tx *gorm.DB, sql string, result interface{}, args ...interface{}) error {
+	return d.Dao.ExecSQL(sql, result, d.checkDB(tx), args)
 }
 
-func (d MqDao) ExecSQL(sql string, result interface{}, args ...interface{}) error {
-	return d.Dao.ExecSQL(sql, result, db, args)
+func (d MqDao) Delete(filter interface{}, tx *gorm.DB) error {
+	return d.Dao.Delete(filter, d.checkDB(tx))
 }
 
-func (d MqDao) DeleteTransaction(filter interface{}, db *gorm.DB) error {
-	return d.Dao.Delete(filter, db)
+func (d MqDao) DB() *gorm.DB {
+	return db
 }
 
-func (d MqDao) Delete(filter interface{}) error {
-	return d.Dao.Delete(filter, db)
+func (d MqDao) checkDB(gd *gorm.DB) *gorm.DB {
+	if gd != nil {
+		return gd
+	}
+
+	return db
 }

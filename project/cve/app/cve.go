@@ -42,22 +42,3 @@ func (c *cveService) BasicInfo(cve dp.CVENum) (DetailInfoDTO, error) {
 
 	return toDetailInfoDTO(&info), err
 }
-
-func (c *cveService) updateCve(app *CmdToAddCVEBasicInfo) error {
-	res, err := c.repo.FindCVEBasicInfo(app.CVENum)
-	if err != nil {
-		return err
-	}
-
-	res.UpdateCveApplication(&app.CveApplication)
-	res.UpdateStatus(dp.Update)
-
-	err = c.repo.SaveCVEBasicInfo(&res)
-	if err != nil {
-		return err
-	}
-
-	// TODO send message  res.CVENum.CVENum
-
-	return nil
-}

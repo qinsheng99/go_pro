@@ -20,7 +20,7 @@ func (o basicInfo) FindCVEBasicInfo(num dp.CVENum) (domain.CveBasicInfo, error) 
 
 	var res cveBasicInfoDO
 
-	if err := o.cli.GetRecord(filter, &res); err != nil {
+	if err := o.cli.GetRecord(nil, filter, &res); err != nil {
 		return domain.CveBasicInfo{}, err
 	}
 
@@ -40,7 +40,7 @@ func (o basicInfo) AddCVEBasicInfo(v *domain.CveBasicInfo) error {
 		}
 	}
 
-	err = o.cli.CreateOrUpdate(&do, updates...)
+	err = o.cli.CreateOrUpdate(&do, nil, updates...)
 	if err != nil {
 		return err
 	}
@@ -68,5 +68,5 @@ func (o basicInfo) SaveCVEBasicInfo(v *domain.CveBasicInfo) error {
 		return err
 	}
 
-	return o.cli.UpdateRecord(&cveBasicInfoDO{Id: u}, d)
+	return o.cli.UpdateRecord(nil, &cveBasicInfoDO{Id: u}, d)
 }

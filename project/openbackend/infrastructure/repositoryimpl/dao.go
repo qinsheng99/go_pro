@@ -9,15 +9,17 @@ import (
 )
 
 type dbImpl interface {
-	InsertTransaction(filter, result interface{}, db *gorm.DB) error
-	UpdateTransaction(filter, update interface{}, db *gorm.DB) error
+	Insert(result interface{}, tx *gorm.DB) error
+	UpdateRecord(tx *gorm.DB, filter, update interface{}) error
+	FirstOrCreate(tx *gorm.DB, filter, result interface{}) error
+	CreateOrUpdate(result interface{}, tx *gorm.DB, updates ...string) error
 
-	Transaction(f func(tx *gorm.DB) error, opts ...*sql.TxOptions) error
+	Transaction(tx *gorm.DB, f func(tx *gorm.DB) error, opts ...*sql.TxOptions) error
 
-	GetRecords(dao.Scope, interface{}, dao.Pagination, []dao.SortByColumn) error
-	Count(dao.Scope) (int64, error)
+	GetRecords(tx *gorm.DB, filter dao.Scope, result interface{}, p dao.Pagination, sort []dao.SortByColumn) error
+	Count(tx *gorm.DB, filter dao.Scope) (int64, error)
 
 	Begin(...*sql.TxOptions) *gorm.DB
-	DeleteTransaction(filter interface{}, db *gorm.DB) error
-	Exist(filter interface{}, result interface{}) (bool, error)
+	Delete(filter interface{}, tx *gorm.DB) error
+	Exist(tx *gorm.DB, filter interface{}, result interface{}) (bool, error)
 }
