@@ -66,7 +66,7 @@ func (d MqDao) ExecSQL(tx *gorm.DB, sql string, result interface{}, args ...inte
 	return d.Dao.ExecSQL(sql, result, d.checkDB(tx), args)
 }
 
-func (d MqDao) Delete(filter interface{}, tx *gorm.DB) error {
+func (d MqDao) Delete(tx *gorm.DB, filter interface{}) error {
 	return d.Dao.Delete(filter, d.checkDB(tx))
 }
 

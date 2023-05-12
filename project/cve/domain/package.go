@@ -40,3 +40,14 @@ type Package struct {
 	PkgName dp.PackageName
 	Version string
 }
+
+func (a ApplicationPackage) FindRepo(repo string) int {
+	index := -1
+	for i, pkg := range a.CommunityPkg {
+		if pkg.Repository.Repo == repo {
+			return i
+		}
+	}
+
+	return index
+}

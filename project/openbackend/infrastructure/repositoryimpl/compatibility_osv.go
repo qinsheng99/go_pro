@@ -48,7 +48,7 @@ func (r *repoOsv) syncOsv(osvList []api.Osv) error {
 			v := osvList[k]
 			filter := compatibilityOsvDO{OsVersion: v.OsVersion}
 			if len(v.PlatformResult) == 0 && len(v.ToolsResult) == 0 {
-				err = r.cli.Delete(&filter, tx)
+				err = r.cli.Delete(tx, &filter)
 				if err != nil {
 					return err
 				}

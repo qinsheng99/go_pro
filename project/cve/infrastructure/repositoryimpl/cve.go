@@ -7,7 +7,6 @@ import (
 
 type cveImpl struct {
 	basicInfo
-	communityPkg
 }
 
 func NewCVEImpl(cfg *postgres.Config) repository.CVE {
@@ -15,6 +14,15 @@ func NewCVEImpl(cfg *postgres.Config) repository.CVE {
 		basicInfo: basicInfo{
 			postgres.NewPgDao(cfg.Table.CveBasicInfo),
 		},
+	}
+}
+
+type pkgImpl struct {
+	communityPkg
+}
+
+func NewPkgImpl(cfg *postgres.Config) repository.PkgImpl {
+	return &pkgImpl{
 		communityPkg: communityPkg{
 			postgres.NewPgDao(cfg.Table.CveCommunityPkg),
 		},

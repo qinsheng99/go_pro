@@ -9,7 +9,7 @@ import (
 )
 
 var pkgUpdates = []string{
-	"repo", "status", "decription", "warehouse", "milestone", "assigne", "updated_at", "branch",
+	"repo", "status", "decription", "milestone", "assigne", "updated_at", "branch",
 }
 
 type cveCommunityPkgDO struct {

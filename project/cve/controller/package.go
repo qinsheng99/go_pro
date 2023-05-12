@@ -13,8 +13,8 @@ type PkgController struct {
 	app.PkgService
 }
 
-func AddRoutePkg(r *gin.RouterGroup) {
-	ctl := &PkgController{}
+func AddRoutePkg(r *gin.RouterGroup, service app.PkgService) {
+	ctl := &PkgController{service}
 
 	group := r.Group("/pkg")
 
@@ -24,11 +24,26 @@ func AddRoutePkg(r *gin.RouterGroup) {
 }
 
 func (p *PkgController) Upload(c *gin.Context) {
+	var req PkgRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		commonctl.QueryFailure(c, err)
+
+		return
+	}
+
 	switch c.Param("type") {
 	case "application":
-		go p.AddApplicationPkg(nil)
+		cmd, err := req.toApplicationPkgCmd()
+		if err != nil {
+			commonctl.Failure(c, err)
+
+			return
+		}
+		go p.AddApplicationPkg(&cmd)
 	default:
 		commonctl.Failure(c, errors.New("invalid type"))
+
+		return
 	}
 
 	commonctl.SuccessCreate(c)
