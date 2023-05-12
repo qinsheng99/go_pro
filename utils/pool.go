@@ -45,6 +45,7 @@ func (p *GoFuncPool) Submit(fn func()) {
 		p.gochannel <- channel
 		defer p.sy.Done()
 	}()
+
 	p.sy.Wait()
 }
 
@@ -52,6 +53,7 @@ func (p *GoFuncPool) Close() {
 	for i := 0; i < p.maxLimit; i++ {
 		<-p.gochannel
 	}
+
 	close(p.gochannel)
 }
 

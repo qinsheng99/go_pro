@@ -15,8 +15,7 @@ type Func func(attempt int) (retry bool, err error)
 
 // Do keeps trying the function until the second argument
 // returns false, or no error is returned.
-func Do(fn Func) error {
-	var err error
+func Do(fn Func) (err error) {
 	var cont bool
 	attempt := 1
 	for {
@@ -32,5 +31,6 @@ func Do(fn Func) error {
 			return errMaxRetriesReached
 		}
 	}
-	return err
+
+	return
 }

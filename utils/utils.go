@@ -16,6 +16,7 @@ func ErrorNotFound(err error) bool {
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return true
 	}
+
 	return false
 }
 
@@ -31,6 +32,7 @@ func StrSliceToInterface(data []string) []interface{} {
 		}
 		res = append(res, data[k])
 	}
+
 	return res
 }
 
@@ -46,6 +48,7 @@ func FilterRepeat(strs []string, str string) (repeat []string) {
 			repeat = append(repeat, s)
 		}
 	}
+
 	return
 }
 
