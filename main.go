@@ -7,7 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/qinsheng99/go-domain-web/common/infrastructure/mysql"
-	"github.com/qinsheng99/go-domain-web/common/infrastructure/postgresql"
+	"github.com/qinsheng99/go-domain-web/common/infrastructure/postgres"
 	"github.com/qinsheng99/go-domain-web/common/logger"
 	"github.com/qinsheng99/go-domain-web/config"
 	"github.com/qinsheng99/go-domain-web/server"
@@ -51,8 +51,8 @@ func main() {
 		return
 	}
 
-	if err = postgresql.Init(cfg.Postgresql); err != nil {
-		logrus.WithError(err).Error("postgresql init failed")
+	if err = postgres.Init(cfg.Postgres); err != nil {
+		logrus.WithError(err).Error("postgres init failed")
 
 		return
 	}

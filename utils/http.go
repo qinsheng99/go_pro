@@ -50,7 +50,10 @@ func (r *request) mainRequest(url, method string, bytesData interface{}, headers
 			return attempt < 3, err
 		}
 
-		req.Header.Set("Content-Type", "application/json")
+		if http.MethodPost == method {
+			req.Header.Set("Content-Type", "application/json")
+		}
+
 		for key, item := range headers {
 			req.Header.Set(key, item)
 		}
@@ -59,6 +62,7 @@ func (r *request) mainRequest(url, method string, bytesData interface{}, headers
 		if err != nil || resp == nil {
 			return attempt < 3, err
 		}
+
 		defer resp.Body.Close()
 		resByte, err = io.ReadAll(resp.Body)
 
@@ -77,11 +81,13 @@ func (r *request) CustomRequest(url, method string, bytesData interface{}, heade
 		bys []byte
 		err error
 	)
+
 	if try {
 		bys, err = r.mainRequest(r.getUrl(url, u), strings.ToUpper(method), bytesData, headers)
 	} else {
 		bys, err = r.noTryRequest(r.getUrl(url, u), strings.ToUpper(method), bytesData, headers)
 	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -89,8 +95,8 @@ func (r *request) CustomRequest(url, method string, bytesData interface{}, heade
 	if data == nil {
 		return bys, nil
 	}
-	err = json.NewDecoder(bytes.NewReader(bys)).Decode(data)
-	return bys, err
+
+	return bys, json.NewDecoder(bytes.NewReader(bys)).Decode(data)
 }
 
 // noTryRequest 所有公用的http请求无重试
@@ -100,22 +106,30 @@ func (r *request) noTryRequest(url, method string, bytesData interface{}, header
 		logger.Log.Errorf("url:%s ;http new request err: %v", url, err)
 		return
 	}
-	req.Header.Set("Content-Type", "application/json")
+
+	if http.MethodPost == method {
+		req.Header.Set("Content-Type", "application/json")
+	}
+
 	for key, item := range headers {
 		req.Header.Set(key, item)
 	}
+
 	resp, err := r.c.Do(req)
 	if err != nil || resp == nil {
 		logger.Log.Warnf("url:%s ;client Do err: %v", url, err)
 		return
 	}
+
 	defer resp.Body.Close()
 
 	if resp.StatusCode > http.StatusMultipleChoices || resp.Body == nil {
 		logger.Log.Errorf("url:%s ;http new request err: %v", url, resp.Status)
 		return nil, errors.New(fmt.Sprintf("request err %s", resp.Status))
 	}
+
 	resByte, err = io.ReadAll(resp.Body)
+
 	return
 }
 

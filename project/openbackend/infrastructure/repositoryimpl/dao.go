@@ -20,6 +20,6 @@ type dbImpl interface {
 	Count(tx *gorm.DB, filter dao.Scope) (int64, error)
 
 	Begin(...*sql.TxOptions) *gorm.DB
-	Delete(filter interface{}, tx *gorm.DB) error
+	Delete(tx *gorm.DB, filter interface{}) error
 	Exist(tx *gorm.DB, filter interface{}, result interface{}) (bool, error)
 }

@@ -59,7 +59,7 @@ func SetRoute(r *gin.Engine, cfg *config.Config) {
 
 	controller.AddRoutePull(group, elasticsearch.NewRepoPull(pull, utils.NewRequest(nil)))
 
-	cvectl.AddRouteCve(group, cveapp.NewCveService(cverepository.NewCVEImpl(cfg.Postgresql)))
+	cvectl.AddRouteCve(group, cveapp.NewCveService(cverepository.NewCVEImpl(cfg.Postgres)))
 
 	//controller.AddRouteRepo(group, repositoryimpl.NewRepoR(mysql.NewRepoMapper()))
 }

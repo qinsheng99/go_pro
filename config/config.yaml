@@ -31,7 +31,7 @@ mongo:
   database: "mydb"
   collection: "dd"
 
-postgresql:
+postgres:
   db_host: "192.168.1.218"
   db_port: 5432
   db_user: "postgres"
@@ -41,6 +41,7 @@ postgresql:
   db_maxidle: 1000
   table:
     cve_basic_info: cve_basic_info
+    cve_community_pkg: cve_community_pkg
 
 etcd:
   host: ${DB_HOST}
@@ -67,3 +68,20 @@ kubernetes:
     group: code.zjm.com
     version: v1
     kind: CodeServer
+task:
+  pkg:
+    endpoint: localhost:8000/
+    exec: "0 10 * * *"
+    packages:
+      - community: mindspore
+        type: "application"
+        org: mindspore
+        platform: gitee
+        url:
+          - https://gitee.com/mindspore/community/raw/master/security/config/Third_Party_Open_Source_Software_List.yaml
+      - community: openeuler
+        type: "base"
+        org: src-openeuler
+        platform: gitee
+        url:
+          - http://omapi.osinfra.cn/v1/versions?community=openeuler&pageSize=20

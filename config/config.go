@@ -7,29 +7,30 @@ import (
 
 	"github.com/qinsheng99/go-domain-web/common/infrastructure/elastic"
 	"github.com/qinsheng99/go-domain-web/common/infrastructure/mysql"
-	"github.com/qinsheng99/go-domain-web/common/infrastructure/postgresql"
+	"github.com/qinsheng99/go-domain-web/common/infrastructure/postgres"
 	"github.com/qinsheng99/go-domain-web/common/logger"
 	"github.com/qinsheng99/go-domain-web/infrastructure/etcd"
 	"github.com/qinsheng99/go-domain-web/infrastructure/kafka"
 	"github.com/qinsheng99/go-domain-web/infrastructure/kubernetes"
 	"github.com/qinsheng99/go-domain-web/infrastructure/mongodb"
 	"github.com/qinsheng99/go-domain-web/infrastructure/redis"
+	"github.com/qinsheng99/go-domain-web/task"
 	"github.com/qinsheng99/go-domain-web/utils/validate"
 )
 
 // Config 整个项目的配置
 type Config struct {
-	Mode       string             `json:"mode"`
-	Port       int                `json:"port"`
-	Logger     *logger.Config     `json:"log"`
-	Mysql      *mysql.Config      `json:"mysql"`
-	Es         *elastic.Config    `json:"es"`
-	Redis      *redis.Config      `json:"redis"`
-	Mongo      *mongodb.Config    `json:"mongo"`
-	Postgresql *postgresql.Config `json:"postgresql"`
-	Etcd       *etcd.Config       `json:"etcd"`
-	Kafka      *kafka.Config      `json:"kafka"`
-	Kubernetes *kubernetes.Config `json:"kubernetes"`
+	Port       int                `json:"port"          required:"true"`
+	Es         *elastic.Config    `json:"es"            required:"true"`
+	Etcd       *etcd.Config       `json:"etcd"          required:"true"`
+	Task       *task.Config       `json:"task"          required:"true"`
+	Mysql      *mysql.Config      `json:"mysql"         required:"true"`
+	Redis      *redis.Config      `json:"redis"         required:"true"`
+	Mongo      *mongodb.Config    `json:"mongo"         required:"true"`
+	Kafka      *kafka.Config      `json:"kafka"         required:"true"`
+	Logger     *logger.Config     `json:"log"           required:"true"`
+	Postgres   *postgres.Config   `json:"postgres"      required:"true"`
+	Kubernetes *kubernetes.Config `json:"kubernetes"    required:"true"`
 }
 
 func Init(path string) (*Config, error) {
