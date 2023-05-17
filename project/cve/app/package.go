@@ -1,11 +1,14 @@
 package app
 
 import (
+	"github.com/sirupsen/logrus"
+
 	"github.com/qinsheng99/go-domain-web/project/cve/domain/repository"
 )
 
 type PkgService interface {
-	AddApplicationPkg(pkg *CmdToApplicationPkg) error
+	AddApplicationPkg([]CmdToApplicationPkg) error
+	AddBasePkg([]CmdToBasePkg) error
 }
 
 type pkgService struct {
@@ -18,13 +21,24 @@ func NewPkgService(repo repository.PkgImpl) PkgService {
 	}
 }
 
-func (p *pkgService) AddApplicationPkg(app *CmdToApplicationPkg) error {
-	//err := p.repo.AddApplicationPkg(app)
-	//if err != nil {
-	//	logrus.Errorf(
-	//		"add application failed, community:%s, err:%s", app.Community.Community(), err.Error(),
-	//	)
-	//}
+func (p *pkgService) AddApplicationPkg(pkg []CmdToApplicationPkg) error {
+	err := p.repo.AddApplicationPkg(pkg)
+	if err != nil {
+		logrus.Errorf(
+			"add application failed, community:%s, err:%s", pkg[0].Repository.Community.Community(), err.Error(),
+		)
+	}
+
+	return nil
+}
+
+func (p *pkgService) AddBasePkg(pkg []CmdToBasePkg) error {
+	err := p.repo.AddBasePkg(pkg)
+	if err != nil {
+		logrus.Errorf(
+			"add application failed, community:%s, err:%s", pkg[0].Repository.Community.Community(), err.Error(),
+		)
+	}
 
 	return nil
 }
