@@ -9,7 +9,7 @@ import (
 const size = 200
 
 type communityPkg struct {
-	cli dbimpl
+	db dbimpl
 }
 
 func (c communityPkg) AddApplicationPkg(app []domain.ApplicationPackage) error {
@@ -18,17 +18,20 @@ func (c communityPkg) AddApplicationPkg(app []domain.ApplicationPackage) error {
 		return nil
 	}
 
+	return c.db.Transaction(nil, c.transactionF(res))
+}
+
+func (c communityPkg) transactionF(res []communityPkgDO) func(tx *gorm.DB) error {
 	f := func(tx *gorm.DB) error {
-		if err := c.cli.UpdateRecord(
+		if err := c.db.UpdateRecord(
 			tx, &communityPkgDO{Community: res[0].Community}, &communityPkgDO{Status: pkgDelete},
-		); err != nil && !c.cli.IsRowNotFound(err) {
+		); err != nil && !c.db.IsRowNotFound(err) {
 			return err
 		}
 		for i := range res {
 			v := &res[i]
-
 			var do communityPkgDO
-			err := c.cli.GetRecord(tx, func(db *gorm.DB) *gorm.DB {
+			err := c.db.GetRecord(tx, func(db *gorm.DB) *gorm.DB {
 				return db.Where(
 					"package_name = ? and version = ? and community = ? and repo = ?",
 					v.PackageName, v.Version, v.Community, v.Repo,
@@ -40,14 +43,14 @@ func (c communityPkg) AddApplicationPkg(app []domain.ApplicationPackage) error {
 			}
 		}
 
-		if err := c.cli.CreateOrUpdate(tx.Session(&gorm.Session{CreateBatchSize: 200}), res, pkgUpdates...); err != nil {
+		if err := c.db.CreateOrUpdate(tx.Session(&gorm.Session{CreateBatchSize: 200}), res, pkgUpdates...); err != nil {
 			return err
 		}
 
-		return c.cli.Delete(tx, &communityPkgDO{Status: pkgDelete})
+		return c.db.Delete(tx, &communityPkgDO{Status: pkgDelete})
 	}
 
-	return c.cli.Transaction(nil, f)
+	return f
 }
 
 //
