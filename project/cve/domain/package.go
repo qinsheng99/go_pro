@@ -3,51 +3,36 @@ package domain
 import "github.com/qinsheng99/go-domain-web/project/cve/domain/dp"
 
 type PackageRepository struct {
-	Org       string
-	Repo      string
-	Program   string
-	Platform  string
-	Milestone string
+	Org      string
+	Repo     string
+	Platform string
 
-	Assigne  dp.Account
-	RepoDesc dp.Description
+	Desc      dp.PackageDescription
+	Community dp.Community
 }
 
 type BasePackageBranch struct {
-	Branch  dp.Branch
-	Version string
+	Branch          string
+	UpstreamVersion string
 }
 
 type BasePackage struct {
 	Id         string
-	PkgName    dp.PackageName
+	Name       dp.PackageName
 	Branches   []BasePackageBranch
-	Community  dp.Community
 	Repository PackageRepository
 }
 
 type ApplicationPackage struct {
-	Community    dp.Community
-	CommunityPkg []CommunityPkg
-}
-
-type CommunityPkg struct {
 	Packages   []Package
 	Repository PackageRepository
 }
 
 type Package struct {
-	PkgName dp.PackageName
-	Version string
-}
+	Id        string
+	Version   string
+	Milestone string
 
-func (a ApplicationPackage) FindRepo(repo string) int {
-	index := -1
-	for i, pkg := range a.CommunityPkg {
-		if pkg.Repository.Repo == repo {
-			return i
-		}
-	}
-
-	return index
+	Name     dp.PackageName
+	Assignee dp.Account
 }

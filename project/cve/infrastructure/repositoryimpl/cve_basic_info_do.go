@@ -108,7 +108,7 @@ func (do *cveBasicInfoDO) toCveBasicInfo() (v domain.CveBasicInfo, err error) {
 	app.Basic.CreatedAt = do.CreatedAt
 	app.Basic.Pushed = do.Pushed
 
-	app.Desc = dp.NewDescription(do.Desc)
+	app.Desc = dp.NewCveDescription(do.Desc)
 
 	if app.Basic.Status, err = dp.NewCVEStatus(do.Status); err != nil {
 		return
@@ -139,7 +139,7 @@ func (o basicInfo) toCveBasicInfoDO(v *domain.CveBasicInfo) (do cveBasicInfoDO, 
 	app := &v.CveApplication
 	do = cveBasicInfoDO{
 		Id:            uuid.New(),
-		Desc:          v.Desc.Description(),
+		Desc:          v.Desc.CveDescription(),
 		Source:        v.Source.Source.Source(),
 		CveNum:        v.CVENum.CVENum(),
 		Pushed:        app.Basic.Pushed,

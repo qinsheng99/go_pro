@@ -2,7 +2,6 @@ package controller
 
 import (
 	"github.com/qinsheng99/go-domain-web/project/cve/app"
-	"github.com/qinsheng99/go-domain-web/project/cve/domain"
 	"github.com/qinsheng99/go-domain-web/project/cve/domain/dp"
 )
 
@@ -24,31 +23,30 @@ type pkgInfo struct {
 }
 
 func (p *PkgRequest) toApplicationPkgCmd() (v app.CmdToApplicationPkg, err error) {
-	if v.Community, err = dp.NewCommunity(p.Community); err != nil {
+	v.Repository.Org = p.Org
+	v.Repository.Repo = p.PackageInfo[0].Repo
+	v.Repository.Platform = p.Platform
+	v.Repository.Desc = dp.NewDescription("")
+	if v.Repository.Community, err = dp.NewCommunity(p.Community); err != nil {
 		return
 	}
 
-	for _, info := range p.PackageInfo {
-		pkg := app.Package{Version: info.Version}
-		if pkg.PkgName, err = dp.NewPackageName(info.PackageName); err != nil {
+	v.Packages = make([]app.Package, len(p.PackageInfo))
+
+	for i := range p.PackageInfo {
+		var pkg = app.Package{
+			Version:   p.PackageInfo[i].Version,
+			Milestone: p.PackageInfo[i].Milestone,
+		}
+
+		if pkg.Name, err = dp.NewPackageName(p.PackageInfo[i].PackageName); err != nil {
 			return
 		}
-		if idx := v.FindRepo(info.Repo); idx != -1 {
-			v.CommunityPkg[idx].Packages = append(v.CommunityPkg[idx].Packages, pkg)
-		} else {
-			c := app.CommunityPkg{
-				Packages: []app.Package{pkg},
-				Repository: domain.PackageRepository{
-					Org:       p.Org,
-					Repo:      info.Repo,
-					Program:   "",
-					Platform:  p.Platform,
-					Milestone: info.Milestone,
-				},
+
+		if p.PackageInfo[i].Assigne != "" {
+			if pkg.Assignee, err = dp.NewAccount(p.PackageInfo[i].Assigne); err != nil {
+				return
 			}
-			c.Repository.Assigne, _ = dp.NewAccount(info.Assigne)
-			c.Repository.RepoDesc = dp.NewDescription(info.RepoDesc)
-			v.CommunityPkg = append(v.CommunityPkg, c)
 		}
 	}
 

@@ -41,7 +41,7 @@ func (u *uvpDataRequest) toCmd() (v app.CmdToAddCVEBasicInfo, err error) {
 	s.Patch = u.Patch
 	s.Severity = u.Severity
 	s.References = u.References
-	s.Desc = dp.NewDescription(u.Desc)
+	s.Desc = dp.NewCveDescription(u.Desc)
 
 	if v.Source, err = dp.NewSource(u.Source); err != nil {
 		return

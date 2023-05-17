@@ -25,7 +25,7 @@ type CveRecord struct {
 type CveApplication struct {
 	Basic CveRecord
 
-	Desc       dp.Description
+	Desc       dp.CveDescription
 	Patch      []Patch
 	Affected   []dp.Purl
 	Severity   []Severity

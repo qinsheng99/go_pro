@@ -34,7 +34,7 @@ func toDetailInfoDTO(v *domain.CveBasicInfo) DetailInfoDTO {
 	app := &v.CveApplication
 	d := DetailInfoDTO{
 		CveNum:     v.CVENum.CVENum(),
-		Desc:       app.Desc.Description(),
+		Desc:       app.Desc.CveDescription(),
 		Source:     v.Source.Source.Source(),
 		Pushed:     app.Basic.Pushed,
 		PushType:   app.Basic.PushType,

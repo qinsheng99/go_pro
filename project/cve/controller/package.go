@@ -39,7 +39,11 @@ func (p *PkgController) Upload(c *gin.Context) {
 
 			return
 		}
-		go p.AddApplicationPkg(&cmd)
+		if err = p.AddApplicationPkg(&cmd); err != nil {
+			commonctl.Failure(c, err)
+
+			return
+		}
 	default:
 		commonctl.Failure(c, errors.New("invalid type"))
 

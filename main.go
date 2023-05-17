@@ -11,6 +11,7 @@ import (
 	"github.com/qinsheng99/go-domain-web/common/logger"
 	"github.com/qinsheng99/go-domain-web/config"
 	"github.com/qinsheng99/go-domain-web/server"
+	"github.com/qinsheng99/go-domain-web/task"
 	"github.com/qinsheng99/go-domain-web/utils"
 )
 
@@ -18,6 +19,8 @@ func init() {
 	logrus.SetReportCaller(true)
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 	flag.Parse()
+
+	//gin.SetMode(gin.ReleaseMode)
 }
 
 var listen = flag.Bool("listen", false, "")
@@ -82,6 +85,18 @@ func main() {
 	//}
 
 	server.SetRoute(r, cfg)
+
+	t := task.NewTask(cfg.Task, cfg.Postgres)
+	if err = t.Register(); err != nil {
+		logrus.WithError(err).Error("register task failed")
+
+		return
+	}
+
+	go t.Pkg()
+
+	t.Run()
+	defer t.Stop()
 
 	//lis := kubernetes.NewListen(kubernetes.GetClient(), kubernetes.GetDyna(), kubernetes.GetResource(), *listen)
 	//go lis.ListenResource()

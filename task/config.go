@@ -1,12 +1,16 @@
 package task
 
+import (
+	"github.com/qinsheng99/go-domain-web/project/cve/app"
+	"github.com/qinsheng99/go-domain-web/project/cve/domain/dp"
+)
+
 type Config struct {
 	Pkg Package `json:"pkg"`
 }
 
 type Package struct {
 	Exec     string            `json:"exec"`
-	Endpoint string            `json:"endpoint"`
 	Packages []CommunityConfig `json:"packages"`
 }
 
@@ -34,3 +38,68 @@ type pkgInfo struct {
 	PackageName string   `json:"package_name"`
 	Branch      []string `json:"branch"`
 }
+
+func (p *PkgResponse) toApplicationPkgCmd() (v app.CmdToApplicationPkg, err error) {
+	v.Repository.Org = p.Org
+	v.Repository.Repo = p.PackageInfo[0].Repo
+	v.Repository.Platform = p.Platform
+	v.Repository.Desc = dp.NewDescription("")
+	if v.Repository.Community, err = dp.NewCommunity(p.Community); err != nil {
+		return
+	}
+
+	v.Packages = make([]app.Package, len(p.PackageInfo))
+
+	for i := range p.PackageInfo {
+		var pkg = app.Package{
+			Version:   p.PackageInfo[i].Version,
+			Milestone: p.PackageInfo[i].Milestone,
+		}
+
+		if pkg.Name, err = dp.NewPackageName(p.PackageInfo[i].PackageName); err != nil {
+			return
+		}
+
+		if p.PackageInfo[i].Assigne != "" {
+			if pkg.Assignee, err = dp.NewAccount(p.PackageInfo[i].Assigne); err != nil {
+				return
+			}
+		}
+
+		v.Packages[i] = pkg
+	}
+
+	return
+}
+
+//func (p *PkgResponse) toBasePkgCmd() (v []app.CmdToBasePkg, err error) {
+//	for _, info := range p.PackageInfo {
+//		b := app.CmdToBasePkg{
+//			Repository: app.PackageRepository{
+//				Org:       p.Org,
+//				Repo:      info.PackageName,
+//				Platform:  p.Platform,
+//				Milestone: info.Milestone,
+//				RepoDesc:  dp.NewDescription(info.RepoDesc),
+//			},
+//		}
+//		b.Repository.Assigne, _ = dp.NewAccount(info.Assigne)
+//		if b.PkgName, err = dp.NewPackageName(info.PackageName); err != nil {
+//			return
+//		}
+//
+//		if b.Community, err = dp.NewCommunity(p.Community); err != nil {
+//			return
+//		}
+//
+//		for _, branch := range info.Branch {
+//			br := app.BasePackageBranch{Version: info.Version}
+//			if br.Branch, err = dp.NewBranch(branch); err != nil {
+//				continue
+//			}
+//			b.Branches = append(b.Branches, br)
+//		}
+//	}
+//
+//	return
+//}
