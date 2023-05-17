@@ -40,8 +40,8 @@ postgres:
   db_max_conn: 500
   db_maxidle: 1000
   table:
-    cve_basic_info: cve_basic_info
-    cve_community_pkg: cve_community_pkg
+    basic_info: basic_info
+    community_pkg: community_pkg
 
 etcd:
   host: ${DB_HOST}

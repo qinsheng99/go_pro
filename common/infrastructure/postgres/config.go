@@ -10,6 +10,6 @@ type Config struct {
 }
 
 type table struct {
-	CveBasicInfo    string `json:"cve_basic_info"`
-	CveCommunityPkg string `json:"cve_community_pkg"`
+	BasicInfo    string `json:"basic_info"`
+	CommunityPkg string `json:"community_pkg"`
 }
