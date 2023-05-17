@@ -15,6 +15,7 @@ type dbimpl interface {
 	Delete(tx *gorm.DB, filter interface{}) error
 
 	Transaction(tx *gorm.DB, f func(tx *gorm.DB) error, opts ...*sql.TxOptions) error
+	DB() *gorm.DB
 
 	IsRowNotFound(err error) bool
 }

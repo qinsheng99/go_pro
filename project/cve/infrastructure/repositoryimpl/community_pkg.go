@@ -18,11 +18,20 @@ func (c communityPkg) AddApplicationPkg(app []domain.ApplicationPackage) error {
 		return nil
 	}
 
-	return c.db.Transaction(nil, c.transactionF(res))
+	return c.db.Transaction(c.db.DB(), c.transactionF(res))
+}
+
+func (c communityPkg) AddBasePkg(app []domain.BasePackage) error {
+	res := c.toBasePkgDO(app)
+	if len(res) == 0 {
+		return nil
+	}
+
+	return c.db.Transaction(c.db.DB(), c.transactionF(res))
 }
 
 func (c communityPkg) transactionF(res []communityPkgDO) func(tx *gorm.DB) error {
-	f := func(tx *gorm.DB) error {
+	return func(tx *gorm.DB) error {
 		if err := c.db.UpdateRecord(
 			tx, &communityPkgDO{Community: res[0].Community}, &communityPkgDO{Status: pkgDelete},
 		); err != nil && !c.db.IsRowNotFound(err) {
@@ -31,60 +40,24 @@ func (c communityPkg) transactionF(res []communityPkgDO) func(tx *gorm.DB) error
 		for i := range res {
 			v := &res[i]
 			var do communityPkgDO
-			err := c.db.GetRecord(tx, func(db *gorm.DB) *gorm.DB {
-				return db.Where(
-					"package_name = ? and version = ? and community = ? and repo = ?",
-					v.PackageName, v.Version, v.Community, v.Repo,
-				)
-			}, &do)
-			if err == nil {
+			if err := c.db.GetRecord(
+				tx,
+				func(db *gorm.DB) *gorm.DB {
+					return db.Where("package_name = ? and version = ? and community = ? and repo = ?",
+						v.PackageName, v.Version, v.Community, v.Repo,
+					)
+				},
+				&do,
+			); err == nil {
 				v.Id = do.Id
 				v.Status = pkgUpdate
 			}
 		}
 
-		if err := c.db.CreateOrUpdate(tx.Session(&gorm.Session{CreateBatchSize: 200}), res, pkgUpdates...); err != nil {
+		if err := c.db.CreateOrUpdate(tx.Session(&gorm.Session{CreateBatchSize: size}), res, pkgUpdates...); err != nil {
 			return err
 		}
 
 		return c.db.Delete(tx, &communityPkgDO{Status: pkgDelete})
 	}
-
-	return f
 }
-
-//
-//func (c communityPkg) AddBasePkg(app []domain.BasePackage) error {
-//	res := c.toAppPkgDO(app)
-//
-//	f := func(tx *gorm.DB) error {
-//		if err := c.cli.UpdateRecord(
-//			tx, &cveCommunityPkgDO{Community: app.Community.Community()}, &cveCommunityPkgDO{Status: "delete"},
-//		); err != nil && !c.cli.IsRowNotFound(err) {
-//			return err
-//		}
-//		for i := range res {
-//			v := &res[i]
-//
-//			var do cveCommunityPkgDO
-//			err := c.cli.GetRecord(tx, func(db *gorm.DB) *gorm.DB {
-//				return db.Where(
-//					"package_name = ? and version = ? and community = ? and repo = ?",
-//					v.PackageName, v.Version, v.Community, v.Repo,
-//				)
-//			}, &do)
-//			if err == nil {
-//				v.Id = do.Id
-//				v.Status = "update"
-//			}
-//		}
-//
-//		if err := c.cli.CreateOrUpdate(tx.Session(&gorm.Session{CreateBatchSize: 200}), res, pkgUpdates...); err != nil {
-//			return err
-//		}
-//
-//		return c.cli.Delete(tx, &cveCommunityPkgDO{Status: "delete"})
-//	}
-//
-//	return c.cli.Transaction(nil, f)
-//}

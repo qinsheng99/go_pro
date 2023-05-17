@@ -64,3 +64,38 @@ func (c communityPkg) toAppPkgDO(v []domain.ApplicationPackage) []communityPkgDO
 
 	return res
 }
+
+func (c communityPkg) toBasePkgDO(v []domain.BasePackage) []communityPkgDO {
+	var res = make([]communityPkgDO, 0)
+	for _, pkg := range v {
+		var versionMap = make(map[string][]string)
+		for _, p := range pkg.Branches {
+			if b, ok := versionMap[p.UpstreamVersion]; !ok {
+				versionMap[p.UpstreamVersion] = []string{p.Branch}
+			} else {
+				versionMap[p.UpstreamVersion] = append(b, p.Branch)
+			}
+		}
+
+		for ver, b := range versionMap {
+			do := communityPkgDO{
+				Id:          uuid.New(),
+				Org:         pkg.Repository.Org,
+				Repo:        pkg.Repository.Repo,
+				Status:      pkgAdd,
+				Version:     ver,
+				Platform:    pkg.Repository.Platform,
+				Community:   pkg.Repository.Community.Community(),
+				Decription:  pkg.Repository.Desc.PackageDescription(),
+				PackageName: pkg.Name.PackageName(),
+				CreatedAt:   utils.Now(),
+				UpdatedAt:   utils.Now(),
+				Branch:      b,
+			}
+
+			res = append(res, do)
+		}
+	}
+
+	return res
+}

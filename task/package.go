@@ -1,7 +1,6 @@
 package task
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 	"strings"
@@ -63,8 +62,6 @@ func (t *Task) basePkg(p CommunityConfig) {
 			continue
 		}
 
-		fmt.Println(len(res["data"].([]interface{})))
-
 		pkgs = append(pkgs, t.basePkgInfo(res["data"].([]interface{}))...)
 	}
 
@@ -76,16 +73,16 @@ func (t *Task) basePkg(p CommunityConfig) {
 
 	resp.PackageInfo = pkgs
 
-	//cmd, err := resp.toBasePkgCmd()
-	//if err != nil {
-	//	logrus.Errorf("cmd to applicationPkg failed, err:%s", err.Error())
-	//
-	//	return
-	//}
-	//
-	//if err = t.pkgimpl.AddApplicationPkg(&cmd); err != nil {
-	//	logrus.Errorf("add application pkg failed, err:%s, community:%s", err, cmd[0].Community.Community())
-	//}
+	cmd, err := resp.toBasePkgCmd()
+	if err != nil {
+		logrus.Errorf("cmd to base pkg failed, err:%s", err.Error())
+
+		return
+	}
+
+	if err = t.pkgimpl.AddBasePkg(cmd); err != nil {
+		logrus.Errorf("add base pkg failed, err:%s, community:%s", err, cmd[0].Repository.Community.Community())
+	}
 }
 
 func (t *Task) applicationPkg(p CommunityConfig) {

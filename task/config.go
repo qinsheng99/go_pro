@@ -72,34 +72,31 @@ func (p *PkgResponse) toApplicationPkgCmd() (v app.CmdToApplicationPkg, err erro
 	return
 }
 
-//func (p *PkgResponse) toBasePkgCmd() (v []app.CmdToBasePkg, err error) {
-//	for _, info := range p.PackageInfo {
-//		b := app.CmdToBasePkg{
-//			Repository: app.PackageRepository{
-//				Org:       p.Org,
-//				Repo:      info.PackageName,
-//				Platform:  p.Platform,
-//				Milestone: info.Milestone,
-//				RepoDesc:  dp.NewDescription(info.RepoDesc),
-//			},
-//		}
-//		b.Repository.Assigne, _ = dp.NewAccount(info.Assigne)
-//		if b.PkgName, err = dp.NewPackageName(info.PackageName); err != nil {
-//			return
-//		}
-//
-//		if b.Community, err = dp.NewCommunity(p.Community); err != nil {
-//			return
-//		}
-//
-//		for _, branch := range info.Branch {
-//			br := app.BasePackageBranch{Version: info.Version}
-//			if br.Branch, err = dp.NewBranch(branch); err != nil {
-//				continue
-//			}
-//			b.Branches = append(b.Branches, br)
-//		}
-//	}
-//
-//	return
-//}
+func (p *PkgResponse) toBasePkgCmd() (v []app.CmdToBasePkg, err error) {
+	for _, info := range p.PackageInfo {
+		b := app.CmdToBasePkg{
+			Repository: app.PackageRepository{
+				Org:      p.Org,
+				Repo:     info.Repo,
+				Platform: p.Platform,
+				Desc:     dp.NewDescription(info.RepoDesc),
+			},
+		}
+
+		if b.Name, err = dp.NewPackageName(info.PackageName); err != nil {
+			return
+		}
+
+		if b.Repository.Community, err = dp.NewCommunity(p.Community); err != nil {
+			return
+		}
+
+		for _, branch := range info.Branch {
+			b.Branches = append(b.Branches, app.BasePackageBranch{UpstreamVersion: info.Version, Branch: branch})
+		}
+
+		v = append(v, b)
+	}
+
+	return
+}
