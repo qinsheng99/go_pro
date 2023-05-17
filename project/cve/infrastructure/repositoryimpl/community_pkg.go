@@ -20,14 +20,14 @@ func (c communityPkg) AddApplicationPkg(app []domain.ApplicationPackage) error {
 
 	f := func(tx *gorm.DB) error {
 		if err := c.cli.UpdateRecord(
-			tx, &cveCommunityPkgDO{Community: res[0].Community}, &cveCommunityPkgDO{Status: pkgDelete},
+			tx, &communityPkgDO{Community: res[0].Community}, &communityPkgDO{Status: pkgDelete},
 		); err != nil && !c.cli.IsRowNotFound(err) {
 			return err
 		}
 		for i := range res {
 			v := &res[i]
 
-			var do cveCommunityPkgDO
+			var do communityPkgDO
 			err := c.cli.GetRecord(tx, func(db *gorm.DB) *gorm.DB {
 				return db.Where(
 					"package_name = ? and version = ? and community = ? and repo = ?",
@@ -44,7 +44,7 @@ func (c communityPkg) AddApplicationPkg(app []domain.ApplicationPackage) error {
 			return err
 		}
 
-		return c.cli.Delete(tx, &cveCommunityPkgDO{Status: "delete"})
+		return c.cli.Delete(tx, &communityPkgDO{Status: pkgDelete})
 	}
 
 	return c.cli.Transaction(nil, f)

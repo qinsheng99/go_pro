@@ -18,7 +18,7 @@ const (
 	pkgDelete = "delete"
 )
 
-type cveCommunityPkgDO struct {
+type communityPkgDO struct {
 	Id          uuid.UUID      `gorm:"column:uuid;type:uuid"`
 	Org         string         `gorm:"column:org"`
 	Repo        string         `gorm:"column:repo"`
@@ -35,11 +35,11 @@ type cveCommunityPkgDO struct {
 	Branch      pq.StringArray `gorm:"column:branch;type:text[];default:'{}'"`
 }
 
-func (c communityPkg) toAppPkgDO(v []domain.ApplicationPackage) []cveCommunityPkgDO {
-	var res = make([]cveCommunityPkgDO, 0)
+func (c communityPkg) toAppPkgDO(v []domain.ApplicationPackage) []communityPkgDO {
+	var res = make([]communityPkgDO, 0)
 	for _, pkg := range v {
 		for _, p := range pkg.Packages {
-			do := cveCommunityPkgDO{
+			do := communityPkgDO{
 				Id:          uuid.New(),
 				Org:         pkg.Repository.Org,
 				Repo:        pkg.Repository.Repo,
