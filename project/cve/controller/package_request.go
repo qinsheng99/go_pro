@@ -26,9 +26,8 @@ type applicationPkgRequest struct {
 	Data []pkgRequest `json:"data"`
 }
 
-func (a *applicationPkgRequest) toApplicationPkgCmd() (cmd []app.CmdToApplicationPkg, err error) {
+func (a *applicationPkgRequest) toApplicationPkgCmd() (v app.CmdToApplicationPkg, err error) {
 	for _, p := range a.Data {
-		var v app.CmdToApplicationPkg
 		v.Repository.Org = p.Org
 		v.Repository.Repo = p.PackageInfo[0].Repo
 		v.Repository.Platform = p.Platform
@@ -55,14 +54,12 @@ func (a *applicationPkgRequest) toApplicationPkgCmd() (cmd []app.CmdToApplicatio
 				}
 			}
 		}
-
-		cmd = append(cmd, v)
 	}
 
 	return
 }
 
-func (p *pkgRequest) toBasePkgCmd() (v []app.CmdToBasePkg, err error) {
+func (p *pkgRequest) toBasePkgCmd() (v app.CmdToBasePkg, err error) {
 	for _, info := range p.PackageInfo {
 		b := app.CmdToBasePkg{
 			Repository: app.PackageRepository{
@@ -85,7 +82,7 @@ func (p *pkgRequest) toBasePkgCmd() (v []app.CmdToBasePkg, err error) {
 			b.Branches = append(b.Branches, app.BasePackageBranch{UpstreamVersion: info.Version, Branch: branch})
 		}
 
-		v = append(v, b)
+		v = b
 	}
 
 	return

@@ -66,3 +66,9 @@ func GenerateCode(length int) string {
 func Now() int64 {
 	return time.Now().Unix()
 }
+
+func ZeroNow() int64 {
+	t := time.Now()
+
+	return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.Location()).Unix()
+}

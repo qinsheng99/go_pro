@@ -12,22 +12,27 @@ type communityPkg struct {
 	db dbimpl
 }
 
-func (c communityPkg) AddApplicationPkg(app []domain.ApplicationPackage) error {
-	res := c.toAppPkgDO(app)
-	if len(res) == 0 {
-		return nil
-	}
-
-	return c.db.Transaction(c.db.DB(), c.transactionF(res))
+func (c communityPkg) AddApplicationPkg(app domain.ApplicationPackage) error {
+	return c.insert(c.toAppPkgDO(app))
 }
 
-func (c communityPkg) AddBasePkg(app []domain.BasePackage) error {
-	res := c.toBasePkgDO(app)
-	if len(res) == 0 {
-		return nil
+func (c communityPkg) AddBasePkg(app domain.BasePackage) error {
+	return c.insert(c.toBasePkgDO(app))
+}
+
+func (c communityPkg) insert(res []communityPkgDO) error {
+	for i := range res {
+		v := &res[i]
+
+		if err := c.db.FirstOrCreate(
+			nil,
+			&communityPkgDO{Community: v.Community, PackageName: v.PackageName, Version: v.Version, Repo: v.Repo}, v,
+		); err != nil {
+			return err
+		}
 	}
 
-	return c.db.Transaction(c.db.DB(), c.transactionF(res))
+	return nil
 }
 
 func (c communityPkg) transactionF(res []communityPkgDO) func(tx *gorm.DB) error {
