@@ -94,9 +94,15 @@ func TestAddBasePkg(t *testing.T) {
 }
 
 func TestFindApplicationPkgs(t *testing.T) {
-	c, _ := dp.NewCommunity("mindspore")
+	opt := repository.OptToFindPkgs{
+		PageNum:      0,
+		CountPerPage: 0,
+		UpdatedAt:    utils.Date(),
+	}
 
-	pkg, err := r.FindApplicationPkgs(c, utils.ToDate(utils.Now()))
+	opt.Community, _ = dp.NewCommunity("mindspore")
+
+	pkg, err := r.FindApplicationPkgs(opt)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -130,11 +136,12 @@ func TestFindBasePkgs(t *testing.T) {
 	opt := repository.OptToFindPkgs{
 		PageNum:      0,
 		CountPerPage: 0,
+		UpdatedAt:    utils.Date(),
 	}
 
 	opt.Community, _ = dp.NewCommunity("mindspore")
 
-	pkg, err := r.FindBasePkgs(opt, utils.ToDate(utils.Now()))
+	pkg, err := r.FindBasePkgs(opt)
 	if err != nil {
 		t.Fatal(err)
 	}

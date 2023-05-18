@@ -6,7 +6,6 @@ import (
 
 	"github.com/qinsheng99/go-domain-web/common/infrastructure/dao"
 	"github.com/qinsheng99/go-domain-web/project/cve/domain"
-	"github.com/qinsheng99/go-domain-web/project/cve/domain/dp"
 	"github.com/qinsheng99/go-domain-web/project/cve/domain/repository"
 )
 
@@ -36,16 +35,16 @@ func (c communityPkgImpl) AddBasePkg(app *domain.BasePackage) error {
 	return c.baseDB.Insert(nil, &do)
 }
 
-func (c communityPkgImpl) FindApplicationPkgs(community dp.Community, updatedAt string) (v []domain.ApplicationPackage, err error) {
+func (c communityPkgImpl) FindApplicationPkgs(opts repository.OptToFindPkgs) (v []domain.ApplicationPackage, err error) {
 	var do []applicationPkgDO
 	err = c.appDB.GetRecords(
 		c.appDB.DB(),
 		func(db *gorm.DB) *gorm.DB {
-			if len(updatedAt) != 0 {
-				db.Where("updated_at <> ?", updatedAt)
+			if len(opts.UpdatedAt) != 0 {
+				db.Where("updated_at <> ?", opts.UpdatedAt)
 			}
 
-			return db.Where("community = ?", community.Community())
+			return db.Where("community = ?", opts.Community.Community())
 		},
 		&do, dao.Pagination{}, nil,
 	)
@@ -98,13 +97,13 @@ func (c communityPkgImpl) FindApplicationPkg(opts repository.OptToFindApplicatio
 	return do.toApplicationPkg()
 }
 
-func (c communityPkgImpl) FindBasePkgs(opts repository.OptToFindPkgs, updatedAt string) (v []domain.BasePackage, err error) {
+func (c communityPkgImpl) FindBasePkgs(opts repository.OptToFindPkgs) (v []domain.BasePackage, err error) {
 	var do []basePkgDO
 	err = c.baseDB.GetRecords(
 		c.baseDB.DB(),
 		func(db *gorm.DB) *gorm.DB {
-			if len(updatedAt) != 0 {
-				db.Where("updated_at <> ?", updatedAt)
+			if len(opts.UpdatedAt) != 0 {
+				db.Where("updated_at <> ?", opts.UpdatedAt)
 			}
 
 			return db.Where("community = ?", opts.Community.Community())

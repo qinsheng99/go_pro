@@ -15,6 +15,7 @@ type OptToFindApplicationPkg struct {
 
 type OptToFindPkgs struct {
 	Community dp.Community
+	UpdatedAt string
 
 	PageNum      int
 	CountPerPage int
@@ -29,11 +30,11 @@ type PkgImpl interface {
 	AddApplicationPkg(*domain.ApplicationPackage) error
 	AddBasePkg(*domain.BasePackage) error
 
-	FindApplicationPkgs(dp.Community, string) ([]domain.ApplicationPackage, error)
+	FindApplicationPkgs(OptToFindPkgs) ([]domain.ApplicationPackage, error)
 	FindApplicationPkg(OptToFindApplicationPkg) (domain.ApplicationPackage, error)
 	DeleteApplicationPkg(id string) error
 
-	FindBasePkgs(OptToFindPkgs, string) (v []domain.BasePackage, err error)
+	FindBasePkgs(OptToFindPkgs) (v []domain.BasePackage, err error)
 	FindBasePkg(OptToFindBasePkg) (domain.BasePackage, error)
 	DeleteBasePkg(id string) error
 }
