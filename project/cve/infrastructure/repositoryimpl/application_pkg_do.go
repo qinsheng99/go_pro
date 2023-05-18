@@ -4,6 +4,7 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/qinsheng99/go-domain-web/project/cve/domain"
+	"github.com/qinsheng99/go-domain-web/project/cve/domain/dp"
 	"github.com/qinsheng99/go-domain-web/utils"
 )
 
@@ -20,6 +21,30 @@ type applicationPkgDO struct {
 	PackageName string    `gorm:"column:package_name"      json:"-"`
 	CreatedAt   int64     `gorm:"column:created_at"        json:"-"`
 	UpdatedAt   int64     `gorm:"column:updated_at"        json:"updated_at"`
+}
+
+func (a applicationPkgDO) toApplicationPkg() (v domain.ApplicationPackage, err error) {
+	pkg := domain.Package{
+		Id:        a.Id.String(),
+		Version:   a.Version,
+		Milestone: a.Milestone,
+	}
+
+	pkg.Assignee, _ = dp.NewAccount(a.Assignee)
+
+	if pkg.Name, err = dp.NewPackageName(a.PackageName); err != nil {
+		return
+	}
+	v.Packages = []domain.Package{pkg}
+	v.Repository = domain.PackageRepository{
+		Org:      a.Org,
+		Repo:     a.Repo,
+		Platform: a.Platform,
+		Desc:     dp.NewDescription(a.Decription),
+	}
+	v.Repository.Community, err = dp.NewCommunity(a.Community)
+
+	return
 }
 
 func (c communityPkgImpl) toApplicationPkgDO(pkg domain.ApplicationPackage) []applicationPkgDO {

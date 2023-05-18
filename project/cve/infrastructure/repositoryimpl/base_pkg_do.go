@@ -5,6 +5,7 @@ import (
 	"github.com/lib/pq"
 
 	"github.com/qinsheng99/go-domain-web/project/cve/domain"
+	"github.com/qinsheng99/go-domain-web/project/cve/domain/dp"
 	"github.com/qinsheng99/go-domain-web/utils"
 )
 
@@ -52,4 +53,31 @@ func (c communityPkgImpl) toBasePkgDO(pkg domain.BasePackage) []basePkgDO {
 	}
 
 	return res
+}
+
+func (b basePkgDO) toBasePkg() (v domain.BasePackage, err error) {
+	v.Id = b.Id.String()
+	if v.Name, err = dp.NewPackageName(b.PackageName); err != nil {
+		return
+	}
+
+	v.Repository = domain.PackageRepository{
+		Org:      b.Org,
+		Repo:     b.Repo,
+		Platform: b.Platform,
+		Desc:     dp.NewDescription(b.Decription),
+	}
+
+	if v.Repository.Community, err = dp.NewCommunity(b.Community); err != nil {
+		return
+	}
+
+	for i := range b.Branch {
+		v.Branches = append(v.Branches, domain.BasePackageBranch{
+			Branch:          b.Branch[i],
+			UpstreamVersion: b.Version,
+		})
+	}
+
+	return
 }
