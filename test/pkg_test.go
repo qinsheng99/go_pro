@@ -12,6 +12,7 @@ import (
 	"github.com/qinsheng99/go-domain-web/project/cve/domain/dp"
 	"github.com/qinsheng99/go-domain-web/project/cve/domain/repository"
 	"github.com/qinsheng99/go-domain-web/project/cve/infrastructure/repositoryimpl"
+	"github.com/qinsheng99/go-domain-web/utils"
 )
 
 var cfg *config.Config
@@ -95,7 +96,7 @@ func TestAddBasePkg(t *testing.T) {
 func TestFindApplicationPkgs(t *testing.T) {
 	c, _ := dp.NewCommunity("mindspore")
 
-	pkg, err := r.FindApplicationPkgs(c, 0)
+	pkg, err := r.FindApplicationPkgs(c, utils.ToDate(utils.Now()))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -133,7 +134,7 @@ func TestFindBasePkgs(t *testing.T) {
 
 	opt.Community, _ = dp.NewCommunity("mindspore")
 
-	pkg, err := r.FindBasePkgs(opt, 0)
+	pkg, err := r.FindBasePkgs(opt, utils.ToDate(utils.Now()))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -143,14 +144,11 @@ func TestFindBasePkgs(t *testing.T) {
 
 func TestFindBasePkg(t *testing.T) {
 	var (
-		version   = ""
 		community = ""
 		name      = ""
 	)
 
-	opts := repository.OptToFindBasePkg{
-		Version: version,
-	}
+	opts := repository.OptToFindBasePkg{}
 
 	opts.Community, _ = dp.NewCommunity(community)
 	opts.Name, _ = dp.NewPackageName(name)

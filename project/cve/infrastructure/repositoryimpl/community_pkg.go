@@ -36,12 +36,12 @@ func (c communityPkgImpl) AddBasePkg(app *domain.BasePackage) error {
 	return c.baseDB.Insert(nil, &do)
 }
 
-func (c communityPkgImpl) FindApplicationPkgs(community dp.Community, updatedAt int64) (v []domain.ApplicationPackage, err error) {
+func (c communityPkgImpl) FindApplicationPkgs(community dp.Community, updatedAt string) (v []domain.ApplicationPackage, err error) {
 	var do []applicationPkgDO
 	err = c.appDB.GetRecords(
 		c.appDB.DB(),
 		func(db *gorm.DB) *gorm.DB {
-			if updatedAt != 0 {
+			if len(updatedAt) != 0 {
 				db.Where("updated_at <> ?", updatedAt)
 			}
 
@@ -98,12 +98,12 @@ func (c communityPkgImpl) FindApplicationPkg(opts repository.OptToFindApplicatio
 	return do.toApplicationPkg()
 }
 
-func (c communityPkgImpl) FindBasePkgs(opts repository.OptToFindPkgs, updatedAt int64) (v []domain.BasePackage, err error) {
+func (c communityPkgImpl) FindBasePkgs(opts repository.OptToFindPkgs, updatedAt string) (v []domain.BasePackage, err error) {
 	var do []basePkgDO
 	err = c.baseDB.GetRecords(
 		c.baseDB.DB(),
 		func(db *gorm.DB) *gorm.DB {
-			if updatedAt != 0 {
+			if len(updatedAt) != 0 {
 				db.Where("updated_at <> ?", updatedAt)
 			}
 
@@ -134,8 +134,8 @@ func (c communityPkgImpl) FindBasePkg(opts repository.OptToFindBasePkg) (domain.
 
 	err := c.baseDB.GetRecord(c.baseDB.DB(), func(db *gorm.DB) *gorm.DB {
 		return db.Where(
-			"community = ? and package_name = ? and version = ?",
-			opts.Community.Community(), opts.Name.PackageName(), opts.Version,
+			"community = ? and package_name = ?",
+			opts.Community.Community(), opts.Name.PackageName(),
 		)
 	}, &do)
 
