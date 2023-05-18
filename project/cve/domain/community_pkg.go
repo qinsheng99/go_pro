@@ -1,6 +1,11 @@
 package domain
 
-import "github.com/qinsheng99/go-domain-web/project/cve/domain/dp"
+import (
+	"fmt"
+	"strings"
+
+	"github.com/qinsheng99/go-domain-web/project/cve/domain/dp"
+)
 
 type PackageRepository struct {
 	Org      string
@@ -14,6 +19,19 @@ type PackageRepository struct {
 type BasePackageBranch struct {
 	Branch          string
 	UpstreamVersion string
+}
+
+func (branch *BasePackageBranch) String() string {
+	return fmt.Sprintf("%s/%v", branch.Branch, branch.UpstreamVersion)
+}
+
+func StringToBasePackageBranch(s string) (r BasePackageBranch) {
+	items := strings.Split(s, "/")
+
+	r.Branch = items[0]
+	r.UpstreamVersion = items[1]
+
+	return
 }
 
 type BasePackage struct {

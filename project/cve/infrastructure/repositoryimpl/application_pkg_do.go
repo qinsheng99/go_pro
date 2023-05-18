@@ -19,8 +19,8 @@ type applicationPkgDO struct {
 	Milestone   string    `gorm:"column:milestone"         json:"milestone"`
 	Decription  string    `gorm:"column:decription"        json:"decription"`
 	PackageName string    `gorm:"column:package_name"      json:"-"`
-	CreatedAt   int64     `gorm:"column:created_at"        json:"-"`
-	UpdatedAt   int64     `gorm:"column:updated_at"        json:"updated_at"`
+	CreatedAt   string    `gorm:"column:created_at"        json:"-"`
+	UpdatedAt   string    `gorm:"column:updated_at"        json:"updated_at"`
 }
 
 func (a applicationPkgDO) toApplicationPkg() (v domain.ApplicationPackage, err error) {
@@ -47,7 +47,7 @@ func (a applicationPkgDO) toApplicationPkg() (v domain.ApplicationPackage, err e
 	return
 }
 
-func (c communityPkgImpl) toApplicationPkgDO(pkg domain.ApplicationPackage) []applicationPkgDO {
+func (c communityPkgImpl) toApplicationPkgDO(pkg *domain.ApplicationPackage) []applicationPkgDO {
 	var res = make([]applicationPkgDO, 0)
 	for _, p := range pkg.Packages {
 		do := applicationPkgDO{
@@ -60,8 +60,8 @@ func (c communityPkgImpl) toApplicationPkgDO(pkg domain.ApplicationPackage) []ap
 			Community:   pkg.Repository.Community.Community(),
 			Decription:  pkg.Repository.Desc.PackageDescription(),
 			PackageName: p.Name.PackageName(),
-			CreatedAt:   utils.Now(),
-			UpdatedAt:   utils.ZeroNow(),
+			CreatedAt:   utils.ToDate(utils.Now()),
+			UpdatedAt:   utils.ToDate(utils.Now()),
 		}
 		if p.Assignee != nil {
 			do.Assignee = p.Assignee.Account()

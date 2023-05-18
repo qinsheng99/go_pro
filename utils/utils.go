@@ -72,3 +72,11 @@ func ZeroNow() int64 {
 
 	return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.Location()).Unix()
 }
+
+func ToDate(n int64) string {
+	if n == 0 {
+		n = Now()
+	}
+
+	return time.Unix(n, 0).Format("2006-01-02")
+}

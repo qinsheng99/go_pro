@@ -7,8 +7,8 @@ import (
 )
 
 type PkgService interface {
-	AddApplicationPkg(CmdToApplicationPkg) error
-	AddBasePkg(CmdToBasePkg) error
+	AddApplicationPkg(*CmdToApplicationPkg) error
+	AddBasePkg(*CmdToBasePkg) error
 }
 
 type pkgService struct {
@@ -21,7 +21,7 @@ func NewPkgService(repo repository.PkgImpl) PkgService {
 	}
 }
 
-func (p *pkgService) AddApplicationPkg(pkg CmdToApplicationPkg) error {
+func (p *pkgService) AddApplicationPkg(pkg *CmdToApplicationPkg) error {
 	err := p.repo.AddApplicationPkg(pkg)
 	if err != nil {
 		logrus.Errorf(
@@ -32,7 +32,7 @@ func (p *pkgService) AddApplicationPkg(pkg CmdToApplicationPkg) error {
 	return nil
 }
 
-func (p *pkgService) AddBasePkg(pkg CmdToBasePkg) error {
+func (p *pkgService) AddBasePkg(pkg *CmdToBasePkg) error {
 	err := p.repo.AddBasePkg(pkg)
 	if err != nil {
 		logrus.Errorf(

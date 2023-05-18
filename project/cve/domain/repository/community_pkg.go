@@ -28,8 +28,8 @@ type OptToFindBasePkg struct {
 }
 
 type PkgImpl interface {
-	AddApplicationPkg(domain.ApplicationPackage) error
-	AddBasePkg(domain.BasePackage) error
+	AddApplicationPkg(*domain.ApplicationPackage) error
+	AddBasePkg(*domain.BasePackage) error
 
 	FindApplicationPkgs(dp.Community, int64) ([]domain.ApplicationPackage, error)
 	FindApplicationPkg(OptToFindApplicationPkg) (domain.ApplicationPackage, error)

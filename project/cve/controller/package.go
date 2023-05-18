@@ -49,7 +49,7 @@ func (p *PkgController) uploadApp(c *gin.Context) {
 		return
 	}
 
-	if err = p.AddApplicationPkg(cmd); err != nil {
+	if err = p.AddApplicationPkg(&cmd); err != nil {
 		commonctl.Failure(c, err)
 	} else {
 		commonctl.SuccessCreate(c)
@@ -71,7 +71,7 @@ func (p *PkgController) uploadBase(c *gin.Context) {
 		return
 	}
 
-	if err = p.AddBasePkg(cmd); err != nil {
+	if err = p.AddBasePkg(&cmd); err != nil {
 		commonctl.Failure(c, err)
 	} else {
 		commonctl.SuccessCreate(c)

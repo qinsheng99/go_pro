@@ -15,16 +15,13 @@ type communityPkgImpl struct {
 	baseDB dbimpl
 }
 
-func (c communityPkgImpl) AddApplicationPkg(app domain.ApplicationPackage) error {
+func (c communityPkgImpl) AddApplicationPkg(app *domain.ApplicationPackage) error {
 	res := c.toApplicationPkgDO(app)
 
 	for i := range res {
 		v := &res[i]
 
-		if err := c.appDB.FirstOrCreate(
-			nil,
-			&applicationPkgDO{Community: v.Community, PackageName: v.PackageName, Version: v.Version, Repo: v.Repo}, v,
-		); err != nil {
+		if err := c.appDB.Insert(nil, v); err != nil {
 			return err
 		}
 	}
@@ -32,21 +29,11 @@ func (c communityPkgImpl) AddApplicationPkg(app domain.ApplicationPackage) error
 	return nil
 }
 
-func (c communityPkgImpl) AddBasePkg(app domain.BasePackage) error {
-	res := c.toBasePkgDO(app)
+func (c communityPkgImpl) AddBasePkg(app *domain.BasePackage) error {
+	var do basePkgDO
+	c.toBasePkgDO(app, &do)
 
-	for i := range res {
-		v := &res[i]
-
-		if err := c.baseDB.FirstOrCreate(
-			nil,
-			&basePkgDO{Community: v.Community, PackageName: v.PackageName, Version: v.Version}, v,
-		); err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return c.baseDB.Insert(nil, &do)
 }
 
 func (c communityPkgImpl) FindApplicationPkgs(community dp.Community, updatedAt int64) (v []domain.ApplicationPackage, err error) {

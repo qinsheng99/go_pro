@@ -9,6 +9,7 @@ import (
 )
 
 type dbimpl interface {
+	Insert(tx *gorm.DB, result interface{}) error
 	FirstOrCreate(tx *gorm.DB, filter, result interface{}) error
 	CreateOrUpdate(tx *gorm.DB, result interface{}, updates ...string) error
 	GetRecord(tx *gorm.DB, filter dao.Scope, result interface{}) error

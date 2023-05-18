@@ -51,7 +51,7 @@ func TestAddApplication(t *testing.T) {
 		},
 		Repository: domain.PackageRepository{
 			Org:      "mindspore",
-			Repo:     "akg",
+			Repo:     "mindspore",
 			Platform: "gitee",
 			Desc:     dp.NewDescription(""),
 		},
@@ -59,12 +59,12 @@ func TestAddApplication(t *testing.T) {
 
 	a.Repository.Community, _ = dp.NewCommunity("mindspore")
 
-	t.Log(r.AddApplicationPkg(a))
+	t.Log(r.AddApplicationPkg(&a))
 }
 
 func TestAddBasePkg(t *testing.T) {
-	var pkg = "crash"
-	var version = "7.2.6"
+	var pkg = "kernel"
+	var version = "4.9.10"
 	var community = "openeuler"
 	var desc = fmt.Sprintf("%s security", pkg)
 	var b = domain.BasePackage{
@@ -89,7 +89,7 @@ func TestAddBasePkg(t *testing.T) {
 
 	b.Name, _ = dp.NewPackageName(pkg)
 
-	t.Log(r.AddBasePkg(b))
+	t.Log(r.AddBasePkg(&b))
 }
 
 func TestFindApplicationPkgs(t *testing.T) {
