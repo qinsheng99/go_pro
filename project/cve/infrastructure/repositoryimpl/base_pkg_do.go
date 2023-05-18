@@ -31,8 +31,8 @@ func (c communityPkgImpl) toBasePkgDO(pkg *domain.BasePackage, do *basePkgDO) {
 		Community:   pkg.Repository.Community.Community(),
 		Decription:  pkg.Repository.Desc.PackageDescription(),
 		PackageName: pkg.Name.PackageName(),
-		CreatedAt:   utils.ToDate(utils.Now()),
-		UpdatedAt:   utils.ToDate(utils.Now()),
+		CreatedAt:   utils.Date(),
+		UpdatedAt:   utils.Date(),
 		Branch:      toStringArray(pkg.Branches),
 	}
 }

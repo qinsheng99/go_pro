@@ -60,8 +60,8 @@ func (c communityPkgImpl) toApplicationPkgDO(pkg *domain.ApplicationPackage) []a
 			Community:   pkg.Repository.Community.Community(),
 			Decription:  pkg.Repository.Desc.PackageDescription(),
 			PackageName: p.Name.PackageName(),
-			CreatedAt:   utils.ToDate(utils.Now()),
-			UpdatedAt:   utils.ToDate(utils.Now()),
+			CreatedAt:   utils.Date(),
+			UpdatedAt:   utils.Date(),
 		}
 		if p.Assignee != nil {
 			do.Assignee = p.Assignee.Account()
