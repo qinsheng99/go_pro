@@ -10,6 +10,7 @@ type Config struct {
 }
 
 type table struct {
-	BasicInfo    string `json:"basic_info"`
-	CommunityPkg string `json:"community_pkg"`
+	BasicInfo      string `json:"basic_info"`
+	BasePkg        string `json:"base_pkg"`
+	ApplicationPkg string `json:"application_pkg"`
 }

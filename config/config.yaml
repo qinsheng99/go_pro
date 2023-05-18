@@ -41,7 +41,8 @@ postgres:
   db_maxidle: 1000
   table:
     basic_info: basic_info
-    community_pkg: community_pkg
+    base_pkg: base_pkg
+    application_pkg: application_pkg
 
 etcd:
   host: ${DB_HOST}

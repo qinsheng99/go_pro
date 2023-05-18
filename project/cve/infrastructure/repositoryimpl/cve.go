@@ -18,13 +18,14 @@ func NewCVEImpl(cfg *postgres.Config) repository.CVE {
 }
 
 type pkgImpl struct {
-	communityPkg
+	communityPkgImpl
 }
 
 func NewPkgImpl(cfg *postgres.Config) repository.PkgImpl {
 	return &pkgImpl{
-		communityPkg: communityPkg{
-			postgres.NewPgDao(cfg.Table.CommunityPkg),
+		communityPkgImpl: communityPkgImpl{
+			appDB:  postgres.NewPgDao(cfg.Table.ApplicationPkg),
+			baseDB: postgres.NewPgDao(cfg.Table.BasePkg),
 		},
 	}
 }
