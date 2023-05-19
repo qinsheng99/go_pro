@@ -44,7 +44,11 @@ func (c communityPkgImpl) FindApplicationPkgs(opts repository.OptToFindPkgs) (v 
 				db.Where("updated_at <> ?", opts.UpdatedAt)
 			}
 
-			return db.Where("community = ?", opts.Community.Community())
+			if opts.Community != nil {
+				db.Where("community = ?", opts.Community.Community())
+			}
+
+			return db
 		},
 		&do, dao.Pagination{}, nil,
 	)
@@ -52,9 +56,10 @@ func (c communityPkgImpl) FindApplicationPkgs(opts repository.OptToFindPkgs) (v 
 		return
 	}
 
-	f := func(repo string) int {
+	f := func(community, repo string) int {
 		for i := range v {
-			if v[i].Repository.Repo == repo {
+			r := &v[i].Repository
+			if r.Repo == repo && r.Community != nil && r.Community.Community() == community {
 				return i
 			}
 		}
@@ -66,7 +71,7 @@ func (c communityPkgImpl) FindApplicationPkgs(opts repository.OptToFindPkgs) (v 
 		if appPkg, err := do[i].toApplicationPkg(); err != nil {
 			return nil, err
 		} else {
-			if idx := f(appPkg.Repository.Repo); idx == -1 {
+			if idx := f(appPkg.Repository.Community.Community(), appPkg.Repository.Repo); idx == -1 {
 				v = append(v, appPkg)
 			} else {
 				v[idx].Packages = append(v[idx].Packages, appPkg.Packages...)
@@ -106,7 +111,11 @@ func (c communityPkgImpl) FindBasePkgs(opts repository.OptToFindPkgs) (v []domai
 				db.Where("updated_at <> ?", opts.UpdatedAt)
 			}
 
-			return db.Where("community = ?", opts.Community.Community())
+			if opts.Community != nil {
+				db.Where("community = ?", opts.Community.Community())
+			}
+
+			return db
 		},
 		&do, dao.Pagination{
 			PageNum:      opts.PageNum,

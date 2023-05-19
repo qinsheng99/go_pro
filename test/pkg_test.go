@@ -44,7 +44,7 @@ func TestAddApplication(t *testing.T) {
 		Version:   "1.2.3",
 		Milestone: "MT",
 	}
-	p.Name, _ = dp.NewPackageName("python3")
+	p.Name, _ = dp.NewPackageName("python")
 	p.Assignee, _ = dp.NewAccount("zjm")
 	var a = domain.ApplicationPackage{
 		Packages: []domain.Package{
@@ -58,7 +58,7 @@ func TestAddApplication(t *testing.T) {
 		},
 	}
 
-	a.Repository.Community, _ = dp.NewCommunity("mindspore")
+	a.Repository.Community, _ = dp.NewCommunity("opengauss")
 
 	t.Log(r.AddApplicationPkg(&a))
 }

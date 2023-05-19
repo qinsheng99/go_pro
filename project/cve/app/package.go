@@ -9,6 +9,9 @@ import (
 type PkgService interface {
 	AddApplicationPkg(*CmdToApplicationPkg) error
 	AddBasePkg(*CmdToBasePkg) error
+
+	ListBasePkgs(repository.OptToFindPkgs) ([]ListBasePkgsDTO, error)
+	ListApplicationPkgs(repository.OptToFindPkgs) ([]ListApplicationPkgsDTO, error)
 }
 
 type pkgService struct {
@@ -41,4 +44,22 @@ func (p *pkgService) AddBasePkg(pkg *CmdToBasePkg) error {
 	}
 
 	return nil
+}
+
+func (p *pkgService) ListBasePkgs(opts repository.OptToFindPkgs) ([]ListBasePkgsDTO, error) {
+	pkgs, err := p.repo.FindBasePkgs(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	return toListBasePkgsDTO(pkgs)
+}
+
+func (p *pkgService) ListApplicationPkgs(opts repository.OptToFindPkgs) ([]ListApplicationPkgsDTO, error) {
+	pkgs, err := p.repo.FindApplicationPkgs(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	return toListApplicationDTO(pkgs), nil
 }

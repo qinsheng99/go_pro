@@ -3,6 +3,7 @@ package controller
 import (
 	"github.com/qinsheng99/go-domain-web/project/cve/app"
 	"github.com/qinsheng99/go-domain-web/project/cve/domain/dp"
+	"github.com/qinsheng99/go-domain-web/project/cve/domain/repository"
 )
 
 type pkgRequest struct {
@@ -83,6 +84,32 @@ func (p *pkgRequest) toBasePkgCmd() (v app.CmdToBasePkg, err error) {
 		}
 
 		v = b
+	}
+
+	return
+}
+
+type pkgListQuery struct {
+	Community    string `json:"community"       form:"community"`
+	PageNum      int    `json:"page_num"        form:"page_num"`
+	CountPerPage int    `json:"count_per_page"  form:"count_per_page"`
+}
+
+func (p pkgListQuery) toOptFindPkgs() (v repository.OptToFindPkgs, err error) {
+	if p.PageNum <= 0 {
+		v.PageNum = 1
+	} else {
+		v.PageNum = p.PageNum
+	}
+
+	if p.CountPerPage <= 0 {
+		v.CountPerPage = 100
+	} else {
+		v.CountPerPage = p.CountPerPage
+	}
+
+	if p.Community != "" {
+		v.Community, err = dp.NewCommunity(p.Community)
 	}
 
 	return
