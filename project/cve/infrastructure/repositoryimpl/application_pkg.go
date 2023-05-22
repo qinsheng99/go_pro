@@ -1,7 +1,6 @@
 package repositoryimpl
 
 import (
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 
 	"github.com/qinsheng99/go-domain-web/common/infrastructure/dao"
@@ -31,10 +30,6 @@ func (a applicationPkgImpl) FindApplicationPkgs(opts repository.OptFindApplicati
 	err = a.db.GetRecords(
 		a.db.DB(),
 		func(db *gorm.DB) *gorm.DB {
-			if opts.UpdatedAt != "" {
-				db.Where("updated_at <> ?", opts.UpdatedAt)
-			}
-
 			if opts.Community != nil {
 				db.Where("community = ?", opts.Community.Community())
 			}
@@ -93,13 +88,10 @@ func (a applicationPkgImpl) FindApplicationPkg(opts repository.OptToFindApplicat
 	return do.toApplicationPkg()
 }
 
-func (a applicationPkgImpl) DeleteApplicationPkg(id string) error {
-	u, err := uuid.Parse(id)
-	if err != nil {
-		return err
-	}
-
-	return a.db.Delete(a.db.DB(), &applicationPkgDO{Id: u})
+func (a applicationPkgImpl) DeleteApplicationPkgs(up string) error {
+	return a.db.Delete(a.db.DB(), func(db *gorm.DB) *gorm.DB {
+		return db.Where(updatedAt+"<> ?", up)
+	})
 }
 
 func (a applicationPkgImpl) SaveApplicationPkg(app *domain.ApplicationPackage) error {

@@ -17,7 +17,7 @@ type dbimpl interface {
 		tx *gorm.DB, filter dao.Scope, result interface{}, p dao.Pagination, sort []dao.SortByColumn,
 	) error
 	UpdateRecord(tx *gorm.DB, filter, update interface{}) error
-	Delete(tx *gorm.DB, filter interface{}) error
+	Delete(tx *gorm.DB, filter dao.Scope) error
 
 	Transaction(tx *gorm.DB, f func(tx *gorm.DB) error, opts ...*sql.TxOptions) error
 	DB() *gorm.DB

@@ -21,10 +21,6 @@ func (b basePkgImpl) FindBasePkgs(opts repository.OptFindBasePkgs) (v []domain.B
 	err = b.db.GetRecords(
 		b.db.DB(),
 		func(db *gorm.DB) *gorm.DB {
-			if opts.UpdatedAt != "" {
-				db.Where("updated_at <> ?", opts.UpdatedAt)
-			}
-
 			if opts.Community != nil {
 				db.Where("community = ?", opts.Community.Community())
 			}
@@ -68,13 +64,10 @@ func (b basePkgImpl) FindBasePkg(opts repository.OptToFindBasePkg) (domain.BaseP
 	return do.toBasePkg()
 }
 
-func (b basePkgImpl) DeleteBasePkg(id string) error {
-	u, err := uuid.Parse(id)
-	if err != nil {
-		return err
-	}
-
-	return b.db.Delete(b.db.DB(), &basePkgDO{Id: u})
+func (b basePkgImpl) DeleteBasePkgs(up string) error {
+	return b.db.Delete(b.db.DB(), func(db *gorm.DB) *gorm.DB {
+		return db.Where(updatedAt+"<> ?", up)
+	})
 }
 
 func (b basePkgImpl) SaveBasePkg(app *domain.BasePackage) error {

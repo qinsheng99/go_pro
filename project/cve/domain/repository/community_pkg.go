@@ -15,7 +15,6 @@ type OptToFindApplicationPkg struct {
 
 type optToFindPkgs struct {
 	Community dp.Community
-	UpdatedAt string
 
 	PageNum      int
 	CountPerPage int
@@ -37,7 +36,7 @@ type BasePkgRepository interface {
 
 	SaveBasePkg(*domain.BasePackage) error
 
-	DeleteBasePkg(string) error
+	DeleteBasePkgs(string) error
 }
 
 type ApplicationPkgRepository interface {
@@ -48,5 +47,5 @@ type ApplicationPkgRepository interface {
 
 	SaveApplicationPkg(*domain.ApplicationPackage) error
 
-	DeleteApplicationPkg(string) error
+	DeleteApplicationPkgs(string) error
 }

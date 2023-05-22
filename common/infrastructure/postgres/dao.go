@@ -66,8 +66,8 @@ func (d PgDao) ExecSQL(tx *gorm.DB, sql string, result interface{}, args ...inte
 	return d.Dao.ExecSQL(sql, result, d.checkDB(tx), args)
 }
 
-func (d PgDao) Delete(tx *gorm.DB, filter interface{}) error {
-	return d.Dao.Delete(filter, d.checkDB(tx))
+func (d PgDao) Delete(tx *gorm.DB, filter dao.Scope) error {
+	return d.checkDB(tx).Table(d.Dao.Name).Scopes(filter).Delete(nil).Error
 }
 
 func (d PgDao) DB() *gorm.DB {

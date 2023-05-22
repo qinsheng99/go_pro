@@ -12,7 +12,6 @@ import (
 	"github.com/qinsheng99/go-domain-web/project/cve/domain/dp"
 	"github.com/qinsheng99/go-domain-web/project/cve/domain/repository"
 	"github.com/qinsheng99/go-domain-web/project/cve/infrastructure/repositoryimpl"
-	"github.com/qinsheng99/go-domain-web/utils"
 )
 
 var cfg *config.Config
@@ -109,7 +108,6 @@ func TestFindApplicationPkgs(t *testing.T) {
 	opt := repository.OptFindApplicationPkgs{
 		PageNum:      0,
 		CountPerPage: 0,
-		UpdatedAt:    utils.Date(),
 	}
 
 	opt.Community, _ = dp.NewCommunity("mindspore")
@@ -148,7 +146,6 @@ func TestFindBasePkgs(t *testing.T) {
 	opt := repository.OptFindBasePkgs{
 		PageNum:      0,
 		CountPerPage: 0,
-		UpdatedAt:    utils.Date(),
 	}
 
 	opt.Community, _ = dp.NewCommunity("mindspore")
