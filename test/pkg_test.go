@@ -194,6 +194,6 @@ func TestSaveApplicationPkg(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
-	t.Log(application.DeleteApplicationPkgs("2023-05-22"))
+	t.Log(application.DeleteApplicationPkgs(repository.OptToDeleteApplicationPkg{UpdatedAt: "2023-05-22"}))
 	t.Log(base.DeleteBasePkgs("2023-05-22"))
 }

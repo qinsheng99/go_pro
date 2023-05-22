@@ -88,10 +88,16 @@ func (a applicationPkgImpl) FindApplicationPkg(opts repository.OptToFindApplicat
 	return do.toApplicationPkg()
 }
 
-func (a applicationPkgImpl) DeleteApplicationPkgs(up string) error {
-	return a.db.Delete(a.db.DB(), func(db *gorm.DB) *gorm.DB {
-		return db.Where(updatedAt+"<> ?", up)
-	})
+func (a applicationPkgImpl) DeleteApplicationPkgs(opt repository.OptToDeleteApplicationPkg) error {
+	f := func(db *gorm.DB) *gorm.DB {
+		if opt.Community != nil {
+			db.Where("community = ?", opt.Community.Community())
+		}
+
+		return db.Where(updatedAt+"<> ?", opt.UpdatedAt)
+	}
+
+	return a.db.Delete(a.db.DB(), f)
 }
 
 func (a applicationPkgImpl) SaveApplicationPkg(app *domain.ApplicationPackage) error {

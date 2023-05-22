@@ -72,31 +72,29 @@ kubernetes:
 task:
   pkg:
     exec: "20 40 15 * * *"
-    packages:
-#      - community: opengauss
-#        type: "application"
-#        org: opengauss
-#        platform: gitee
-#        url:
-#          - https://gitee.com/opengauss/openGauss-tools-sql-translator/raw/master/Third_Party_Open_Source_Software_List.yaml
-#          - https://gitee.com/opengauss/openGauss-connector-jdbc/raw/master/Third_Party_Open_Source_Software_List.yaml
-#          - https://gitee.com/opengauss/DataStudio/raw/master/Third_Party_Open_Source_Software_List.yaml
-#          - https://gitee.com/opengauss/openGauss-third_party/raw/master/Third_Party_Open_Source_Software_List.yaml
-#      - community: mindspore
-#        type: "application"
-#        org: mindspore
-#        platform: gitee
-#        url:
-#          - https://gitee.com/mindspore/community/raw/master/security/config/Third_Party_Open_Source_Software_List.yaml
-#      - community: openlookeng
-#        type: "application"
-#        org: openlookeng
-#        platform: gitee
-#        url:
-#          - https://gitee.com/openlookeng/community/raw/master/security/config/Third_Party_Open_Source_Software_List.yaml
+    base:
       - community: openeuler
         type: "base"
         org: src-openeuler
         platform: gitee
         url:
           - http://omapi.osinfra.cn/v1/versions?community=openeuler&pageSize=4&currentPage=36
+    application:
+      - community: opengauss
+          org: opengauss
+          platform: gitee
+          url:
+            - https://gitee.com/opengauss/openGauss-tools-sql-translator/raw/master/Third_Party_Open_Source_Software_List.yaml
+            - https://gitee.com/opengauss/openGauss-connector-jdbc/raw/master/Third_Party_Open_Source_Software_List.yaml
+            - https://gitee.com/opengauss/DataStudio/raw/master/Third_Party_Open_Source_Software_List.yaml
+            - https://gitee.com/opengauss/openGauss-third_party/raw/master/Third_Party_Open_Source_Software_List.yaml
+      - community: mindspore
+          org: mindspore
+          platform: gitee
+          url:
+            - https://gitee.com/mindspore/community/raw/master/security/config/Third_Party_Open_Source_Software_List.yaml
+      - community: openlookeng
+          org: openlookeng
+          platform: gitee
+          url:
+            - https://gitee.com/openlookeng/community/raw/master/security/config/Third_Party_Open_Source_Software_List.yaml
