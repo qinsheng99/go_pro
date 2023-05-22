@@ -88,7 +88,7 @@ func (a applicationPkgImpl) FindApplicationPkg(opts repository.OptToFindApplicat
 	return do.toApplicationPkg()
 }
 
-func (a applicationPkgImpl) DeleteApplicationPkgs(opt repository.OptToDeleteApplicationPkg) error {
+func (a applicationPkgImpl) DeleteApplicationPkgs(opt repository.OptToDeleteApplicationPkgs) error {
 	f := func(db *gorm.DB) *gorm.DB {
 		if opt.Community != nil {
 			db.Where("community = ?", opt.Community.Community())

@@ -64,10 +64,16 @@ func (b basePkgImpl) FindBasePkg(opts repository.OptToFindBasePkg) (domain.BaseP
 	return do.toBasePkg()
 }
 
-func (b basePkgImpl) DeleteBasePkgs(up string) error {
-	return b.db.Delete(b.db.DB(), func(db *gorm.DB) *gorm.DB {
-		return db.Where(updatedAt+"<> ?", up)
-	})
+func (b basePkgImpl) DeleteBasePkgs(opt repository.OptToDeleteBasePkgs) error {
+	f := func(db *gorm.DB) *gorm.DB {
+		if opt.Community != nil {
+			db.Where("community = ?", opt.Community.Community())
+		}
+
+		return db.Where(updatedAt+"<> ?", opt.UpdatedAt)
+	}
+
+	return b.db.Delete(b.db.DB(), f)
 }
 
 func (b basePkgImpl) SaveBasePkg(app *domain.BasePackage) error {

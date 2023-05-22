@@ -28,11 +28,15 @@ type OptToFindBasePkg struct {
 type OptFindBasePkgs = optToFindPkgs
 type OptFindApplicationPkgs = optToFindPkgs
 
-type OptToDeleteApplicationPkg struct {
+type optToDeletePkgs struct {
+	// delete not equal UpdatedAt record
 	UpdatedAt string
 
 	Community dp.Community
 }
+
+type OptToDeleteApplicationPkgs = optToDeletePkgs
+type OptToDeleteBasePkgs = optToDeletePkgs
 
 type BasePkgRepository interface {
 	AddBasePkg(*domain.BasePackage) error
@@ -42,7 +46,7 @@ type BasePkgRepository interface {
 
 	SaveBasePkg(*domain.BasePackage) error
 
-	DeleteBasePkgs(string) error
+	DeleteBasePkgs(OptToDeleteBasePkgs) error
 }
 
 type ApplicationPkgRepository interface {
@@ -53,5 +57,5 @@ type ApplicationPkgRepository interface {
 
 	SaveApplicationPkg(*domain.ApplicationPackage) error
 
-	DeleteApplicationPkgs(OptToDeleteApplicationPkg) error
+	DeleteApplicationPkgs(OptToDeleteApplicationPkgs) error
 }
