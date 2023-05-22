@@ -15,7 +15,7 @@ import (
 	"github.com/qinsheng99/go-domain-web/utils"
 )
 
-func (t *Task) CommunityPkg() {
+func (t *Task) ApplicationPkg() {
 	for _, v := range t.cfg.Pkg.Application {
 		if err := t.applicationPkg(v); err != nil {
 			logrus.Errorf("application pkg failed, community:%s, err:%s", v.Community, err.Error())
@@ -30,7 +30,9 @@ func (t *Task) CommunityPkg() {
 			}
 		}
 	}
+}
 
+func (t *Task) BasePkg() {
 	for _, v := range t.cfg.Pkg.Base {
 		if err := t.basePkg(v); err != nil {
 			logrus.Errorf("base pkg failed, err:%s", err.Error())
@@ -68,24 +70,15 @@ func (t *Task) basePkg(p CommunityConfig) error {
 	var resp = PkgResponse{Community: p.Community, Platform: p.Platform, Org: p.Org}
 	for _, u := range p.Url {
 		var res map[string]interface{}
-		_, err := t.cli.CustomRequest(
+		if _, err := t.cli.CustomRequest(
 			u, http.MethodGet, nil, nil, nil, true, &res,
-		)
-		if err != nil {
-			logrus.Errorf(
-				"get community pkg failed, community:%s, url:%s, err:%s ", p.Community, u, err.Error(),
-			)
-
-			continue
+		); err != nil {
+			return err
 		}
 
-		if res == nil || res["data"] == nil || len(res["data"].([]interface{})) == 0 {
-			logrus.Errorf("empty data, url:%s", u)
-
-			continue
+		if res["data"] != nil {
+			resp.PackageInfo = append(resp.PackageInfo, t.basePkgInfo(res["data"].([]interface{}))...)
 		}
-
-		resp.PackageInfo = append(resp.PackageInfo, t.basePkgInfo(res["data"].([]interface{}))...)
 	}
 
 	basePkg, err := resp.toBasePkgCmd()
@@ -117,11 +110,8 @@ func (t *Task) basePkg(p CommunityConfig) error {
 }
 
 func (t *Task) applicationPkg(p CommunityConfig) error {
-	var cmdPkg []app.CmdToApplicationPkg
+	var appPkgs []app.CmdToApplicationPkg
 	for _, u := range p.Url {
-		var resp = PkgResponse{Community: p.Community, Platform: p.Platform, Org: p.Org}
-		var res = make(map[string]map[string]map[string]string)
-		var gauss map[string]map[string]string
 		bys, err := t.cli.CustomRequest(
 			u, http.MethodGet, nil, nil, nil, true, nil,
 		)
@@ -134,8 +124,10 @@ func (t *Task) applicationPkg(p CommunityConfig) error {
 			return err
 		}
 
+		var res = make(map[string]map[string]map[string]string)
 		if bys, err = os.ReadFile(p.DownloadFile); err == nil {
 			if p.Community == "opengauss" {
+				var gauss map[string]map[string]string
 				err = yaml.Unmarshal(bys, &gauss)
 				res[p.Repo] = gauss
 			} else {
@@ -146,44 +138,47 @@ func (t *Task) applicationPkg(p CommunityConfig) error {
 		if err != nil {
 			return err
 		}
-
-		resp.PackageInfo = t.applicationPkgInfo(res)
+		var resp = PkgResponse{
+			Org:         p.Org,
+			Platform:    p.Platform,
+			Community:   p.Community,
+			PackageInfo: t.applicationPkgInfo(res),
+		}
 
 		cmd, err := resp.toApplicationPkgCmd()
 		if err != nil {
 			return err
 		}
 
-		cmdPkg = append(cmdPkg, cmd)
+		appPkgs = append(appPkgs, cmd)
 	}
 
-	for i := range cmdPkg {
-		for k := range cmdPkg[i].Packages {
-			v := &cmdPkg[i].Packages[k]
-			pkg, err := t.application.FindApplicationPkg(
+	for i := range appPkgs {
+		for k := range appPkgs[i].Packages {
+			v := appPkgs[i].Packages[k]
+			repo := appPkgs[i].Repository
+			appPkg, err := t.application.FindApplicationPkg(
 				repository.OptToFindApplicationPkg{
 					Name:      v.Name,
 					Version:   v.Version,
-					Repo:      cmdPkg[i].Repository.Repo,
-					Community: cmdPkg[i].Repository.Community,
+					Repo:      repo.Repo,
+					Community: repo.Community,
 				},
 			)
-			if err != nil {
-				if err = t.application.AddApplicationPkg(&domain.ApplicationPackage{
-					Packages:   []domain.Package{*v},
-					Repository: cmdPkg[i].Repository,
-				}); err != nil {
-					logrus.Errorf("add pkg failed, err:%s\n", err.Error())
-				}
-			} else {
-				v.Id = pkg.Packages[0].Id
-				if err = t.application.SaveApplicationPkg(&domain.ApplicationPackage{
-					Packages:   []domain.Package{*v},
-					Repository: cmdPkg[i].Repository,
-				}); err != nil {
+			data := domain.ApplicationPackage{
+				Packages:   []domain.Package{v},
+				Repository: repo,
+			}
+			if err == nil {
+				data.Packages[0].Id = appPkg.Packages[0].Id
+				if err = t.application.SaveApplicationPkg(&data); err != nil {
 					logrus.Errorf("save pkg failed, err:%s\n", err.Error())
 
 					return err
+				}
+			} else {
+				if err = t.application.AddApplicationPkg(&data); err != nil {
+					logrus.Errorf("add pkg failed, err:%s\n", err.Error())
 				}
 			}
 		}

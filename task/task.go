@@ -30,7 +30,11 @@ func NewTask(cfg *Config, pcfg *postgres.Config) *Task {
 }
 
 func (t *Task) Register() error {
-	_, err := t.cron.AddFunc(t.cfg.Pkg.Exec, t.CommunityPkg)
+	_, err := t.cron.AddFunc(t.cfg.Pkg.Exec, t.BasePkg)
+	if err != nil {
+		return err
+	}
+	_, err = t.cron.AddFunc(t.cfg.Pkg.Exec, t.ApplicationPkg)
 
 	return err
 }
