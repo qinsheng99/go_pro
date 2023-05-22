@@ -206,17 +206,15 @@ func (t *Task) applicationPkg(p CommunityConfig) error {
 //
 // ]
 func (t *Task) basePkgInfo(res []interface{}) (pkginfo []pkgInfo) {
-	for _, pkg := range res {
-		for repKey, repValue := range pkg.(map[string]interface{}) {
+	for i := range res {
+		pkgMap := res[i]
+		for repKey, repValue := range pkgMap.(map[string]interface{}) {
 			var data = make(map[string]pkgInfo)
 			if v, ok := repValue.(map[string]interface{})["branch_detail"]; ok {
 				branchs := t.branchMap(v.([]interface{}))
-				for _, i := range v.([]interface{}) {
-					pkgv := i.(map[string]interface{})
-					var info = pkgInfo{
-						Repo:        repKey,
-						PackageName: repKey,
-					}
+				for _, detail := range v.([]interface{}) {
+					pkgv := detail.(map[string]interface{})
+					var info = pkgInfo{Repo: repKey, PackageName: repKey}
 					if ver, ok := pkgv["version"].(string); ok {
 						if len(ver) == 0 {
 							continue
