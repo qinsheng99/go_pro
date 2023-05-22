@@ -10,13 +10,13 @@ type Config struct {
 }
 
 type Package struct {
-	Exec     string            `json:"exec"`
-	Packages []CommunityConfig `json:"packages"`
+	Exec        string            `json:"exec"`
+	Base        []CommunityConfig `json:"base"`
+	Application []CommunityConfig `json:"application"`
 }
 
 type CommunityConfig struct {
 	Org       string   `json:"org"`
-	Type      string   `json:"type"`
 	Platform  string   `json:"platform"`
 	Community string   `json:"community"`
 	Url       []string `json:"url"`
