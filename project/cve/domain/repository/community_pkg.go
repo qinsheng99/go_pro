@@ -35,7 +35,9 @@ type BasePkgRepository interface {
 	FindBasePkgs(OptFindBasePkgs) (v []domain.BasePackage, err error)
 	FindBasePkg(OptToFindBasePkg) (domain.BasePackage, error)
 
-	DeleteBasePkg(id string) error
+	SaveBasePkg(*domain.BasePackage) error
+
+	DeleteBasePkg(string) error
 }
 
 type ApplicationPkgRepository interface {
@@ -44,5 +46,7 @@ type ApplicationPkgRepository interface {
 	FindApplicationPkgs(OptFindApplicationPkgs) ([]domain.ApplicationPackage, error)
 	FindApplicationPkg(OptToFindApplicationPkg) (domain.ApplicationPackage, error)
 
-	DeleteApplicationPkg(id string) error
+	SaveApplicationPkg(*domain.ApplicationPackage) error
+
+	DeleteApplicationPkg(string) error
 }

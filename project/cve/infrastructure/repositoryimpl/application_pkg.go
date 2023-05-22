@@ -10,12 +10,15 @@ import (
 )
 
 func (a applicationPkgImpl) AddApplicationPkg(app *domain.ApplicationPackage) error {
-	res := a.toApplicationPkgDO(app)
+	res, err := a.toApplicationPkgDO(app)
+	if err != nil {
+		return err
+	}
 
 	for i := range res {
 		v := &res[i]
 
-		if err := a.db.Insert(nil, v); err != nil {
+		if err = a.db.Insert(nil, v); err != nil {
 			return err
 		}
 	}
@@ -97,4 +100,26 @@ func (a applicationPkgImpl) DeleteApplicationPkg(id string) error {
 	}
 
 	return a.db.Delete(a.db.DB(), &applicationPkgDO{Id: u})
+}
+
+func (a applicationPkgImpl) SaveApplicationPkg(app *domain.ApplicationPackage) error {
+	res, err := a.toApplicationPkgDO(app)
+	if err != nil {
+		return err
+	}
+
+	for i := range res {
+		v := &res[i]
+
+		u, err := v.toMap()
+		if err != nil {
+			return err
+		}
+
+		if err = a.db.UpdateRecord(a.db.DB(), &applicationPkgDO{Id: v.Id}, u); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

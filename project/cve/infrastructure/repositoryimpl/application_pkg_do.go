@@ -1,6 +1,8 @@
 package repositoryimpl
 
 import (
+	"encoding/json"
+
 	"github.com/google/uuid"
 
 	"github.com/qinsheng99/go-domain-web/project/cve/domain"
@@ -11,8 +13,8 @@ import (
 type applicationPkgDO struct {
 	Id          uuid.UUID `gorm:"column:uuid;type:uuid"    json:"-"`
 	Org         string    `gorm:"column:org"               json:"-"`
-	Repo        string    `gorm:"column:repo"              json:"repo"`
-	Assignee    string    `gorm:"column:assignee"          json:"assigne"`
+	Repo        string    `gorm:"column:repo"              json:"-"`
+	Assignee    string    `gorm:"column:assignee"          json:"assignee"`
 	Version     string    `gorm:"column:version"           json:"-"`
 	Platform    string    `gorm:"column:platform"          json:"-"`
 	Community   string    `gorm:"column:community"         json:"-"`
@@ -23,8 +25,11 @@ type applicationPkgDO struct {
 	UpdatedAt   string    `gorm:"column:updated_at"        json:"updated_at"`
 }
 
-func (a applicationPkgImpl) toApplicationPkgDO(pkg *domain.ApplicationPackage) []applicationPkgDO {
-	var res = make([]applicationPkgDO, 0)
+func (a applicationPkgImpl) toApplicationPkgDO(pkg *domain.ApplicationPackage) ([]applicationPkgDO, error) {
+	var (
+		res = make([]applicationPkgDO, 0)
+		err error
+	)
 	for _, p := range pkg.Packages {
 		do := applicationPkgDO{
 			Id:          uuid.New(),
@@ -39,14 +44,21 @@ func (a applicationPkgImpl) toApplicationPkgDO(pkg *domain.ApplicationPackage) [
 			CreatedAt:   utils.Date(),
 			UpdatedAt:   utils.Date(),
 		}
+
 		if p.Assignee != nil {
 			do.Assignee = p.Assignee.Account()
+		}
+
+		if p.Id != "" {
+			if do.Id, err = uuid.Parse(p.Id); err != nil {
+				return nil, err
+			}
 		}
 
 		res = append(res, do)
 	}
 
-	return res
+	return res, err
 }
 
 func (a applicationPkgDO) toApplicationPkg() (v domain.ApplicationPackage, err error) {
@@ -71,4 +83,17 @@ func (a applicationPkgDO) toApplicationPkg() (v domain.ApplicationPackage, err e
 	v.Repository.Community, err = dp.NewCommunity(a.Community)
 
 	return
+}
+
+func (a applicationPkgDO) toMap() (map[string]interface{}, error) {
+	var m map[string]interface{}
+
+	v, err := json.Marshal(a)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(v, &m)
+
+	return m, err
 }

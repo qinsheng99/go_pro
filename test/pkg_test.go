@@ -41,35 +41,40 @@ func TestMain(m *testing.M) {
 }
 
 func TestAddApplication(t *testing.T) {
+	a := applicationPkg("mindspore", "apk", "xiaohu", "kk", "mindspore kk")
+
+	t.Log(application.AddApplicationPkg(&a))
+}
+
+func applicationPkg(community, repo, assignee, name, desc string) domain.ApplicationPackage {
 	var p = domain.Package{
 		Id:        "",
 		Version:   "1.2.3",
 		Milestone: "MT",
 	}
-	p.Name, _ = dp.NewPackageName("git")
-	p.Assignee, _ = dp.NewAccount("zjm")
+	p.Name, _ = dp.NewPackageName(name)
+	p.Assignee, _ = dp.NewAccount(assignee)
 	var a = domain.ApplicationPackage{
 		Packages: []domain.Package{
 			p,
 		},
 		Repository: domain.PackageRepository{
-			Org:      "opengauss",
-			Repo:     "security",
+			Org:      community,
+			Repo:     repo,
 			Platform: "gitee",
-			Desc:     dp.NewDescription(""),
+			Desc:     dp.NewDescription(desc),
 		},
 	}
 
-	a.Repository.Community, _ = dp.NewCommunity("opengauss")
+	a.Repository.Community, _ = dp.NewCommunity(community)
 
-	t.Log(application.AddApplicationPkg(&a))
+	return a
 }
 
-func TestAddBasePkg(t *testing.T) {
-	var pkg = "git"
+func basePkg(name string) domain.BasePackage {
 	var version = "4.9.10"
 	var community = "openeuler"
-	var desc = fmt.Sprintf("%s security", pkg)
+	var desc = fmt.Sprintf("%s security", name)
 	var b = domain.BasePackage{
 		Branches: []domain.BasePackageBranch{
 			{
@@ -83,15 +88,20 @@ func TestAddBasePkg(t *testing.T) {
 		},
 		Repository: domain.PackageRepository{
 			Org:      "src-openeuler",
-			Repo:     pkg,
+			Repo:     name,
 			Platform: "gitee",
 			Desc:     dp.NewDescription(desc),
 		},
 	}
 	b.Repository.Community, _ = dp.NewCommunity(community)
 
-	b.Name, _ = dp.NewPackageName(pkg)
+	b.Name, _ = dp.NewPackageName(name)
 
+	return b
+}
+
+func TestAddBasePkg(t *testing.T) {
+	b := basePkg("git")
 	t.Log(base.AddBasePkg(&b))
 }
 
@@ -168,4 +178,20 @@ func TestFindBasePkg(t *testing.T) {
 	}
 
 	t.Logf("%#v\n", pkg)
+}
+
+func TestSaveBasePkg(t *testing.T) {
+	b := basePkg("git")
+	b.Id = "9309bc5b-918c-41b4-976c-5554754150b2"
+
+	t.Log(base.SaveBasePkg(&b))
+}
+
+func TestSaveApplicationPkg(t *testing.T) {
+	a := applicationPkg(
+		"mindspore", "mindspore", "xiaohu", "python3", "mindspore python3",
+	)
+	a.Packages[0].Id = "8ce0d85b-520d-4aac-8bed-fbfa2d02ebc5"
+
+	t.Log(application.SaveApplicationPkg(&a))
 }

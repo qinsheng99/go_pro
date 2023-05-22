@@ -76,7 +76,7 @@ func marshalJsonb(v postgres.Jsonb) string {
 func marshalStringArray(sa pq.StringArray) string {
 	v, err := sa.Value()
 	if err != nil {
-		return ""
+		return "{}"
 	}
 
 	if v != nil {

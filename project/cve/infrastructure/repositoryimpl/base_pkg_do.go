@@ -9,17 +9,23 @@ import (
 	"github.com/qinsheng99/go-domain-web/utils"
 )
 
+const (
+	updatedAt  = "updated_at"
+	decription = "decription"
+	branch     = "branch"
+)
+
 type basePkgDO struct {
-	Id          uuid.UUID      `gorm:"column:uuid;type:uuid"                    json:"-"`
-	Org         string         `gorm:"column:org"                               json:"-"`
-	Repo        string         `gorm:"column:repo"                              json:"repo"`
-	Platform    string         `gorm:"column:platform"                          json:"-"`
-	Community   string         `gorm:"column:community"                         json:"-"`
-	CreatedAt   string         `gorm:"column:created_at"                        json:"-"`
-	UpdatedAt   string         `gorm:"column:updated_at"                        json:"updated_at"`
-	Decription  string         `gorm:"column:decription"                        json:"decription"`
-	PackageName string         `gorm:"column:package_name"                      json:"-"`
-	Branch      pq.StringArray `gorm:"column:branch;type:text[];default:'{}'"   json:"-"`
+	Id          uuid.UUID      `gorm:"column:uuid;type:uuid"`
+	Org         string         `gorm:"column:org"`
+	Repo        string         `gorm:"column:repo"`
+	Platform    string         `gorm:"column:platform"`
+	Community   string         `gorm:"column:community"`
+	CreatedAt   string         `gorm:"column:created_at"`
+	UpdatedAt   string         `gorm:"column:updated_at"`
+	Decription  string         `gorm:"column:decription"`
+	PackageName string         `gorm:"column:package_name"`
+	Branch      pq.StringArray `gorm:"column:branch;type:text[];default:'{}'"`
 }
 
 func (b basePkgImpl) toBasePkgDO(pkg *domain.BasePackage, do *basePkgDO) {
@@ -34,6 +40,14 @@ func (b basePkgImpl) toBasePkgDO(pkg *domain.BasePackage, do *basePkgDO) {
 		CreatedAt:   utils.Date(),
 		UpdatedAt:   utils.Date(),
 		Branch:      toStringArray(pkg.Branches),
+	}
+}
+
+func (b basePkgDO) toUpdatedMap() map[string]interface{} {
+	return map[string]interface{}{
+		updatedAt:  b.UpdatedAt,
+		decription: b.Decription,
+		branch:     marshalStringArray(b.Branch),
 	}
 }
 

@@ -76,3 +76,15 @@ func (b basePkgImpl) DeleteBasePkg(id string) error {
 
 	return b.db.Delete(b.db.DB(), &basePkgDO{Id: u})
 }
+
+func (b basePkgImpl) SaveBasePkg(app *domain.BasePackage) error {
+	var do basePkgDO
+	b.toBasePkgDO(app, &do)
+
+	id, err := uuid.Parse(app.Id)
+	if err != nil {
+		return err
+	}
+
+	return b.db.UpdateRecord(b.db.DB(), &basePkgDO{Id: id}, do.toUpdatedMap())
+}
