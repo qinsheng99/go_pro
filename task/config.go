@@ -6,20 +6,22 @@ import (
 )
 
 type Config struct {
-	Pkg Package `json:"pkg"`
+	Pkg Package `json:"pkg"   required:"true"`
 }
 
 type Package struct {
-	Exec        string            `json:"exec"`
-	Base        []CommunityConfig `json:"base"`
-	Application []CommunityConfig `json:"application"`
+	Exec        string            `json:"exec"         required:"true"`
+	Base        []CommunityConfig `json:"base"         required:"true"`
+	Application []CommunityConfig `json:"application"  required:"true"`
 }
 
 type CommunityConfig struct {
-	Org       string   `json:"org"`
-	Platform  string   `json:"platform"`
-	Community string   `json:"community"`
-	Url       []string `json:"url"`
+	Org          string   `json:"org"             required:"true"`
+	Repo         string   `json:"repo"`
+	Platform     string   `json:"platform"        required:"true"`
+	Community    string   `json:"community"       required:"true"`
+	DownloadFile string   `json:"download_file"`
+	Url          []string `json:"url"`
 }
 
 type PkgResponse struct {

@@ -19,11 +19,6 @@ type Task struct {
 	application repository.ApplicationPkgRepository
 }
 
-const (
-	application = "application"
-	base        = "base"
-)
-
 func NewTask(cfg *Config, pcfg *postgres.Config) *Task {
 	return &Task{
 		cfg:         *cfg,
@@ -35,7 +30,7 @@ func NewTask(cfg *Config, pcfg *postgres.Config) *Task {
 }
 
 func (t *Task) Register() error {
-	_, err := t.cron.AddFunc(t.cfg.Pkg.Exec, t.Pkg)
+	_, err := t.cron.AddFunc(t.cfg.Pkg.Exec, t.CommunityPkg)
 
 	return err
 }

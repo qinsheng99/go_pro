@@ -15,18 +15,18 @@ import (
 	"github.com/qinsheng99/go-domain-web/utils"
 )
 
-func (t *Task) Pkg() {
+func (t *Task) CommunityPkg() {
 	for _, v := range t.cfg.Pkg.Application {
 		if err := t.applicationPkg(v); err != nil {
 			logrus.Errorf("application pkg failed, community:%s, err:%s", v.Community, err.Error())
 		} else {
-			if community, err := dp.NewCommunity(v.Community); err == nil {
-				if err = t.application.DeleteApplicationPkgs(repository.OptToDeleteApplicationPkg{
-					UpdatedAt: utils.Date(),
-					Community: community,
-				}); err != nil {
-					logrus.Errorf("delete application pkg failed, community:%s, err:%s", v.Community, err.Error())
-				}
+			community, _ := dp.NewCommunity(v.Community)
+
+			if err = t.application.DeleteApplicationPkgs(repository.OptToDeleteApplicationPkgs{
+				UpdatedAt: utils.Date(),
+				Community: community,
+			}); err != nil {
+				logrus.Errorf("delete application pkg failed, community:%s, err:%s", v.Community, err.Error())
 			}
 		}
 	}
@@ -35,7 +35,11 @@ func (t *Task) Pkg() {
 		if err := t.basePkg(v); err != nil {
 			logrus.Errorf("base pkg failed, err:%s", err.Error())
 		} else {
-			if err = t.base.DeleteBasePkgs(utils.Date()); err != nil {
+			community, _ := dp.NewCommunity(v.Community)
+			if err = t.base.DeleteBasePkgs(repository.OptToDeleteApplicationPkgs{
+				UpdatedAt: utils.Date(),
+				Community: community,
+			}); err != nil {
 				logrus.Errorf("delete base pkg failed, err:%s", err.Error())
 			}
 		}
@@ -103,6 +107,8 @@ func (t *Task) basePkg(p CommunityConfig) error {
 			pkg.Id = v.Id
 			if err = t.base.SaveBasePkg(pkg); err != nil {
 				logrus.Errorf("save base pkg failed, err:%s", err.Error())
+
+				return err
 			}
 		}
 	}
@@ -122,15 +128,16 @@ func (t *Task) applicationPkg(p CommunityConfig) error {
 		if err != nil {
 			return err
 		}
-		var name = "logs/pkg.yaml"
-		if err = os.WriteFile(name, bys, os.ModePerm); err != nil {
+
+		_ = os.Remove(p.DownloadFile)
+		if err = os.WriteFile(p.DownloadFile, bys, os.ModePerm); err != nil {
 			return err
 		}
 
-		if bys, err = os.ReadFile(name); err == nil {
+		if bys, err = os.ReadFile(p.DownloadFile); err == nil {
 			if p.Community == "opengauss" {
 				err = yaml.Unmarshal(bys, &gauss)
-				res["security"] = gauss
+				res[p.Repo] = gauss
 			} else {
 				err = yaml.Unmarshal(bys, &res)
 			}
@@ -148,8 +155,6 @@ func (t *Task) applicationPkg(p CommunityConfig) error {
 		}
 
 		cmdPkg = append(cmdPkg, cmd)
-
-		_ = os.Remove(name)
 	}
 
 	for i := range cmdPkg {
@@ -177,6 +182,8 @@ func (t *Task) applicationPkg(p CommunityConfig) error {
 					Repository: cmdPkg[i].Repository,
 				}); err != nil {
 					logrus.Errorf("save pkg failed, err:%s\n", err.Error())
+
+					return err
 				}
 			}
 		}

@@ -93,7 +93,7 @@ func main() {
 	//	return
 	//}
 
-	go t.Pkg()
+	go t.CommunityPkg()
 
 	//t.Run()
 	//defer t.Stop()
