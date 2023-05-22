@@ -100,7 +100,7 @@ func basePkg(name string) domain.BasePackage {
 }
 
 func TestAddBasePkg(t *testing.T) {
-	b := basePkg("git")
+	b := basePkg("debug")
 	t.Log(base.AddBasePkg(&b))
 }
 
@@ -191,4 +191,9 @@ func TestSaveApplicationPkg(t *testing.T) {
 	a.Packages[0].Id = "8ce0d85b-520d-4aac-8bed-fbfa2d02ebc5"
 
 	t.Log(application.SaveApplicationPkg(&a))
+}
+
+func TestDelete(t *testing.T) {
+	t.Log(application.DeleteApplicationPkgs("2023-05-22"))
+	t.Log(base.DeleteBasePkgs("2023-05-22"))
 }
