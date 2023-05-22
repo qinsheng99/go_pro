@@ -10,22 +10,24 @@ type PkgService interface {
 	AddApplicationPkg(*CmdToApplicationPkg) error
 	AddBasePkg(*CmdToBasePkg) error
 
-	ListBasePkgs(repository.OptToFindPkgs) ([]ListBasePkgsDTO, error)
-	ListApplicationPkgs(repository.OptToFindPkgs) ([]ListApplicationPkgsDTO, error)
+	ListBasePkgs(repository.OptFindBasePkgs) ([]ListBasePkgsDTO, error)
+	ListApplicationPkgs(repository.OptFindApplicationPkgs) ([]ListApplicationPkgsDTO, error)
 }
 
 type pkgService struct {
-	repo repository.PkgImpl
+	base        repository.BasePkgRepository
+	application repository.ApplicationPkgRepository
 }
 
-func NewPkgService(repo repository.PkgImpl) PkgService {
+func NewPkgService(base repository.BasePkgRepository, application repository.ApplicationPkgRepository) PkgService {
 	return &pkgService{
-		repo: repo,
+		base:        base,
+		application: application,
 	}
 }
 
 func (p *pkgService) AddApplicationPkg(pkg *CmdToApplicationPkg) error {
-	err := p.repo.AddApplicationPkg(pkg)
+	err := p.application.AddApplicationPkg(pkg)
 	if err != nil {
 		logrus.Errorf(
 			"add application failed, community:%s, err:%s", pkg.Repository.Community.Community(), err.Error(),
@@ -36,7 +38,7 @@ func (p *pkgService) AddApplicationPkg(pkg *CmdToApplicationPkg) error {
 }
 
 func (p *pkgService) AddBasePkg(pkg *CmdToBasePkg) error {
-	err := p.repo.AddBasePkg(pkg)
+	err := p.base.AddBasePkg(pkg)
 	if err != nil {
 		logrus.Errorf(
 			"add application failed, community:%s, err:%s", pkg.Repository.Community.Community(), err.Error(),
@@ -46,8 +48,8 @@ func (p *pkgService) AddBasePkg(pkg *CmdToBasePkg) error {
 	return nil
 }
 
-func (p *pkgService) ListBasePkgs(opts repository.OptToFindPkgs) ([]ListBasePkgsDTO, error) {
-	pkgs, err := p.repo.FindBasePkgs(opts)
+func (p *pkgService) ListBasePkgs(opts repository.OptFindBasePkgs) ([]ListBasePkgsDTO, error) {
+	pkgs, err := p.base.FindBasePkgs(opts)
 	if err != nil {
 		return nil, err
 	}
@@ -55,8 +57,8 @@ func (p *pkgService) ListBasePkgs(opts repository.OptToFindPkgs) ([]ListBasePkgs
 	return toListBasePkgsDTO(pkgs)
 }
 
-func (p *pkgService) ListApplicationPkgs(opts repository.OptToFindPkgs) ([]ListApplicationPkgsDTO, error) {
-	pkgs, err := p.repo.FindApplicationPkgs(opts)
+func (p *pkgService) ListApplicationPkgs(opts repository.OptFindApplicationPkgs) ([]ListApplicationPkgsDTO, error) {
+	pkgs, err := p.application.FindApplicationPkgs(opts)
 	if err != nil {
 		return nil, err
 	}

@@ -17,15 +17,22 @@ func NewCVEImpl(cfg *postgres.Config) repository.CVE {
 	}
 }
 
-type pkgImpl struct {
-	communityPkgImpl
+type basePkgImpl struct {
+	db dbimpl
 }
 
-func NewPkgImpl(cfg *postgres.Config) repository.PkgImpl {
-	return &pkgImpl{
-		communityPkgImpl: communityPkgImpl{
-			appDB:  postgres.NewPgDao(cfg.Table.ApplicationPkg),
-			baseDB: postgres.NewPgDao(cfg.Table.BasePkg),
-		},
+type applicationPkgImpl struct {
+	db dbimpl
+}
+
+func NewApplicationPkgImpl(cfg *postgres.Config) repository.ApplicationPkgRepository {
+	return &applicationPkgImpl{
+		db: postgres.NewPgDao(cfg.Table.ApplicationPkg),
+	}
+}
+
+func NewBasePkgImpl(cfg *postgres.Config) repository.BasePkgRepository {
+	return &basePkgImpl{
+		db: postgres.NewPgDao(cfg.Table.BasePkg),
 	}
 }

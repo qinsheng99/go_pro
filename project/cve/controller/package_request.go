@@ -95,7 +95,27 @@ type pkgListQuery struct {
 	CountPerPage int    `json:"count_per_page"  form:"count_per_page"`
 }
 
-func (p pkgListQuery) toOptFindPkgs() (v repository.OptToFindPkgs, err error) {
+func (p pkgListQuery) toOptFindApplicationPkgs() (v repository.OptFindApplicationPkgs, err error) {
+	if p.PageNum <= 0 {
+		v.PageNum = 1
+	} else {
+		v.PageNum = p.PageNum
+	}
+
+	if p.CountPerPage <= 0 {
+		v.CountPerPage = 100
+	} else {
+		v.CountPerPage = p.CountPerPage
+	}
+
+	if p.Community != "" {
+		v.Community, err = dp.NewCommunity(p.Community)
+	}
+
+	return
+}
+
+func (p pkgListQuery) toOptFindBasePkgs() (v repository.OptFindBasePkgs, err error) {
 	if p.PageNum <= 0 {
 		v.PageNum = 1
 	} else {

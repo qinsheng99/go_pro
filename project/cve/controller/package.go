@@ -107,7 +107,7 @@ func (p *PkgController) List(c *gin.Context) {
 }
 
 func (p *PkgController) listBase(q pkgListQuery, c *gin.Context) {
-	opt, err := q.toOptFindPkgs()
+	opt, err := q.toOptFindBasePkgs()
 	if err != nil {
 		commonctl.Failure(c, err)
 
@@ -122,7 +122,7 @@ func (p *PkgController) listBase(q pkgListQuery, c *gin.Context) {
 }
 
 func (p *PkgController) listApplication(q pkgListQuery, c *gin.Context) {
-	opt, err := q.toOptFindPkgs()
+	opt, err := q.toOptFindApplicationPkgs()
 	if err != nil {
 		commonctl.Failure(c, err)
 

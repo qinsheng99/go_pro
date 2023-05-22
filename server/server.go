@@ -61,7 +61,9 @@ func SetRoute(r *gin.Engine, cfg *config.Config) {
 
 	cvectl.AddRouteCve(group, cveapp.NewCveService(cverepository.NewCVEImpl(cfg.Postgres)))
 
-	cvectl.AddRoutePkg(group, cveapp.NewPkgService(cverepository.NewPkgImpl(cfg.Postgres)))
+	cvectl.AddRoutePkg(group, cveapp.NewPkgService(
+		cverepository.NewBasePkgImpl(cfg.Postgres), cverepository.NewApplicationPkgImpl(cfg.Postgres)),
+	)
 
 	//controller.AddRouteRepo(group, repositoryimpl.NewRepoR(mysql.NewRepoMapper()))
 }

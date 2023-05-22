@@ -13,7 +13,7 @@ type OptToFindApplicationPkg struct {
 	Name      dp.PackageName
 }
 
-type OptToFindPkgs struct {
+type optToFindPkgs struct {
 	Community dp.Community
 	UpdatedAt string
 
@@ -26,15 +26,23 @@ type OptToFindBasePkg struct {
 	Name      dp.PackageName
 }
 
-type PkgImpl interface {
-	AddApplicationPkg(*domain.ApplicationPackage) error
+type OptFindBasePkgs = optToFindPkgs
+type OptFindApplicationPkgs = optToFindPkgs
+
+type BasePkgRepository interface {
 	AddBasePkg(*domain.BasePackage) error
 
-	FindApplicationPkgs(OptToFindPkgs) ([]domain.ApplicationPackage, error)
-	FindApplicationPkg(OptToFindApplicationPkg) (domain.ApplicationPackage, error)
-	DeleteApplicationPkg(id string) error
-
-	FindBasePkgs(OptToFindPkgs) (v []domain.BasePackage, err error)
+	FindBasePkgs(OptFindBasePkgs) (v []domain.BasePackage, err error)
 	FindBasePkg(OptToFindBasePkg) (domain.BasePackage, error)
+
 	DeleteBasePkg(id string) error
+}
+
+type ApplicationPkgRepository interface {
+	AddApplicationPkg(*domain.ApplicationPackage) error
+
+	FindApplicationPkgs(OptFindApplicationPkgs) ([]domain.ApplicationPackage, error)
+	FindApplicationPkg(OptToFindApplicationPkg) (domain.ApplicationPackage, error)
+
+	DeleteApplicationPkg(id string) error
 }

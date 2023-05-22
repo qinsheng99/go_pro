@@ -15,14 +15,14 @@ type basePkgDO struct {
 	Repo        string         `gorm:"column:repo"                              json:"repo"`
 	Platform    string         `gorm:"column:platform"                          json:"-"`
 	Community   string         `gorm:"column:community"                         json:"-"`
-	Decription  string         `gorm:"column:decription"                        json:"decription"`
-	PackageName string         `gorm:"column:package_name"                      json:"-"`
 	CreatedAt   string         `gorm:"column:created_at"                        json:"-"`
 	UpdatedAt   string         `gorm:"column:updated_at"                        json:"updated_at"`
+	Decription  string         `gorm:"column:decription"                        json:"decription"`
+	PackageName string         `gorm:"column:package_name"                      json:"-"`
 	Branch      pq.StringArray `gorm:"column:branch;type:text[];default:'{}'"   json:"-"`
 }
 
-func (c communityPkgImpl) toBasePkgDO(pkg *domain.BasePackage, do *basePkgDO) {
+func (b basePkgImpl) toBasePkgDO(pkg *domain.BasePackage, do *basePkgDO) {
 	*do = basePkgDO{
 		Id:          uuid.New(),
 		Org:         pkg.Repository.Org,

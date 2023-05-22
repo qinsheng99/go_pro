@@ -23,31 +23,7 @@ type applicationPkgDO struct {
 	UpdatedAt   string    `gorm:"column:updated_at"        json:"updated_at"`
 }
 
-func (a applicationPkgDO) toApplicationPkg() (v domain.ApplicationPackage, err error) {
-	pkg := domain.Package{
-		Id:        a.Id.String(),
-		Version:   a.Version,
-		Milestone: a.Milestone,
-	}
-
-	pkg.Assignee, _ = dp.NewAccount(a.Assignee)
-
-	if pkg.Name, err = dp.NewPackageName(a.PackageName); err != nil {
-		return
-	}
-	v.Packages = []domain.Package{pkg}
-	v.Repository = domain.PackageRepository{
-		Org:      a.Org,
-		Repo:     a.Repo,
-		Platform: a.Platform,
-		Desc:     dp.NewDescription(a.Decription),
-	}
-	v.Repository.Community, err = dp.NewCommunity(a.Community)
-
-	return
-}
-
-func (c communityPkgImpl) toApplicationPkgDO(pkg *domain.ApplicationPackage) []applicationPkgDO {
+func (a applicationPkgImpl) toApplicationPkgDO(pkg *domain.ApplicationPackage) []applicationPkgDO {
 	var res = make([]applicationPkgDO, 0)
 	for _, p := range pkg.Packages {
 		do := applicationPkgDO{
@@ -71,4 +47,28 @@ func (c communityPkgImpl) toApplicationPkgDO(pkg *domain.ApplicationPackage) []a
 	}
 
 	return res
+}
+
+func (a applicationPkgDO) toApplicationPkg() (v domain.ApplicationPackage, err error) {
+	pkg := domain.Package{
+		Id:        a.Id.String(),
+		Version:   a.Version,
+		Milestone: a.Milestone,
+	}
+
+	pkg.Assignee, _ = dp.NewAccount(a.Assignee)
+
+	if pkg.Name, err = dp.NewPackageName(a.PackageName); err != nil {
+		return
+	}
+	v.Packages = []domain.Package{pkg}
+	v.Repository = domain.PackageRepository{
+		Org:      a.Org,
+		Repo:     a.Repo,
+		Platform: a.Platform,
+		Desc:     dp.NewDescription(a.Decription),
+	}
+	v.Repository.Community, err = dp.NewCommunity(a.Community)
+
+	return
 }

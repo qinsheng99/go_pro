@@ -16,7 +16,8 @@ import (
 )
 
 var cfg *config.Config
-var r repository.PkgImpl
+var base repository.BasePkgRepository
+var application repository.ApplicationPkgRepository
 
 func TestMain(m *testing.M) {
 	var err error
@@ -33,7 +34,8 @@ func TestMain(m *testing.M) {
 		return
 	}
 
-	r = repositoryimpl.NewPkgImpl(cfg.Postgres)
+	application = repositoryimpl.NewApplicationPkgImpl(cfg.Postgres)
+	base = repositoryimpl.NewBasePkgImpl(cfg.Postgres)
 
 	m.Run()
 }
@@ -44,15 +46,15 @@ func TestAddApplication(t *testing.T) {
 		Version:   "1.2.3",
 		Milestone: "MT",
 	}
-	p.Name, _ = dp.NewPackageName("python")
+	p.Name, _ = dp.NewPackageName("git")
 	p.Assignee, _ = dp.NewAccount("zjm")
 	var a = domain.ApplicationPackage{
 		Packages: []domain.Package{
 			p,
 		},
 		Repository: domain.PackageRepository{
-			Org:      "mindspore",
-			Repo:     "mindspore",
+			Org:      "opengauss",
+			Repo:     "security",
 			Platform: "gitee",
 			Desc:     dp.NewDescription(""),
 		},
@@ -60,11 +62,11 @@ func TestAddApplication(t *testing.T) {
 
 	a.Repository.Community, _ = dp.NewCommunity("opengauss")
 
-	t.Log(r.AddApplicationPkg(&a))
+	t.Log(application.AddApplicationPkg(&a))
 }
 
 func TestAddBasePkg(t *testing.T) {
-	var pkg = "kernel"
+	var pkg = "git"
 	var version = "4.9.10"
 	var community = "openeuler"
 	var desc = fmt.Sprintf("%s security", pkg)
@@ -90,11 +92,11 @@ func TestAddBasePkg(t *testing.T) {
 
 	b.Name, _ = dp.NewPackageName(pkg)
 
-	t.Log(r.AddBasePkg(&b))
+	t.Log(base.AddBasePkg(&b))
 }
 
 func TestFindApplicationPkgs(t *testing.T) {
-	opt := repository.OptToFindPkgs{
+	opt := repository.OptFindApplicationPkgs{
 		PageNum:      0,
 		CountPerPage: 0,
 		UpdatedAt:    utils.Date(),
@@ -102,7 +104,7 @@ func TestFindApplicationPkgs(t *testing.T) {
 
 	opt.Community, _ = dp.NewCommunity("mindspore")
 
-	pkg, err := r.FindApplicationPkgs(opt)
+	pkg, err := application.FindApplicationPkgs(opt)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -124,7 +126,7 @@ func TestFindApplicationPkg(t *testing.T) {
 	opts.Community, _ = dp.NewCommunity(community)
 	opts.Name, _ = dp.NewPackageName(name)
 
-	pkg, err := r.FindApplicationPkg(opts)
+	pkg, err := application.FindApplicationPkg(opts)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -133,7 +135,7 @@ func TestFindApplicationPkg(t *testing.T) {
 }
 
 func TestFindBasePkgs(t *testing.T) {
-	opt := repository.OptToFindPkgs{
+	opt := repository.OptFindBasePkgs{
 		PageNum:      0,
 		CountPerPage: 0,
 		UpdatedAt:    utils.Date(),
@@ -141,7 +143,7 @@ func TestFindBasePkgs(t *testing.T) {
 
 	opt.Community, _ = dp.NewCommunity("mindspore")
 
-	pkg, err := r.FindBasePkgs(opt)
+	pkg, err := base.FindBasePkgs(opt)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -160,7 +162,7 @@ func TestFindBasePkg(t *testing.T) {
 	opts.Community, _ = dp.NewCommunity(community)
 	opts.Name, _ = dp.NewPackageName(name)
 
-	pkg, err := r.FindBasePkg(opts)
+	pkg, err := base.FindBasePkg(opts)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -12,10 +12,11 @@ import (
 )
 
 type Task struct {
-	cfg     Config
-	cli     utils.ReqImpl
-	cron    *cron.Cron
-	pkgimpl repository.PkgImpl
+	cfg         Config
+	cli         utils.ReqImpl
+	cron        *cron.Cron
+	base        repository.BasePkgRepository
+	application repository.ApplicationPkgRepository
 }
 
 const (
@@ -25,10 +26,11 @@ const (
 
 func NewTask(cfg *Config, pcfg *postgres.Config) *Task {
 	return &Task{
-		cfg:     *cfg,
-		cli:     utils.NewRequest(&http.Transport{}),
-		cron:    cron.New(cron.WithSeconds()),
-		pkgimpl: cverepository.NewPkgImpl(pcfg),
+		cfg:         *cfg,
+		cli:         utils.NewRequest(&http.Transport{}),
+		cron:        cron.New(cron.WithSeconds()),
+		base:        cverepository.NewBasePkgImpl(pcfg),
+		application: cverepository.NewApplicationPkgImpl(pcfg),
 	}
 }
 
