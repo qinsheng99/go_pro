@@ -87,16 +87,14 @@ func main() {
 	server.SetRoute(r, cfg)
 
 	t := task.NewTask(cfg.Task, cfg.Postgres)
-	//if err = t.Register(); err != nil {
-	//	logrus.WithError(err).Error("register task failed")
-	//
-	//	return
-	//}
+	if err = t.Register(); err != nil {
+		logrus.WithError(err).Error("register task failed")
 
-	go t.CommunityPkg()
+		return
+	}
 
-	//t.Run()
-	//defer t.Stop()
+	go t.Run()
+	defer t.Stop()
 
 	//lis := kubernetes.NewListen(kubernetes.GetClient(), kubernetes.GetDyna(), kubernetes.GetResource(), *listen)
 	//go lis.ListenResource()
