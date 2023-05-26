@@ -1,8 +1,8 @@
 package app
 
 import (
-	"github.com/qinsheng99/go-domain-web/project/sort/domain"
-	"github.com/qinsheng99/go-domain-web/project/sort/domain/sort"
+	"github.com/qinsheng99/go-domain-web/project/dataStructure/domain"
+	"github.com/qinsheng99/go-domain-web/project/dataStructure/domain/sort"
 )
 
 type sortService struct {
@@ -33,5 +33,5 @@ func (s sortService) Insert(arr domain.SortDP) {
 }
 
 func (s sortService) Quick(arr domain.SortDP) {
-	s.s.QuickSort(arr.Fields.SortField(), 0, len(arr.Fields.SortField())-1)
+	s.s.QuickSort(arr.Fields.SortField(), 0, arr.Fields.Len()-1)
 }

@@ -4,7 +4,7 @@ type RequestPull struct {
 	Ref       string `json:"ref"        form:"ref"`
 	Sig       string `json:"sig"        form:"sig"`
 	Org       string `json:"org"        form:"org"`
-	Sort      string `json:"sort"       form:"sort"`
+	Sort      string `json:"dataStructure"       form:"dataStructure"`
 	Repo      string `json:"repo"       form:"repo"`
 	Label     string `json:"label"      form:"label"`
 	State     string `json:"state"      form:"state"`

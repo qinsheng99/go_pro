@@ -3,7 +3,7 @@ package domain
 import (
 	"time"
 
-	"github.com/qinsheng99/go-domain-web/project/sort/domain/dp"
+	"github.com/qinsheng99/go-domain-web/domain/dp"
 )
 
 type OsvOptions struct {

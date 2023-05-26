@@ -2,7 +2,7 @@ package repository
 
 import (
 	"github.com/qinsheng99/go-domain-web/domain"
-	"github.com/qinsheng99/go-domain-web/project/sort/domain/dp"
+	"github.com/qinsheng99/go-domain-web/domain/dp"
 )
 
 type RepoImpl interface {

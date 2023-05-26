@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin/binding"
 
 	commonctl "github.com/qinsheng99/go-domain-web/common/controller"
-	"github.com/qinsheng99/go-domain-web/project/sort/app"
+	"github.com/qinsheng99/go-domain-web/project/dataStructure/app"
 )
 
 type BaseSort struct {
@@ -17,7 +17,7 @@ type BaseSort struct {
 func AddRouteSort(r *gin.RouterGroup, s app.SortServiceImpl) {
 	baseSort := BaseSort{s: s}
 
-	group := r.Group("/sort")
+	group := r.Group("/dataStructure")
 
 	func() {
 		group.POST("/:type", baseSort.SelectSort)
