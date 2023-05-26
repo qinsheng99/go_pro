@@ -17,7 +17,7 @@ type BaseSort struct {
 func AddRouteSort(r *gin.RouterGroup, s app.SortServiceImpl) {
 	baseSort := BaseSort{s: s}
 
-	group := r.Group("/dataStructure")
+	group := r.Group("/sort")
 
 	func() {
 		group.POST("/:type", baseSort.SelectSort)

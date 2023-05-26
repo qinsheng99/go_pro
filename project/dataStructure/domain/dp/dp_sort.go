@@ -15,7 +15,7 @@ func (s sortFields) SortField() []int {
 
 func NewSortField(arr []int) (SortField, error) {
 	if len(arr) == 0 {
-		return nil, errors.New("dataStructure field is empty")
+		return nil, errors.New("sort field is empty")
 	}
 
 	return sortFields(arr), nil
